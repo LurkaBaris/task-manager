@@ -33,28 +33,39 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 24px;
 }
 
 .link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: 8px;
+  min-height: 64px;
+  padding: 0;
   color: var(--text-secondary);
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
   text-decoration: none;
   transition:
-    background-color 180ms ease,
     color 180ms ease;
 }
 
+.link::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 999px 999px 0 0;
+  background: var(--primary);
+  content: '';
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
 .link:hover {
-  background: var(--column-bg);
   color: var(--text);
 }
 
@@ -65,8 +76,12 @@
 }
 
 .linkActive {
-  background: var(--primary-soft);
   color: var(--primary-active);
+}
+
+.linkActive::after,
+.link:hover::after {
+  opacity: 1;
 }
 
 @media (max-width: 640px) {
