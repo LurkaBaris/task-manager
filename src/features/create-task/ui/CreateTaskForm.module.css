@@ -1,0 +1,16 @@
+.label {
+  color: var(--mantine-color-gray-7);
+  font-weight: 600;
+}
+
+.input {
+  color: var(--mantine-color-gray-9);
+}
+
+.input::placeholder {
+  color: var(--mantine-color-gray-6);
+}
+
+.error {
+  font-size: 12px;
+}
