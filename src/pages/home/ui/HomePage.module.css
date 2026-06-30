@@ -31,75 +31,6 @@
   box-shadow: var(--shadow);
 }
 
-.column {
-  display: flex;
-  min-height: 420px;
-  min-width: 280px;
-  flex: 1 0 280px;
-  flex-direction: column;
-  align-self: stretch;
-  border-color: var(--border);
-  background: var(--column-bg);
-}
-
-.columnHeader {
-  margin-bottom: 22px;
-}
-
-.columnTitle {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.columnTitle h2 {
-  margin: 0;
-  color: var(--text);
-  font-size: 16px;
-  line-height: 1.2;
-}
-
-.statusDot {
-  width: 10px;
-  height: 10px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--text-muted);
-}
-
-.column[data-tone='todo'] .statusDot {
-  background: var(--todo);
-}
-
-.column[data-tone='progress'] .statusDot {
-  background: var(--progress);
-}
-
-.column[data-tone='done'] .statusDot {
-  background: var(--done);
-}
-
-.counter {
-  color: var(--text-secondary);
-}
-
-.columnBody {
-  min-height: 40px;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 1px dashed var(--border-strong);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--surface) 74%, transparent);
-}
-
-.emptyText {
-  color: var(--text-muted);
-}
-
 .board {
   align-items: stretch;
   flex: 1;
@@ -114,13 +45,5 @@
 
   .createButton {
     width: 100%;
-  }
-
-  .column {
-    min-height: 280px;
-  }
-
-  .columnBody {
-    min-height: 180px;
   }
 }

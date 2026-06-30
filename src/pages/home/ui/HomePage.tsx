@@ -1,8 +1,22 @@
-import { Badge, Button, Group, Paper, Text, Title } from '@mantine/core'
-import { columns } from '../model/constants'
+import { ColumnCard, DEFAULT_COLUMNS, type Column } from '@/entities/column'
+import { TaskCard, type Task } from '@/entities/task'
+import { Button, Group, Title } from '@mantine/core'
+import { tasks } from '../model/tasks'
 import styles from './HomePage.module.css'
 
 export const HomePage = () => {
+  const tasksByColumnId = tasks.reduce<Map<Column['id'], Task[]>>((acc, task) => {
+    const columnTasks = acc.get(task.columnId)
+
+    if (columnTasks) {
+      columnTasks.push(task)
+    } else {
+      acc.set(task.columnId, [task])
+    }
+
+    return acc
+  }, new Map())
+
   return (
     <section className={styles.section}>
       <Group align="center" className={styles.heading} justify="space-between">
@@ -30,33 +44,17 @@ export const HomePage = () => {
         justify="space-between"
         wrap="nowrap"
       >
-        {columns.map((column) => (
-          <Paper
-            className={styles.column}
-            data-tone={column.tone}
-            key={column.title}
-            p="md"
-            radius="lg"
-            withBorder
-          >
-            <Group className={styles.columnHeader} justify="space-between">
-              <div className={styles.columnTitle}>
-                <span className={styles.statusDot} aria-hidden="true" />
-                <Title order={2}>{column.title}</Title>
-              </div>
+        {DEFAULT_COLUMNS.map((column) => {
+          const columnTasks = tasksByColumnId.get(column.id) ?? []
 
-              <Badge className={styles.counter} variant="light">
-                {column.count}
-              </Badge>
-            </Group>
-
-            <div className={styles.columnBody}>
-              <Text className={styles.emptyText} size="sm">
-                Пока нет задач
-              </Text>
-            </div>
-          </Paper>
-        ))}
+          return (
+            <ColumnCard column={column} count={columnTasks.length} key={column.id}>
+              {columnTasks.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </ColumnCard>
+          )
+        })}
       </Group>
     </section>
   )
