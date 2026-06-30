@@ -1,5 +1,6 @@
+export type ColumnId = 'todo' | 'inProgress' | 'done'
+
 export interface Column {
-  id: string
+  id: ColumnId
   title: string
-  order: number
 }

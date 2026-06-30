@@ -1,16 +1,4 @@
-import type { TaskPriority, TaskStatus } from './types'
-
-export const TASK_STATUS_LABEL: Record<TaskStatus, string> = {
-  todo: 'К выполнению',
-  inProgress: 'В работе',
-  done: 'Готово',
-}
-
-export const TASK_STATUS_COLOR: Record<TaskStatus, string> = {
-  todo: 'blue',
-  inProgress: 'yellow',
-  done: 'green',
-}
+import type { TaskPriority } from './types'
 
 export const TASK_PRIORITY_LABEL: Record<TaskPriority, string> = {
   low: 'Низкий',
@@ -19,7 +7,7 @@ export const TASK_PRIORITY_LABEL: Record<TaskPriority, string> = {
 }
 
 export const TASK_PRIORITY_COLOR: Record<TaskPriority, string> = {
-  low: 'green',
-  medium: 'yellow',
-  high: 'red',
+  low: 'priorityLow',
+  medium: 'priorityMedium',
+  high: 'priorityHigh',
 }

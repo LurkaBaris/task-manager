@@ -1,6 +1,6 @@
 .header {
-  border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+  background: color-mix(in srgb, var(--mantine-color-white) 92%, transparent);
   backdrop-filter: blur(16px);
 }
 
@@ -16,7 +16,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--text);
+  color: var(--mantine-color-gray-9);
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
@@ -25,7 +25,7 @@
 }
 
 .brandText {
-  color: var(--text);
+  color: var(--mantine-color-gray-9);
   font-size: 16px;
   font-weight: 700;
 }
@@ -43,7 +43,7 @@
   justify-content: center;
   min-height: 64px;
   padding: 0;
-  color: var(--text-secondary);
+  color: var(--mantine-color-gray-7);
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
@@ -59,24 +59,24 @@
   left: 0;
   height: 2px;
   border-radius: 999px 999px 0 0;
-  background: var(--primary);
+  background: var(--mantine-color-brand-7);
   content: '';
   opacity: 0;
   transition: opacity 180ms ease;
 }
 
 .link:hover {
-  color: var(--text);
+  color: var(--mantine-color-gray-9);
 }
 
 .link:focus-visible,
 .brand:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  box-shadow: 0 0 0 3px var(--mantine-color-brand-1);
 }
 
 .linkActive {
-  color: var(--primary-active);
+  color: var(--mantine-color-brand-8);
 }
 
 .linkActive::after,

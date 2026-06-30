@@ -1,21 +1,15 @@
+import { COLUMN_COLOR_BY_ID, COLUMN_TITLE_BY_ID } from '@/entities/column'
 import { Badge } from '@mantine/core'
-import type { FC } from 'react'
-import { TASK_STATUS_COLOR, TASK_STATUS_LABEL } from '../model/constants'
-import type { TaskStatus } from '../model/types'
+import type { Task } from '../model/types'
 
-interface ITaskStatusBadge {
-  status: TaskStatus
+interface TaskStatusBadgeProps {
+  columnId: Task['columnId']
 }
 
-export const TaskStatusBadge: FC<ITaskStatusBadge> = ({ status }) => {
+export const TaskStatusBadge = ({ columnId }: TaskStatusBadgeProps) => {
   return (
-    <Badge
-      color={TASK_STATUS_COLOR[status]}
-      radius="sm"
-      size="sm"
-      variant="light"
-    >
-      {TASK_STATUS_LABEL[status]}
+    <Badge color={COLUMN_COLOR_BY_ID[columnId]}>
+      {COLUMN_TITLE_BY_ID[columnId]}
     </Badge>
   )
 }
