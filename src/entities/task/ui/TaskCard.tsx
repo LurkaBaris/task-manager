@@ -1,40 +1,41 @@
 import { Card, Group, Stack, Text, Title } from '@mantine/core'
-import type { FC } from 'react'
 import { taskDateFormatter } from '../lib/taskDateFormatter'
 import type { Task } from '../model/types'
 import styles from './TaskCard.module.css'
 import { TaskPriorityBadge } from './TaskPriorityBadge'
 import { TaskStatusBadge } from './TaskStatusBadge'
 
-interface ITaskCard {
+interface TaskCardProps {
   task: Task
 }
 
-export const TaskCard: FC<ITaskCard> = ({ task }) => {
+export const TaskCard = ({ task }: TaskCardProps) => {
   const createdAt = taskDateFormatter.format(new Date(task.createdAt))
 
   return (
-    <Card className={styles.card} component="article" padding="md" radius="md" withBorder>
-      <Stack gap="xs">
-        <Title className={styles.title} order={3}>
-          {task.title}
-        </Title>
+    <Card className={styles.card} component="article">
+      <Stack gap="sm">
+        <Stack gap="xs">
+          <Title order={3} size="md" c="gray.9">
+            {task.title}
+          </Title>
 
-        <Text className={styles.description} size="sm">
-          {task.description}
-        </Text>
+          <Text size="sm" c="gray.7" lh={1.45}>
+            {task.description}
+          </Text>
+        </Stack>
+
+        <Stack gap={8} pt={10} className={styles.footer}>
+          <Text size="xs" c="gray.6" fw={600}>
+            Создано: {createdAt}
+          </Text>
+
+          <Group gap="xs" wrap="wrap">
+            <TaskStatusBadge columnId={task.columnId} />
+            <TaskPriorityBadge priority={task.priority} />
+          </Group>
+        </Stack>
       </Stack>
-
-      <div className={styles.footer}>
-        <Text className={styles.date} size="xs">
-          Создано: {createdAt}
-        </Text>
-
-        <Group className={styles.badges} gap="xs">
-          <TaskStatusBadge status={task.status} />
-          <TaskPriorityBadge priority={task.priority} />
-        </Group>
-      </div>
     </Card>
   )
 }
