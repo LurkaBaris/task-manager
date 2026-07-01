@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { useShallow } from 'zustand/shallow'
 import type { Task } from './types'
 
 interface ITaskState {
@@ -44,8 +45,11 @@ export const useTaskStore = create<TaskStore>()(
 )
 
 export const selectTasks = (state: TaskStore): Task[] => state.tasks
-export const taskActions: ITaskActions = {
-  addTask: useTaskStore.getState().addTask,
-  updateTask: useTaskStore.getState().updateTask,
-  deleteTask: useTaskStore.getState().deleteTask,
-}
+export const useTaskActions = () =>
+  useTaskStore(
+    useShallow((state) => ({
+      addTask: state.addTask,
+      updateTask: state.updateTask,
+      deleteTask: state.deleteTask,
+    })),
+  )

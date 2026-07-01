@@ -1,6 +1,7 @@
-import { taskActions, TaskForm, type Task, type TaskSchemaType } from '@/entities/task'
+import { TaskForm, useTaskActions, type Task, type TaskSchemaType } from '@/entities/task'
 import { ActionIcon, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import { Pencil } from 'lucide-react'
 
 interface EditTaskButtonProps {
@@ -8,10 +9,18 @@ interface EditTaskButtonProps {
 }
 
 export const EditTaskButton = ({ task }: EditTaskButtonProps) => {
+  const { updateTask } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
   const handleEditTask = (values: TaskSchemaType) => {
-    taskActions.updateTask(task.id, values)
+    updateTask(task.id, values)
+
+    notifications.show({
+      title: 'Обновилась задача',
+      message: `Задача (id: ${task.id}) была успешно обновлена`,
+      color: 'brand',
+    })
+
     close()
   }
 

@@ -1,29 +1,34 @@
-import { taskActions, TaskForm, type Task, type TaskSchemaType } from '@/entities/task'
+import {
+  createTask,
+  TaskForm,
+  useTaskActions,
+  type Task,
+  type TaskSchemaType,
+} from '@/entities/task'
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import clsx from 'clsx'
 import styles from './CreateTaskButton.module.css'
 
 interface CreateTaskButtonProps {
-  onCreate?: (newTask: Task) => void
   className?: string
 }
 
-export const CreateTaskButton = ({ onCreate, className }: CreateTaskButtonProps) => {
+export const CreateTaskButton = ({ className }: CreateTaskButtonProps) => {
+  const { addTask } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
   const handleCreateTask = (values: TaskSchemaType) => {
-    const newTask: Task = {
-      id: `task-${window.crypto.randomUUID()}`,
-      title: values.title,
-      description: values.description,
-      columnId: values.columnId,
-      priority: values.priority,
-      createdAt: new Date().toISOString(),
-    }
+    const newTask: Task = createTask(values)
 
-    taskActions.addTask(newTask)
-    onCreate?.(newTask)
+    addTask(newTask)
+
+    notifications.show({
+      title: 'Задача создана',
+      message: `Новая задача добавлена, у нее id: ${newTask.id}`,
+      color: 'brand',
+    })
 
     close()
   }

@@ -1,8 +1,8 @@
 import { COLUMN_TITLE_BY_ID } from '@/entities/column'
-import { TASK_PRIORITY_OPTIONS } from '@/entities/task'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Group, Select, Stack, TextInput, Textarea } from '@mantine/core'
 import { Controller, useForm } from 'react-hook-form'
+import { TASK_PRIORITY_OPTIONS } from '../model/options'
 import { taskSchema, type TaskSchemaType } from '../model/taskSchema'
 import styles from './TaskForm.module.css'
 
@@ -44,7 +44,7 @@ export const TaskForm = ({
       columnId: 'todo',
       priority: 'low',
     },
-    mode: 'onBlur',
+    mode: 'onTouched',
     resolver: zodResolver(taskSchema),
   })
 

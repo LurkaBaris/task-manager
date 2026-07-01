@@ -1,6 +1,7 @@
-import { taskActions, type Task } from '@/entities/task'
+import { useTaskActions, type Task } from '@/entities/task'
 import { ActionIcon, Button, Group, Modal, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import { Trash2 } from 'lucide-react'
 
 interface DeleteTaskButtonProps {
@@ -8,10 +9,18 @@ interface DeleteTaskButtonProps {
 }
 
 export const DeleteTaskButton = ({ task }: DeleteTaskButtonProps) => {
+  const { deleteTask } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
   const handleDeleteTask = () => {
-    taskActions.deleteTask(task.id)
+    deleteTask(task.id)
+
+    notifications.show({
+      title: 'Вы удалили задачу',
+      message: `Задача (id: ${task.id}) была удалена`,
+      color: 'brand',
+    })
+
     close()
   }
 

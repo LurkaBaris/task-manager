@@ -1,5 +1,6 @@
 import App from '@/app/App.tsx'
 import '@mantine/core/styles.css'
+import '@mantine/notifications/styles.css'
 import '@/app/styles/index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

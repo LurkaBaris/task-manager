@@ -10,8 +10,8 @@ import {
 import { CreateTaskButton } from '@/features/create-task'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { EditTaskButton } from '@/features/edit-task'
-import { useDebouncedValue } from '@/shared/lib'
 import { Button, Flex, Group, MultiSelect, Pill, TextInput } from '@mantine/core'
+import { useDebouncedValue } from '@mantine/hooks'
 import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
@@ -22,12 +22,12 @@ const VISIBLE_PRIORITY_PILLS_COUNT = 2
 export const TaskBoard = () => {
   const [search, setSearch] = useState('')
   const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([])
-  const debouncedSearch = useDebouncedValue(search, 300)
+  const [debouncedSearch] = useDebouncedValue(search, 300)
   const tasks = useTaskStore(useShallow(selectTasks))
   const normalizedSearch = debouncedSearch.toLowerCase().trim()
 
   const tasksByColumnId = useMemo(() => {
-    return tasks.reduce<Map<Column['id'], Task[]>>((acc, task) => {
+    const reducedTasks = tasks.reduce<Map<Column['id'], Task[]>>((acc, task) => {
       const matchesSearch =
         normalizedSearch.length === 0 ||
         task.title.toLowerCase().includes(normalizedSearch) ||
@@ -50,6 +50,12 @@ export const TaskBoard = () => {
 
       return acc
     }, new Map())
+
+    reducedTasks.forEach((columnTasks) => {
+      columnTasks.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    })
+
+    return reducedTasks
   }, [tasks, normalizedSearch, selectedPriorities])
 
   return (
@@ -63,7 +69,7 @@ export const TaskBoard = () => {
           value={search}
         />
 
-        <MultiSelect
+        <MultiSelect<TaskPriority>
           className={styles.prioritySelect}
           styles={{
             input: {
@@ -79,10 +85,10 @@ export const TaskBoard = () => {
           }}
           clearable
           data={TASK_PRIORITY_OPTIONS}
-          onChange={(values) => setSelectedPriorities(values as TaskPriority[])}
+          onChange={(values) => setSelectedPriorities(values)}
           placeholder={selectedPriorities.length === 0 ? 'Приоритеты' : undefined}
           renderPill={({ value, option, onRemove, disabled }) => {
-            const priorityIndex = selectedPriorities.indexOf(value as TaskPriority)
+            const priorityIndex = selectedPriorities.findIndex((priority) => priority === value)
 
             if (priorityIndex >= VISIBLE_PRIORITY_PILLS_COUNT) {
               if (priorityIndex === VISIBLE_PRIORITY_PILLS_COUNT) {
@@ -126,11 +132,11 @@ export const TaskBoard = () => {
           return (
             <ColumnCard column={column} count={columnTasks.length} key={column.id}>
               {columnTasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                search={normalizedSearch}
-                task={task}
-                actions={
+                <TaskCard
+                  key={task.id}
+                  search={normalizedSearch}
+                  task={task}
+                  actions={
                     <>
                       <DeleteTaskButton task={task} />
                       <EditTaskButton task={task} />

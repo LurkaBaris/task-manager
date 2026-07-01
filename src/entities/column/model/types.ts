@@ -1,6 +1,5 @@
-export type ColumnId = 'todo' | 'inProgress' | 'done'
+import type { COLUMN_CONFIG } from './constants'
 
-export interface Column {
-  id: ColumnId
-  title: string
-}
+export type ColumnConfig = (typeof COLUMN_CONFIG)[number]
+
+export type Column = Omit<ColumnConfig, 'color'>
