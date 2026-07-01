@@ -8,7 +8,8 @@ interface ITaskState {
 
 interface ITaskActions {
   addTask: (task: Task) => void
-  setTasks: (tasks: Task[]) => void
+  updateTask: (taskId: Task['id'], patch: Partial<Omit<Task, 'id' | 'createdAt'>>) => void
+  deleteTask: (taskId: Task['id']) => void
 }
 
 export type TaskStore = ITaskState & ITaskActions
@@ -20,11 +21,19 @@ export const useTaskStore = create<TaskStore>()(
     (set) => ({
       tasks: [],
 
-      setTasks: (tasks) => set({ tasks }),
-
       addTask: (task) =>
         set((state) => ({
           tasks: [...state.tasks, task],
+        })),
+
+      updateTask: (taskId, patch) =>
+        set((state) => ({
+          tasks: state.tasks.map((task) => (task.id === taskId ? { ...task, ...patch } : task)),
+        })),
+
+      deleteTask: (taskId) =>
+        set((state) => ({
+          tasks: state.tasks.filter((task) => task.id !== taskId),
         })),
     }),
     {
@@ -36,6 +45,7 @@ export const useTaskStore = create<TaskStore>()(
 
 export const selectTasks = (state: TaskStore): Task[] => state.tasks
 export const taskActions: ITaskActions = {
-  setTasks: useTaskStore.getState().setTasks,
   addTask: useTaskStore.getState().addTask,
+  updateTask: useTaskStore.getState().updateTask,
+  deleteTask: useTaskStore.getState().deleteTask,
 }

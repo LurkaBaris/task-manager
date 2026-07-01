@@ -7,9 +7,5 @@ interface TaskStatusBadgeProps {
 }
 
 export const TaskStatusBadge = ({ columnId }: TaskStatusBadgeProps) => {
-  return (
-    <Badge color={COLUMN_COLOR_BY_ID[columnId]}>
-      {COLUMN_TITLE_BY_ID[columnId]}
-    </Badge>
-  )
+  return <Badge color={COLUMN_COLOR_BY_ID[columnId]}>{COLUMN_TITLE_BY_ID[columnId]}</Badge>
 }

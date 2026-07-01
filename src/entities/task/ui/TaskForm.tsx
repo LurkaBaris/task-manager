@@ -1,14 +1,16 @@
 import { COLUMN_TITLE_BY_ID } from '@/entities/column'
-import { TASK_PRIORITY_LABEL, taskActions, type Task } from '@/entities/task'
+import { TASK_PRIORITY_OPTIONS } from '@/entities/task'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Group, Select, Stack, TextInput, Textarea } from '@mantine/core'
 import { Controller, useForm } from 'react-hook-form'
-import { createTaskSchema, type CreateTaskSchemaType } from '../model/createTaskSchema'
-import styles from './CreateTaskForm.module.css'
+import { taskSchema, type TaskSchemaType } from '../model/taskSchema'
+import styles from './TaskForm.module.css'
 
-interface CreateTaskFormProps {
+interface TaskFormProps {
+  defaultValues?: TaskSchemaType
+  submitLabel?: string
   onCancel: () => void
-  onCreate: (newTask: Task) => void
+  onSubmit: (values: TaskSchemaType) => void
 }
 
 const statusOptions = Object.entries(COLUMN_TITLE_BY_ID).map(([value, label]) => ({
@@ -16,50 +18,38 @@ const statusOptions = Object.entries(COLUMN_TITLE_BY_ID).map(([value, label]) =>
   label,
 }))
 
-const priorityOptions = Object.entries(TASK_PRIORITY_LABEL).map(([value, label]) => ({
-  value,
-  label,
-}))
-
-const inputClassNames = {
-  error: styles.error,
-  input: styles.input,
-  label: styles.label,
-}
-
 const inputProps = {
-  classNames: inputClassNames,
+  classNames: {
+    error: styles.error,
+    input: styles.input,
+    label: styles.label,
+  },
 }
 
-export const CreateTaskForm = ({ onCancel, onCreate }: CreateTaskFormProps) => {
+export const TaskForm = ({
+  onCancel,
+  onSubmit,
+  defaultValues,
+  submitLabel = 'Создать',
+}: TaskFormProps) => {
   const {
     control,
     handleSubmit,
     reset,
     formState: { isSubmitting, isValid, isDirty },
-  } = useForm<CreateTaskSchemaType>({
-    defaultValues: {
+  } = useForm<TaskSchemaType>({
+    defaultValues: defaultValues || {
       title: '',
       description: '',
       columnId: 'todo',
       priority: 'low',
     },
     mode: 'onBlur',
-    resolver: zodResolver(createTaskSchema),
+    resolver: zodResolver(taskSchema),
   })
 
-  const onSubmit = (values: CreateTaskSchemaType) => {
-    const newTask: Task = {
-      id: `task-${window.crypto.randomUUID()}`,
-      title: values.title,
-      description: values.description,
-      createdAt: new Date().toISOString(),
-      columnId: values.columnId,
-      priority: values.priority,
-    }
-
-    taskActions.addTask(newTask)
-    onCreate(newTask)
+  const onSubmitModal = (values: TaskSchemaType) => {
+    onSubmit(values)
     reset()
   }
 
@@ -69,7 +59,7 @@ export const CreateTaskForm = ({ onCancel, onCreate }: CreateTaskFormProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmitModal)}>
       <Stack gap="md">
         <Controller
           name="title"
@@ -124,7 +114,7 @@ export const CreateTaskForm = ({ onCancel, onCreate }: CreateTaskFormProps) => {
               {...inputProps}
               {...field}
               allowDeselect={false}
-              data={priorityOptions}
+              data={TASK_PRIORITY_OPTIONS}
               error={fieldState.error?.message}
               label="Приоритет"
             />
@@ -137,7 +127,7 @@ export const CreateTaskForm = ({ onCancel, onCreate }: CreateTaskFormProps) => {
           </Button>
 
           <Button disabled={!isValid || !isDirty} loading={isSubmitting} type="submit">
-            Создать
+            {submitLabel}
           </Button>
         </Group>
       </Stack>

@@ -48,8 +48,7 @@
   font-weight: 600;
   line-height: 1;
   text-decoration: none;
-  transition:
-    color 180ms ease;
+  transition: color 180ms ease;
 }
 
 .link::after {

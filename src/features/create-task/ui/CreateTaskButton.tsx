@@ -1,9 +1,8 @@
-import type { Task } from '@/entities/task'
+import { taskActions, TaskForm, type Task, type TaskSchemaType } from '@/entities/task'
 import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import clsx from 'clsx'
 import styles from './CreateTaskButton.module.css'
-import { CreateTaskForm } from './CreateTaskForm'
 
 interface CreateTaskButtonProps {
   onCreate?: (newTask: Task) => void
@@ -13,8 +12,19 @@ interface CreateTaskButtonProps {
 export const CreateTaskButton = ({ onCreate, className }: CreateTaskButtonProps) => {
   const [opened, { open, close }] = useDisclosure(false)
 
-  const handleCreateTask = (newTask: Task) => {
+  const handleCreateTask = (values: TaskSchemaType) => {
+    const newTask: Task = {
+      id: `task-${window.crypto.randomUUID()}`,
+      title: values.title,
+      description: values.description,
+      columnId: values.columnId,
+      priority: values.priority,
+      createdAt: new Date().toISOString(),
+    }
+
+    taskActions.addTask(newTask)
     onCreate?.(newTask)
+
     close()
   }
 
@@ -25,7 +35,7 @@ export const CreateTaskButton = ({ onCreate, className }: CreateTaskButtonProps)
       </Button>
 
       <Modal centered onClose={close} opened={opened} title="Создать задачу">
-        <CreateTaskForm onCancel={close} onCreate={handleCreateTask} />
+        <TaskForm onCancel={close} onSubmit={handleCreateTask} />
       </Modal>
     </>
   )

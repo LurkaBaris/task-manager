@@ -1,4 +1,7 @@
 export { TASK_PRIORITY_LABEL } from './model/constants'
+export { TASK_PRIORITY_OPTIONS } from './model/options'
 export { selectTasks, taskActions, useTaskStore, type TaskStore } from './model/store'
+export { type TaskSchemaType } from './model/taskSchema'
 export type { Task, TaskPriority } from './model/types'
 export { TaskCard } from './ui/TaskCard'
+export { TaskForm } from './ui/TaskForm'

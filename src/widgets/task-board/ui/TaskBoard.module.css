@@ -1,0 +1,18 @@
+.toolbar {
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+
+.prioritySelect {
+  flex: 1 1 300px;
+  min-width: 220px;
+  max-width: 300px;
+}
+
+.board {
+  overflow-x: auto;
+}
