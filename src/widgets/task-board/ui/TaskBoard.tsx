@@ -11,6 +11,7 @@ import { ColumnTaskSortControl, useColumnTaskSort } from '@/features/change-colu
 import { CreateTaskButton } from '@/features/create-task'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { EditTaskButton } from '@/features/edit-task'
+import { DraggableTask, DroppableColumn, TaskDndProvider } from '@/features/task-dnd'
 import {
   Button,
   Flex,
@@ -190,52 +191,60 @@ export const TaskBoard = () => {
           ))}
         </Group>
       ) : (
-        <Group
-          align="stretch"
-          gap="md"
-          grow
-          justify="space-between"
-          wrap="nowrap"
-          className={styles.board}
-        >
-          {DEFAULT_COLUMNS.map((column) => {
-            const sortOrder = getColumnSortOrder(column.id)
-            const columnTasks = sortTasksByCreatedAt(
-              visibleTasksByColumnId.get(column.id) ?? [],
-              sortOrder,
-            )
+        <TaskDndProvider renderOverlay={(task) => <TaskCard task={task} />}>
+          <Group
+            align="stretch"
+            gap="md"
+            grow
+            justify="space-between"
+            wrap="nowrap"
+            className={styles.board}
+          >
+            {DEFAULT_COLUMNS.map((column) => {
+              const sortOrder = getColumnSortOrder(column.id)
+              const columnTasks = sortTasksByCreatedAt(
+                visibleTasksByColumnId.get(column.id) ?? [],
+                sortOrder,
+              )
 
-            return (
-              <ColumnCard
-                column={column}
-                count={columnTasks.length}
-                emptyText={hasLoadError ? 'Задачи не загрузились' : undefined}
-                key={column.id}
-                headerControls={
-                  <ColumnTaskSortControl
-                    disabled={isBoardLocked}
-                    sortOrder={sortOrder}
-                    onChange={(sortOrder) => changeColumnSortOrder(column.id, sortOrder)}
-                  />
-                }
-              >
-                {columnTasks.map((task) => (
-                  <TaskCard
-                    key={task.id}
-                    search={normalizedSearch}
-                    task={task}
-                    actions={
-                      <>
-                        <DeleteTaskButton task={task} />
-                        <EditTaskButton task={task} />
-                      </>
-                    }
-                  />
-                ))}
-              </ColumnCard>
-            )
-          })}
-        </Group>
+              return (
+                <DroppableColumn columnId={column.id} key={column.id}>
+                  {({ setNodeRef, isOver }) => (
+                    <ColumnCard
+                      column={column}
+                      count={columnTasks.length}
+                      emptyText={hasLoadError ? 'Задачи не загрузились' : undefined}
+                      listRef={setNodeRef}
+                      isHightlighted={isOver}
+                      headerControls={
+                        <ColumnTaskSortControl
+                          disabled={isBoardLocked}
+                          sortOrder={sortOrder}
+                          onChange={(sortOrder) => changeColumnSortOrder(column.id, sortOrder)}
+                        />
+                      }
+                    >
+                      {columnTasks.map((task) => (
+                        <DraggableTask task={task} key={task.id}>
+                          <TaskCard
+                            search={normalizedSearch}
+                            task={task}
+                            actions={
+                              <>
+                                <DeleteTaskButton task={task} />
+                                <EditTaskButton task={task} />
+                              </>
+                            }
+                          />
+                        </DraggableTask>
+                      ))}
+                    </ColumnCard>
+                  )}
+                </DroppableColumn>
+              )
+            })}
+          </Group>
+        </TaskDndProvider>
       )}
     </>
   )

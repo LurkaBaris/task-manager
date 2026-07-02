@@ -1,30 +1,41 @@
 import { Badge, Flex, Group, Paper, ScrollArea, Stack, Text, Title } from '@mantine/core'
 import clsx from 'clsx'
-import type { ReactNode } from 'react'
+import { type ReactNode, type Ref } from 'react'
 import type { Column } from '../model/types'
 import styles from './ColumnCard.module.css'
 
 interface ColumnCardProps {
   column: Column
   count: number
+  listRef?: Ref<HTMLDivElement>
   children?: ReactNode
   headerControls?: ReactNode
   emptyText?: string
+  isHightlighted?: boolean
 }
 
 export const ColumnCard = ({
+  listRef,
   column,
   count,
   children,
   headerControls,
   emptyText = 'Пока нет задач',
+  isHightlighted = false,
 }: ColumnCardProps) => {
   return (
-    <Paper radius="lg" mah="1000px" mih="420px" miw="240px" h="calc(100vh - 100px)">
+    <Paper
+      radius="lg"
+      mah="1000px"
+      mih="420px"
+      miw="240px"
+      h="calc(100vh - 100px)"
+      className={styles.wrapper}
+    >
       <Flex direction="column" h="100%">
         <Group
           className={styles.header}
-          pb={22}
+          pb={10}
           justify="space-between"
           wrap="nowrap"
           pt="lg"
@@ -45,14 +56,30 @@ export const ColumnCard = ({
 
         <ScrollArea
           className={styles.body}
-          classNames={{ scrollbar: styles.scrollbar }}
+          classNames={{
+            content: styles.content,
+            scrollbar: styles.scrollbar,
+            viewport: styles.viewport,
+          }}
           overscrollBehavior="contain"
           scrollbarSize={6}
           scrollbars="y"
           type="hover"
-          pb="lg"
         >
-          <Stack className={clsx(count === 0 && styles.bodyEmpty)} gap="sm" px="md">
+          <Stack
+            flex={1}
+            className={clsx(
+              styles.taskList,
+              count === 0 && styles.bodyEmpty,
+              isHightlighted && styles.taskListOver,
+            )}
+            gap="sm"
+            px="md"
+            pt="md"
+            pb="lg"
+            mih="100%"
+            ref={listRef}
+          >
             {count > 0 ? (
               children
             ) : (
