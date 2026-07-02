@@ -7,6 +7,7 @@ import {
   useTaskStore,
   type TaskPriority,
 } from '@/entities/task'
+import { ColumnTaskSortControl, useColumnTaskSort } from '@/features/change-column-task-sort'
 import { CreateTaskButton } from '@/features/create-task'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { EditTaskButton } from '@/features/edit-task'
@@ -26,6 +27,7 @@ import { notifications } from '@mantine/notifications'
 import { Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
+import { sortTasksByCreatedAt } from '../lib/sortTasksByCreatedAt'
 import styles from './TaskBoard.module.css'
 
 const VISIBLE_PRIORITY_PILLS_COUNT = 2
@@ -38,6 +40,7 @@ export const TaskBoard = () => {
   const [debouncedSearch] = useDebouncedValue(search, 300)
   const { tasksByColumnId, isLoading, isLoaded } = useTaskStore(useShallow(selectTasks))
   const { loadTasksByColumnIds } = useTaskActions()
+  const { changeColumnSortOrder, getColumnSortOrder } = useColumnTaskSort()
   const normalizedSearch = debouncedSearch.toLowerCase().trim()
   const isInitialLoading = isLoading && !isLoaded
   const isBoardLocked = !isLoaded
@@ -47,19 +50,17 @@ export const TaskBoard = () => {
       new Map(
         DEFAULT_COLUMNS.map((column) => {
           const columnTasks = tasksByColumnId[column.id] ?? []
-          const visibleTasks = columnTasks
-            .filter((task) => {
-              const matchesSearch =
-                normalizedSearch.length === 0 ||
-                task.title.toLowerCase().includes(normalizedSearch) ||
-                task.description.toLowerCase().includes(normalizedSearch)
+          const visibleTasks = columnTasks.filter((task) => {
+            const matchesSearch =
+              normalizedSearch.length === 0 ||
+              task.title.toLowerCase().includes(normalizedSearch) ||
+              task.description.toLowerCase().includes(normalizedSearch)
 
-              const matchesPriority =
-                selectedPriorities.length === 0 || selectedPriorities.includes(task.priority)
+            const matchesPriority =
+              selectedPriorities.length === 0 || selectedPriorities.includes(task.priority)
 
-              return matchesSearch && matchesPriority
-            })
-            .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+            return matchesSearch && matchesPriority
+          })
 
           return [column.id, visibleTasks]
         }),
@@ -83,7 +84,7 @@ export const TaskBoard = () => {
       }
     }
 
-    void load()
+    load()
   }, [loadTasksByColumnIds])
 
   return (
@@ -198,7 +199,11 @@ export const TaskBoard = () => {
           className={styles.board}
         >
           {DEFAULT_COLUMNS.map((column) => {
-            const columnTasks = visibleTasksByColumnId.get(column.id) ?? []
+            const sortOrder = getColumnSortOrder(column.id)
+            const columnTasks = sortTasksByCreatedAt(
+              visibleTasksByColumnId.get(column.id) ?? [],
+              sortOrder,
+            )
 
             return (
               <ColumnCard
@@ -206,6 +211,13 @@ export const TaskBoard = () => {
                 count={columnTasks.length}
                 emptyText={hasLoadError ? 'Задачи не загрузились' : undefined}
                 key={column.id}
+                headerControls={
+                  <ColumnTaskSortControl
+                    disabled={isBoardLocked}
+                    sortOrder={sortOrder}
+                    onChange={(sortOrder) => changeColumnSortOrder(column.id, sortOrder)}
+                  />
+                }
               >
                 {columnTasks.map((task) => (
                   <TaskCard

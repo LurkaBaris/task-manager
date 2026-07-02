@@ -8,6 +8,7 @@ interface ColumnCardProps {
   column: Column
   count: number
   children?: ReactNode
+  headerControls?: ReactNode
   emptyText?: string
 }
 
@@ -15,6 +16,7 @@ export const ColumnCard = ({
   column,
   count,
   children,
+  headerControls,
   emptyText = 'Пока нет задач',
 }: ColumnCardProps) => {
   return (
@@ -32,9 +34,13 @@ export const ColumnCard = ({
             {column.title}
           </Title>
 
-          <Badge className={styles.counter} variant="light">
-            {count}
-          </Badge>
+          <Flex gap="sm" align="center">
+            <Badge className={styles.counter} variant="light">
+              {count}
+            </Badge>
+
+            {headerControls}
+          </Flex>
         </Group>
 
         <ScrollArea
