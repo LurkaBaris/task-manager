@@ -10,7 +10,7 @@ interface TaskFormProps {
   defaultValues?: TaskSchemaType
   submitLabel?: string
   onCancel: () => void
-  onSubmit: (values: TaskSchemaType) => void
+  onSubmit: (values: TaskSchemaType) => void | Promise<void>
 }
 
 const statusOptions = Object.entries(COLUMN_TITLE_BY_ID).map(([value, label]) => ({
@@ -35,7 +35,6 @@ export const TaskForm = ({
   const {
     control,
     handleSubmit,
-    reset,
     formState: { isSubmitting, isValid, isDirty },
   } = useForm<TaskSchemaType>({
     defaultValues: defaultValues || {
@@ -48,13 +47,11 @@ export const TaskForm = ({
     resolver: zodResolver(taskSchema),
   })
 
-  const onSubmitModal = (values: TaskSchemaType) => {
-    onSubmit(values)
-    reset()
+  const onSubmitModal = async (values: TaskSchemaType) => {
+    await onSubmit(values)
   }
 
   const handleCancel = () => {
-    reset()
     onCancel()
   }
 

@@ -16,3 +16,16 @@
 .board {
   overflow-x: auto;
 }
+
+.loadingColumn {
+  flex: 1 1 0;
+}
+
+.loadingTask {
+  min-height: 116px;
+  justify-content: center;
+  padding: var(--mantine-spacing-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-gray-0);
+}

@@ -12,16 +12,24 @@ export const EditTaskButton = ({ task }: EditTaskButtonProps) => {
   const { updateTask } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
-  const handleEditTask = (values: TaskSchemaType) => {
-    updateTask(task.id, values)
+  const handleEditTask = async (values: TaskSchemaType) => {
+    try {
+      await updateTask(task.id, values)
 
-    notifications.show({
-      title: 'Обновилась задача',
-      message: `Задача (id: ${task.id}) была успешно обновлена`,
-      color: 'brand',
-    })
+      notifications.show({
+        title: 'Обновилась задача',
+        message: `Задача (id: ${task.id}) была успешно обновлена`,
+        color: 'brand',
+      })
 
-    close()
+      close()
+    } catch {
+      notifications.show({
+        title: 'Не удалось обновить задачу',
+        message: 'Попробуйте еще раз',
+        color: 'red',
+      })
+    }
   }
 
   return (

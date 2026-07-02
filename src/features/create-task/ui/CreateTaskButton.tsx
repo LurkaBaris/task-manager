@@ -13,29 +13,43 @@ import styles from './CreateTaskButton.module.css'
 
 interface CreateTaskButtonProps {
   className?: string
+  disabled?: boolean
 }
 
-export const CreateTaskButton = ({ className }: CreateTaskButtonProps) => {
+export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButtonProps) => {
   const { addTask } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
-  const handleCreateTask = (values: TaskSchemaType) => {
+  const handleCreateTask = async (values: TaskSchemaType) => {
     const newTask: Task = createTask(values)
 
-    addTask(newTask)
+    try {
+      await addTask(newTask)
 
-    notifications.show({
-      title: 'Задача создана',
-      message: `Новая задача добавлена, у нее id: ${newTask.id}`,
-      color: 'brand',
-    })
+      notifications.show({
+        title: 'Задача создана',
+        message: `Новая задача добавлена, у нее id: ${newTask.id}`,
+        color: 'brand',
+      })
 
-    close()
+      close()
+    } catch {
+      notifications.show({
+        title: 'Не удалось создать задачу',
+        message: 'Попробуйте еще раз',
+        color: 'red',
+      })
+    }
   }
 
   return (
     <>
-      <Button className={clsx(styles.createButton, className)} onClick={open} type="button">
+      <Button
+        className={clsx(styles.createButton, className)}
+        disabled={disabled}
+        onClick={open}
+        type="button"
+      >
         Создать задачу
       </Button>
 

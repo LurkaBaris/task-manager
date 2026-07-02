@@ -3,6 +3,7 @@ import { ActionIcon, Button, Group, Modal, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { Trash2 } from 'lucide-react'
+import { useState } from 'react'
 
 interface DeleteTaskButtonProps {
   task: Task
@@ -11,17 +12,30 @@ interface DeleteTaskButtonProps {
 export const DeleteTaskButton = ({ task }: DeleteTaskButtonProps) => {
   const { deleteTask } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  const handleDeleteTask = () => {
-    deleteTask(task.id)
+  const handleDeleteTask = async () => {
+    setIsDeleting(true)
 
-    notifications.show({
-      title: 'Вы удалили задачу',
-      message: `Задача (id: ${task.id}) была удалена`,
-      color: 'brand',
-    })
+    try {
+      await deleteTask(task.id)
 
-    close()
+      notifications.show({
+        title: 'Вы удалили задачу',
+        message: `Задача (id: ${task.id}) была удалена`,
+        color: 'brand',
+      })
+
+      close()
+    } catch {
+      notifications.show({
+        title: 'Не удалось удалить задачу',
+        message: 'Попробуйте еще раз',
+        color: 'red',
+      })
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   return (
@@ -45,11 +59,17 @@ export const DeleteTaskButton = ({ task }: DeleteTaskButtonProps) => {
           </Text>
 
           <Group justify="flex-end">
-            <Button color="gray" onClick={close} type="button" variant="subtle">
+            <Button
+              color="gray"
+              disabled={isDeleting}
+              onClick={close}
+              type="button"
+              variant="subtle"
+            >
               Отмена
             </Button>
 
-            <Button color="red" onClick={handleDeleteTask} type="button">
+            <Button color="red" loading={isDeleting} onClick={handleDeleteTask} type="button">
               Удалить
             </Button>
           </Group>
