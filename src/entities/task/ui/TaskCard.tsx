@@ -26,7 +26,7 @@ export const TaskCard = ({ task, actions, search }: TaskCardProps) => {
             </Title>
 
             {actions && (
-              <Flex gap="sm" align="center">
+              <Flex className={styles.actions} gap="sm" align="center">
                 {actions}
               </Flex>
             )}

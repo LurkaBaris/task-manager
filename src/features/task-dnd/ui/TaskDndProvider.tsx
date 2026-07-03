@@ -23,6 +23,7 @@ import {
   type TasksByColumnId,
 } from '../lib/taskDndState'
 import { isTaskDndTaskData } from '../model/guards'
+import styles from './TaskDndProvider.module.css'
 
 interface TaskDndProviderProps {
   children: (props: {
@@ -246,7 +247,7 @@ export const TaskDndProvider = ({
       {children({ overColumnId, getColumnTasks: getVisibleColumnTasks })}
 
       <DragOverlay dropAnimation={null}>
-        {activeTask ? renderOverlay(activeTask) : null}
+        {activeTask ? <div className={styles.overlay}>{renderOverlay(activeTask)}</div> : null}
       </DragOverlay>
     </DndContext>
   )

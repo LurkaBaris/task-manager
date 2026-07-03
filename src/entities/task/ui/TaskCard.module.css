@@ -2,6 +2,10 @@
   flex-shrink: 0;
 }
 
+.card .actions * {
+  cursor: pointer;
+}
+
 .footer {
   border-top: 1px solid var(--mantine-color-gray-3);
 }
