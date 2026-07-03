@@ -33,26 +33,21 @@ export const ColumnCard = ({
       className={styles.wrapper}
     >
       <Flex direction="column" h="100%">
-        <Group
-          className={styles.header}
-          pb={10}
-          justify="space-between"
-          wrap="nowrap"
-          pt="lg"
-          px="md"
-        >
-          <Title className={styles.title} order={2} size="md">
-            {column.title}
-          </Title>
+        <Stack pt="lg" px="md" gap="md" pb={10}>
+          <Group className={styles.header} justify="space-between" wrap="nowrap">
+            <Title className={styles.title} order={2} size="md">
+              {column.title}
+            </Title>
 
-          <Flex gap="sm" align="center">
             <Badge className={styles.counter} variant="light">
               {count}
             </Badge>
+          </Group>
 
+          <Flex gap="sm" align="center" justify="space-between">
             {headerControls}
           </Flex>
-        </Group>
+        </Stack>
 
         <ScrollArea
           className={styles.body}

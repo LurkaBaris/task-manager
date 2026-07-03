@@ -1,6 +1,7 @@
 import { DEFAULT_COLUMNS, type Column } from '@/entities/column'
 
 export const TASK_SORT_ORDER = {
+  Manual: 'manual',
   Newest: 'newest',
   Oldest: 'oldest',
 } as const
@@ -16,7 +17,7 @@ export const getDefaultSortOrderByColumnId = (): TaskSortOrderByColumnId =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
-const isTaskSortOrder = (value: unknown): value is TaskSortOrder =>
+export const isTaskSortOrder = (value: unknown): value is TaskSortOrder =>
   Object.values(TASK_SORT_ORDER).some((sortOrder) => sortOrder === value)
 
 export const parseSortOrderByColumnId = (value: unknown): TaskSortOrderByColumnId => {

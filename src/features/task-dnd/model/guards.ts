@@ -4,10 +4,10 @@ const isDndData = (data: unknown): data is { type: string } => {
   return typeof data === 'object' && data !== null && 'type' in data
 }
 
-export const isTaskDndActiveData = (data: unknown): data is TaskDndTaskData => {
+export const isTaskDndTaskData = (data: unknown): data is TaskDndTaskData => {
   return isDndData(data) && data.type === 'task' && 'task' in data
 }
 
-export const isTaskDndOverData = (data: unknown): data is TaskDndColumnData => {
+export const isTaskDndColumnData = (data: unknown): data is TaskDndColumnData => {
   return isDndData(data) && data.type === 'column' && 'columnId' in data
 }

@@ -7,11 +7,17 @@ import {
   useTaskStore,
   type TaskPriority,
 } from '@/entities/task'
-import { ColumnTaskSortControl, useColumnTaskSort } from '@/features/change-column-task-sort'
+import {
+  ColumnTaskSortControl,
+  sortTasksBySortOrder,
+  TASK_SORT_ORDER,
+  useColumnTaskSort,
+} from '@/features/change-column-task-sort'
 import { CreateTaskButton } from '@/features/create-task'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { EditTaskButton } from '@/features/edit-task'
-import { DraggableTask, DroppableColumn, TaskDndProvider } from '@/features/task-dnd'
+import { DroppableColumn, SortableTask, TaskDndProvider } from '@/features/task-dnd'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import {
   Button,
   Flex,
@@ -28,7 +34,6 @@ import { notifications } from '@mantine/notifications'
 import { Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import { sortTasksByCreatedAt } from '../lib/sortTasksByCreatedAt'
 import styles from './TaskBoard.module.css'
 
 const VISIBLE_PRIORITY_PILLS_COUNT = 2
@@ -45,6 +50,8 @@ export const TaskBoard = () => {
   const normalizedSearch = debouncedSearch.toLowerCase().trim()
   const isInitialLoading = isLoading && !isLoaded
   const isBoardLocked = !isLoaded
+  const isTaskFilterActive = normalizedSearch.length > 0 || selectedPriorities.length > 0
+  const isTaskDndDisabled = isBoardLocked || isTaskFilterActive
 
   const visibleTasksByColumnId = useMemo(
     () =>
@@ -191,59 +198,75 @@ export const TaskBoard = () => {
           ))}
         </Group>
       ) : (
-        <TaskDndProvider renderOverlay={(task) => <TaskCard task={task} />}>
-          <Group
-            align="stretch"
-            gap="md"
-            grow
-            justify="space-between"
-            wrap="nowrap"
-            className={styles.board}
-          >
-            {DEFAULT_COLUMNS.map((column) => {
-              const sortOrder = getColumnSortOrder(column.id)
-              const columnTasks = sortTasksByCreatedAt(
-                visibleTasksByColumnId.get(column.id) ?? [],
-                sortOrder,
-              )
+        <TaskDndProvider
+          columnIds={DEFAULT_COLUMNS.map((column) => column.id)}
+          disabled={isTaskDndDisabled}
+          getColumnTasks={(columnId) =>
+            sortTasksBySortOrder(
+              visibleTasksByColumnId.get(columnId) ?? [],
+              getColumnSortOrder(columnId),
+            )
+          }
+          isColumnManual={(columnId) => getColumnSortOrder(columnId) === TASK_SORT_ORDER.Manual}
+          setColumnManual={(columnId) => changeColumnSortOrder(columnId, TASK_SORT_ORDER.Manual)}
+          renderOverlay={(task) => <TaskCard task={task} />}
+        >
+          {({ overColumnId, getColumnTasks }) => (
+            <Group
+              align="stretch"
+              gap="md"
+              grow
+              justify="space-between"
+              wrap="nowrap"
+              className={styles.board}
+            >
+              {DEFAULT_COLUMNS.map((column) => {
+                const sortOrder = getColumnSortOrder(column.id)
+                const columnTasks = getColumnTasks(column.id)
 
-              return (
-                <DroppableColumn columnId={column.id} key={column.id}>
-                  {({ setNodeRef, isOver }) => (
-                    <ColumnCard
-                      column={column}
-                      count={columnTasks.length}
-                      emptyText={hasLoadError ? 'Задачи не загрузились' : undefined}
-                      listRef={setNodeRef}
-                      isHightlighted={isOver}
-                      headerControls={
-                        <ColumnTaskSortControl
-                          disabled={isBoardLocked}
-                          sortOrder={sortOrder}
-                          onChange={(sortOrder) => changeColumnSortOrder(column.id, sortOrder)}
-                        />
-                      }
-                    >
-                      {columnTasks.map((task) => (
-                        <DraggableTask task={task} key={task.id}>
-                          <TaskCard
-                            search={normalizedSearch}
-                            task={task}
-                            actions={
-                              <>
-                                <DeleteTaskButton task={task} />
-                                <EditTaskButton task={task} />
-                              </>
-                            }
+                return (
+                  <DroppableColumn columnId={column.id} key={column.id}>
+                    {({ setNodeRef }) => (
+                      <ColumnCard
+                        column={column}
+                        count={columnTasks.length}
+                        emptyText={hasLoadError ? 'Задачи не загрузились' : undefined}
+                        listRef={setNodeRef}
+                        isHightlighted={overColumnId === column.id}
+                        headerControls={
+                          <ColumnTaskSortControl
+                            disabled={isBoardLocked}
+                            sortOrder={sortOrder}
+                            onChange={(sortOrder) => changeColumnSortOrder(column.id, sortOrder)}
                           />
-                        </DraggableTask>
-                      ))}
-                    </ColumnCard>
-                  )}
-                </DroppableColumn>
-              )
-            })}
-          </Group>
+                        }
+                      >
+                        <SortableContext
+                          items={columnTasks.map((task) => task.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          {columnTasks.map((task) => (
+                            <SortableTask task={task} disabled={isTaskDndDisabled} key={task.id}>
+                              <TaskCard
+                                search={normalizedSearch}
+                                task={task}
+                                actions={
+                                  <>
+                                    <DeleteTaskButton task={task} />
+                                    <EditTaskButton task={task} />
+                                  </>
+                                }
+                              />
+                            </SortableTask>
+                          ))}
+                        </SortableContext>
+                      </ColumnCard>
+                    )}
+                  </DroppableColumn>
+                )
+              })}
+            </Group>
+          )}
         </TaskDndProvider>
       )}
     </>

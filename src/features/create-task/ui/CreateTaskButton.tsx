@@ -17,11 +17,12 @@ interface CreateTaskButtonProps {
 }
 
 export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButtonProps) => {
-  const { addTask } = useTaskActions()
+  const { addTask, getNextPositionByColumnId } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
   const handleCreateTask = async (values: TaskSchemaType) => {
-    const newTask: Task = createTask(values)
+    const position = getNextPositionByColumnId(values.columnId)
+    const newTask: Task = createTask({ ...values, position })
 
     try {
       await addTask(newTask)

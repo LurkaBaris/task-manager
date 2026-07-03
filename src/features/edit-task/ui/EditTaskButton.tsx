@@ -14,7 +14,7 @@ export const EditTaskButton = ({ task }: EditTaskButtonProps) => {
 
   const handleEditTask = async (values: TaskSchemaType) => {
     try {
-      await updateTask(task.id, values)
+      await updateTask(task, values)
 
       notifications.show({
         title: 'Обновилась задача',

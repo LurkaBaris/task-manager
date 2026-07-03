@@ -6,6 +6,7 @@ import type { Task } from '../model/types'
 const taskDbRecordSchema = taskSchema.extend({
   id: z.string(),
   createdAt: z.string(),
+  position: z.number(),
 })
 
 export const mapTaskFromDb = (record: TaskDbRecord): Task | null => {
@@ -26,4 +27,5 @@ export const mapTaskToDb = (task: Task): TaskDbRecord => ({
   createdAt: task.createdAt,
   columnId: task.columnId,
   priority: task.priority,
+  position: task.position,
 })

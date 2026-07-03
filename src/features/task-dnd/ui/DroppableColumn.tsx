@@ -5,14 +5,11 @@ import type { TaskDndColumnData } from '../model/types'
 
 interface DroppableColumnProps {
   columnId: Column['id']
-  children: (props: {
-    setNodeRef: (element: HTMLElement | null) => void
-    isOver: boolean
-  }) => ReactNode
+  children: (props: { setNodeRef: (element: HTMLElement | null) => void }) => ReactNode
 }
 
 export const DroppableColumn = ({ columnId, children }: DroppableColumnProps) => {
-  const { setNodeRef, isOver } = useDroppable({
+  const { setNodeRef } = useDroppable({
     id: columnId,
     data: {
       type: 'column',
@@ -20,5 +17,5 @@ export const DroppableColumn = ({ columnId, children }: DroppableColumnProps) =>
     } satisfies TaskDndColumnData,
   })
 
-  return children({ setNodeRef, isOver })
+  return children({ setNodeRef })
 }

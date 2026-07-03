@@ -1,10 +1,27 @@
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 import { taskRepository } from '../api/taskRepository'
+import {
+  getNextTaskPosition,
+  getTaskPositionAfterNormalization,
+  normalizeTaskPositionsByOrder,
+} from './position'
 import type { Task } from './types'
 
 type TaskPatch = Partial<Omit<Task, 'id' | 'createdAt'>>
 type TasksByColumnId = Partial<Record<Task['columnId'], Task[]>>
+type MoveTaskParams = {
+  task: Task
+  targetColumnId: Task['columnId']
+  previousTask?: Task
+  nextTask?: Task
+}
+type ReorderColumnTasksParams = {
+  columns: {
+    columnId: Task['columnId']
+    tasks: Task[]
+  }[]
+}
 
 interface ITaskState {
   tasksByColumnId: TasksByColumnId
@@ -15,8 +32,11 @@ interface ITaskState {
 interface ITaskActions {
   loadTasksByColumnIds: (columnIds: Task['columnId'][]) => Promise<void>
   addTask: (task: Task) => Promise<void>
-  updateTask: (taskId: Task['id'], patch: TaskPatch) => Promise<void>
+  updateTask: (task: Task, patch: TaskPatch) => Promise<void>
   deleteTask: (taskId: Task['id']) => Promise<void>
+  moveTask: (params: MoveTaskParams) => Promise<void>
+  reorderColumnTasks: (params: ReorderColumnTasksParams) => Promise<void>
+  getNextPositionByColumnId: (columnId: Task['columnId']) => number
 }
 
 export type TaskStore = ITaskState & ITaskActions
@@ -42,14 +62,6 @@ const removeTaskFromColumns = (
       columnTasks?.filter((task) => task.id !== taskId) ?? [],
     ]),
   )
-
-const findTaskInColumns = (
-  tasksByColumnId: TasksByColumnId,
-  taskId: Task['id'],
-): Task | undefined =>
-  Object.values(tasksByColumnId)
-    .flat()
-    .find((task) => task.id === taskId)
 
 // решил попробовать использовать index по назначению, и чтобы в ui избежать reduce + filter
 export const useTaskStore = create<TaskStore>()((set, get) => ({
@@ -91,22 +103,31 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
     }))
   },
 
-  updateTask: async (taskId, patch) => {
-    const task = findTaskInColumns(get().tasksByColumnId, taskId)
+  updateTask: async (task, patch) => {
+    const nextColumnId = patch.columnId ?? task.columnId
 
-    if (!task) {
-      throw new Error('Task not found')
+    if (nextColumnId !== task.columnId) {
+      await get().moveTask({
+        task: {
+          ...task,
+          ...patch,
+          columnId: nextColumnId,
+        },
+        targetColumnId: nextColumnId,
+      })
+
+      return
     }
 
-    const updatedTask: Task = { ...task, ...patch }
+    const updatedTask: Task = {
+      ...task,
+      ...patch,
+    }
 
     await taskRepository.put(updatedTask)
 
     set((state) => ({
-      tasksByColumnId: upsertTaskInColumns(
-        removeTaskFromColumns(state.tasksByColumnId, taskId),
-        updatedTask,
-      ),
+      tasksByColumnId: upsertTaskInColumns(state.tasksByColumnId, updatedTask),
     }))
   },
 
@@ -116,6 +137,87 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
     set((state) => ({
       tasksByColumnId: removeTaskFromColumns(state.tasksByColumnId, taskId),
     }))
+  },
+
+  getNextPositionByColumnId: (columnId) => {
+    const columnTasks = get().tasksByColumnId[columnId] ?? []
+
+    return getNextTaskPosition(columnTasks)
+  },
+
+  moveTask: async ({ task, targetColumnId, previousTask, nextTask }) => {
+    if (previousTask && previousTask.columnId !== targetColumnId) {
+      throw new Error('Предыдущая задача не из этой колонки')
+    }
+
+    if (nextTask && nextTask.columnId !== targetColumnId) {
+      throw new Error('Следующая задача не из этой колонки')
+    }
+
+    const targetColumnTasksWithoutMovedTask = (get().tasksByColumnId[targetColumnId] ?? []).filter(
+      (columnTask) => columnTask.id !== task.id,
+    )
+
+    const { position, normalizedTasks } = getTaskPositionAfterNormalization(
+      targetColumnTasksWithoutMovedTask,
+      previousTask,
+      nextTask,
+    )
+
+    const movedTask: Task = {
+      ...task,
+      columnId: targetColumnId,
+      position,
+    }
+
+    if (normalizedTasks) {
+      await taskRepository.putMany([...normalizedTasks, movedTask])
+    } else {
+      await taskRepository.put(movedTask)
+    }
+
+    set((state) => {
+      let nextTasksByColumnId = removeTaskFromColumns(state.tasksByColumnId, task.id)
+
+      if (normalizedTasks) {
+        nextTasksByColumnId = {
+          ...nextTasksByColumnId,
+          [targetColumnId]: normalizedTasks,
+        }
+      }
+
+      return {
+        tasksByColumnId: upsertTaskInColumns(nextTasksByColumnId, movedTask),
+      }
+    })
+  },
+
+  reorderColumnTasks: async ({ columns }) => {
+    const normalizedColumnEntries = columns.map(({ columnId, tasks }) => ({
+      columnId,
+      tasks: normalizeTaskPositionsByOrder(
+        tasks.map((task) => ({
+          ...task,
+          columnId,
+        })),
+      ),
+    }))
+
+    await taskRepository.putMany(normalizedColumnEntries.flatMap(({ tasks }) => tasks))
+
+    set((state) => {
+      const nextTasksByColumnId: TasksByColumnId = {
+        ...state.tasksByColumnId,
+      }
+
+      normalizedColumnEntries.forEach(({ columnId, tasks }) => {
+        nextTasksByColumnId[columnId] = tasks
+      })
+
+      return {
+        tasksByColumnId: nextTasksByColumnId,
+      }
+    })
   },
 }))
 
@@ -132,5 +234,8 @@ export const useTaskActions = () =>
       addTask: state.addTask,
       updateTask: state.updateTask,
       deleteTask: state.deleteTask,
+      getNextPositionByColumnId: state.getNextPositionByColumnId,
+      moveTask: state.moveTask,
+      reorderColumnTasks: state.reorderColumnTasks,
     })),
   )

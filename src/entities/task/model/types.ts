@@ -12,4 +12,5 @@ export interface Task {
   createdAt: string
   columnId: Column['id']
   priority: TaskPriority
+  position: number
 }
