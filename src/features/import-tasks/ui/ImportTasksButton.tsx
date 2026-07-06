@@ -98,11 +98,29 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
         accept=".json,application/json"
         hidden
         onChange={async (event) => {
-          const file = event.currentTarget.files?.[0]
+          const input = event.currentTarget
+          const file = input.files?.[0]
 
-          if (file) {
-            await handleSelectFile(file)
+          if (!file) {
+            return
           }
+
+          const isJsonFile =
+            file.type === 'application/json' || file.name.toLowerCase().endsWith('.json')
+
+          if (!isJsonFile) {
+            input.value = ''
+            notifications.show({
+              title: 'Вы выбрали не тот формат файла',
+              message: 'Попробуйте выбрать другой файл',
+              color: 'red',
+            })
+            return
+          }
+
+          await handleSelectFile(file)
+
+          input.value = ''
         }}
         ref={inputRef}
         type="file"

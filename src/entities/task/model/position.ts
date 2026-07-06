@@ -1,6 +1,5 @@
+import { TASK_POSITION_STEP } from '@/shared/lib'
 import type { Task } from './types'
-
-export const TASK_POSITION_STEP = 1000
 
 const isDefined = <T>(value: T | undefined): value is T => value !== undefined
 

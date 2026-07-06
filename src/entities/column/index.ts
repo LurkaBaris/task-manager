@@ -1,6 +1,5 @@
 export {
   COLUMN_COLOR_BY_ID,
-  COLUMN_CONFIG,
   COLUMN_TITLE_BY_ID,
   DEFAULT_COLUMNS,
 } from './model/constants'

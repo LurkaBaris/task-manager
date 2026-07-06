@@ -1,4 +1,4 @@
-import { appDbPromise } from '@/shared/lib/indexed-db'
+import { appDbPromise } from '@/shared/lib'
 import type { Task } from '../model/types'
 import { mapTaskFromDb, mapTaskToDb } from './taskMapper'
 
