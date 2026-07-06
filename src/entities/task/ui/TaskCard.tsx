@@ -20,7 +20,7 @@ export const TaskCard = ({ task, actions, search }: TaskCardProps) => {
     <Card className={styles.card} component="article">
       <Stack gap="sm">
         <Stack gap="xs">
-          <Flex gap="md" align="center" justify="space-between">
+          <Flex gap="md" align="center" justify="space-between" wrap="wrap">
             <Title order={3} size="md" c="gray.9">
               {renderHighlightedText(task.title, search ?? '')}
             </Title>

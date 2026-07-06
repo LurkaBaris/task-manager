@@ -4,7 +4,9 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  TouchSensor,
   useSensor,
+  useSensors,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
@@ -63,11 +65,19 @@ export const TaskDndProvider = ({
   const { moveTask, reorderColumnTasks } = useTaskActions()
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const activeTaskRef = useRef<Task | null>(null)
-  const pointerSensor = useSensor(PointerSensor, {
-    activationConstraint: {
-      distance: 6,
-    },
-  })
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 8,
+      },
+    }),
+  )
   const [overColumnId, setOverColumnId] = useState<Task['columnId'] | null>(null)
   const [draftTasksByColumnId, setDraftTasksByColumnId] = useState<TasksByColumnId | null>(null)
 
@@ -237,7 +247,7 @@ export const TaskDndProvider = ({
   return (
     <DndContext
       collisionDetection={closestCenter}
-      sensors={[pointerSensor]}
+      sensors={sensors}
       modifiers={[restrictToWindowEdges]}
       onDragStart={handleDragStart}
       onDragCancel={handleDragCancel}

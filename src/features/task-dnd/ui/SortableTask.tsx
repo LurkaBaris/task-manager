@@ -3,6 +3,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { ReactNode } from 'react'
 import type { TaskDndTaskData } from '../model/types'
+import styles from './SortableTask.module.css'
 
 interface SortableTaskProps {
   task: Task
@@ -23,6 +24,7 @@ export const SortableTask = ({ task, disabled = false, children }: SortableTaskP
   return (
     <div
       ref={setNodeRef}
+      className={styles.draggable}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
