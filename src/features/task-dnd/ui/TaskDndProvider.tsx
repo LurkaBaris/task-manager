@@ -219,13 +219,13 @@ export const TaskDndProvider = ({
       }
 
       notifications.show({
-        title: 'Задача перемещена',
+        title: `Перемещена задача «${draggedTask.title}»`,
         message: 'Изменения сохранены',
         color: 'brand',
       })
     } catch {
       notifications.show({
-        title: 'Не удалось переместить задачу',
+        title: `Не удалось переместить задачу «${draggedTask.title}»`,
         message: 'Попробуйте перетащить задачу еще раз',
         color: 'red',
       })

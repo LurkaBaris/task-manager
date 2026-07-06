@@ -28,15 +28,15 @@ export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButt
       await addTask(newTask)
 
       notifications.show({
-        title: 'Задача создана',
-        message: `Новая задача добавлена, у нее id: ${newTask.id}`,
+        title: `Создана задача «${newTask.title}»`,
+        message: 'Задача добавлена на доску',
         color: 'brand',
       })
 
       close()
     } catch {
       notifications.show({
-        title: 'Не удалось создать задачу',
+        title: `Не удалось создать задачу «${values.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
       })

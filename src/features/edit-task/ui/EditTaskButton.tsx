@@ -17,15 +17,15 @@ export const EditTaskButton = ({ task }: EditTaskButtonProps) => {
       await updateTask(task, values)
 
       notifications.show({
-        title: 'Обновилась задача',
-        message: `Задача (id: ${task.id}) была успешно обновлена`,
+        title: `Обновлена задача «${values.title}»`,
+        message: 'Изменения сохранены',
         color: 'brand',
       })
 
       close()
     } catch {
       notifications.show({
-        title: 'Не удалось обновить задачу',
+        title: `Не удалось обновить задачу «${task.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
       })

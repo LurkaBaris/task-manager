@@ -19,13 +19,13 @@ export const DeleteUndoNotificationContent = ({
       notifications.hide(notificationId)
 
       notifications.show({
-        title: 'Задача восстановлена',
-        message: `Задача «${task.title}» снова на доске`,
+        title: `Восстановлена задача «${task.title}»`,
+        message: 'Задача снова на доске',
         color: 'brand',
       })
     } catch {
       notifications.show({
-        title: 'Не удалось восстановить задачу',
+        title: `Не удалось восстановить задачу «${task.title}»`,
         message: 'Попробуйте импортировать задачу из резервной копии или создать ее заново',
         color: 'red',
       })

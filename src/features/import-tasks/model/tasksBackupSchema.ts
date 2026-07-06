@@ -31,7 +31,7 @@ export const tasksBackupSchema = z
       if (taskIds.has(task.id)) {
         ctx.addIssue({
           code: 'custom',
-          message: 'В файле есть задачи с одинаковым id',
+          message: 'В файле есть повторяющиеся задачи',
           path: ['tasks', index, 'id'],
         })
       }

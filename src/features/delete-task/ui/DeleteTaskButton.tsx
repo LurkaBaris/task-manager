@@ -25,7 +25,7 @@ export const DeleteTaskButton = ({ task }: DeleteTaskButtonProps) => {
 
       notifications.show({
         id: notificationId,
-        title: 'Вы удалили задачу',
+        title: `Удалена задача «${task.title}»`,
         message: <DeleteUndoNotificationContent notificationId={notificationId} task={task} />,
         color: 'brand',
         autoClose: 5000,
@@ -34,7 +34,7 @@ export const DeleteTaskButton = ({ task }: DeleteTaskButtonProps) => {
       close()
     } catch {
       notifications.show({
-        title: 'Не удалось удалить задачу',
+        title: `Не удалось удалить задачу «${task.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
       })

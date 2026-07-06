@@ -59,7 +59,7 @@ export const appDbPromise = openDB<AppDbSchema>(INDEXED_DB_NAME, INDEXED_DB_VERS
           cursor = await cursor.continue()
         }
       } catch (error) {
-        console.error('Не удалось создать задачу', error)
+        console.error('Не удалось определить позицию задачи', error)
       }
     }
   },
