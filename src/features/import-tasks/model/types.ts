@@ -1,0 +1,1 @@
+export const SUPPORTED_TASKS_BACKUP_VERSION = 1

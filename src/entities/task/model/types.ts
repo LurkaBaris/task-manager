@@ -14,3 +14,5 @@ export interface Task {
   priority: TaskPriority
   position: number
 }
+
+export type ImportTasksMode = 'merge' | 'replace'

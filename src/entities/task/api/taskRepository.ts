@@ -35,4 +35,14 @@ export const taskRepository = {
   async delete(taskId: Task['id']): Promise<void> {
     await (await appDbPromise).delete('tasks', taskId)
   },
+
+  async replaceAll(tasks: Task[]): Promise<void> {
+    const db = await appDbPromise
+    const transaction = db.transaction('tasks', 'readwrite')
+
+    await transaction.store.clear()
+    await Promise.all(tasks.map((task) => transaction.store.put(mapTaskToDb(task))))
+
+    await transaction.done
+  },
 }

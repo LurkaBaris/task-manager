@@ -16,6 +16,8 @@ import {
 import { CreateTaskButton } from '@/features/create-task'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { EditTaskButton } from '@/features/edit-task'
+import { ExportTasksButton } from '@/features/export-tasks'
+import { ImportTasksButton } from '@/features/import-tasks'
 import { DroppableColumn, SortableTask, TaskDndProvider } from '@/features/task-dnd'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import {
@@ -153,6 +155,10 @@ export const TaskBoard = () => {
         <Button disabled={isBoardLocked} type="button" variant="light">
           Создать колонку
         </Button>
+
+        <ExportTasksButton disabled={isBoardLocked} />
+
+        <ImportTasksButton disabled={isBoardLocked} />
 
         <CreateTaskButton disabled={isBoardLocked} />
       </Flex>

@@ -4,9 +4,10 @@ import { taskRepository } from '../api/taskRepository'
 import {
   getNextTaskPosition,
   getTaskPositionAfterNormalization,
+  normalizeTaskPositions,
   normalizeTaskPositionsByOrder,
 } from './position'
-import type { Task } from './types'
+import type { ImportTasksMode, Task } from './types'
 
 type TaskPatch = Partial<Omit<Task, 'id' | 'createdAt'>>
 type TasksByColumnId = Partial<Record<Task['columnId'], Task[]>>
@@ -37,6 +38,7 @@ interface ITaskActions {
   moveTask: (params: MoveTaskParams) => Promise<void>
   reorderColumnTasks: (params: ReorderColumnTasksParams) => Promise<void>
   getNextPositionByColumnId: (columnId: Task['columnId']) => number
+  importTasks: (tasks: Task[], mode: ImportTasksMode) => Promise<void>
 }
 
 export type TaskStore = ITaskState & ITaskActions
@@ -61,6 +63,27 @@ const removeTaskFromColumns = (
       columnId,
       columnTasks?.filter((task) => task.id !== taskId) ?? [],
     ]),
+  )
+
+const groupTasksByColumnId = (tasks: Task[]): TasksByColumnId => {
+  const tasksByColumnId: TasksByColumnId = {}
+
+  tasks.forEach((task) => {
+    const columnTasks = tasksByColumnId[task.columnId]
+
+    if (columnTasks) {
+      columnTasks.push(task)
+    } else {
+      tasksByColumnId[task.columnId] = [task]
+    }
+  })
+
+  return tasksByColumnId
+}
+
+const normalizeTasksByColumnId = (tasks: Task[]): Task[] =>
+  Object.values(groupTasksByColumnId(tasks)).flatMap((columnTasks) =>
+    normalizeTaskPositions(columnTasks ?? []),
   )
 
 // решил попробовать использовать index по назначению, и чтобы в ui избежать reduce + filter
@@ -219,6 +242,36 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
       }
     })
   },
+
+  importTasks: async (tasks, mode) => {
+    if (mode === 'replace') {
+      const normalizedTasks = normalizeTasksByColumnId(tasks)
+
+      await taskRepository.replaceAll(normalizedTasks)
+
+      set({
+        tasksByColumnId: groupTasksByColumnId(normalizedTasks),
+        isLoaded: true,
+      })
+
+      return
+    }
+
+    const importedTaskIds = new Set(tasks.map((task) => task.id))
+
+    const currentTasks = Object.values(get().tasksByColumnId)
+      .flatMap((columnTasks) => columnTasks ?? [])
+      .filter((task) => !importedTaskIds.has(task.id))
+
+    const normalizedTasks = normalizeTasksByColumnId([...currentTasks, ...tasks])
+
+    await taskRepository.putMany(normalizedTasks)
+
+    set({
+      tasksByColumnId: groupTasksByColumnId(normalizedTasks),
+      isLoaded: true,
+    })
+  },
 }))
 
 export const selectTasks = (state: TaskStore): ITaskState => ({
@@ -237,5 +290,6 @@ export const useTaskActions = () =>
       getNextPositionByColumnId: state.getNextPositionByColumnId,
       moveTask: state.moveTask,
       reorderColumnTasks: state.reorderColumnTasks,
+      importTasks: state.importTasks,
     })),
   )
