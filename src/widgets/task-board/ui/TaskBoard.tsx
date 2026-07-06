@@ -236,7 +236,13 @@ export const TaskBoard = () => {
                       <ColumnCard
                         column={column}
                         count={columnTasks.length}
-                        emptyText={hasLoadError ? 'Задачи не загрузились' : undefined}
+                        emptyText={
+                          hasLoadError
+                            ? 'Задачи не загрузились'
+                            : isTaskFilterActive
+                              ? 'По данным фильтрам задач не нашлось'
+                              : undefined
+                        }
                         listRef={setNodeRef}
                         isHightlighted={overColumnId === column.id}
                         headerControls={
