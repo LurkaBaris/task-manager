@@ -1,5 +1,6 @@
-import { COLUMN_COLOR_BY_ID, COLUMN_TITLE_BY_ID } from '@/entities/column'
+import { selectColumns, useColumnStore } from '@/entities/column'
 import { Badge } from '@mantine/core'
+import { useShallow } from 'zustand/shallow'
 import type { Task } from '../model/types'
 
 interface TaskStatusBadgeProps {
@@ -7,5 +8,9 @@ interface TaskStatusBadgeProps {
 }
 
 export const TaskStatusBadge = ({ columnId }: TaskStatusBadgeProps) => {
-  return <Badge color={COLUMN_COLOR_BY_ID[columnId]}>{COLUMN_TITLE_BY_ID[columnId]}</Badge>
+  const { columns } = useColumnStore(useShallow(selectColumns))
+
+  const column = columns.find((column) => column.id === columnId)
+
+  return <Badge color={column?.color ?? 'gray'}>{column?.title ?? 'Колонка удалена'}</Badge>
 }

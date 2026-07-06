@@ -1,6 +1,8 @@
+import { selectColumns, useColumnStore } from '@/entities/column'
 import { useTaskActions, type Task } from '@/entities/task'
 import { Button, Stack, Text } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
+import { useShallow } from 'zustand/shallow'
 
 interface DeleteUndoNotificationContentProps {
   task: Task
@@ -11,11 +13,22 @@ export const DeleteUndoNotificationContent = ({
   task,
   notificationId,
 }: DeleteUndoNotificationContentProps) => {
-  const { addTask } = useTaskActions()
+  const { columns } = useColumnStore(useShallow(selectColumns))
+  const { restoreTasks } = useTaskActions()
+  const hasTaskColumn = columns.some((column) => column.id === task.columnId)
 
   const handleClick = async () => {
+    if (!hasTaskColumn) {
+      notifications.show({
+        title: `Не удалось восстановить задачу «${task.title}»`,
+        message: 'Колонка этой задачи уже удалена',
+        color: 'red',
+      })
+      return
+    }
+
     try {
-      await addTask(task)
+      await restoreTasks([task])
       notifications.hide(notificationId)
 
       notifications.show({

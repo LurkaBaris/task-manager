@@ -1,3 +1,4 @@
+import { selectColumns, useColumnStore } from '@/entities/column'
 import {
   createTask,
   TaskForm,
@@ -9,6 +10,7 @@ import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import clsx from 'clsx'
+import { useShallow } from 'zustand/shallow'
 import styles from './CreateTaskButton.module.css'
 
 interface CreateTaskButtonProps {
@@ -17,6 +19,7 @@ interface CreateTaskButtonProps {
 }
 
 export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButtonProps) => {
+  const { columns } = useColumnStore(useShallow(selectColumns))
   const { addTask, getNextPositionByColumnId } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -55,7 +58,7 @@ export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButt
       </Button>
 
       <Modal centered onClose={close} opened={opened} title="Создать задачу">
-        <TaskForm onCancel={close} onSubmit={handleCreateTask} />
+        <TaskForm onCancel={close} onSubmit={handleCreateTask} columns={columns} />
       </Modal>
     </>
   )

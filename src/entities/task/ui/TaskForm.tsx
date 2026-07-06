@@ -1,4 +1,4 @@
-import { COLUMN_TITLE_BY_ID } from '@/entities/column'
+import { type Column } from '@/entities/column'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Group, Select, Stack, TextInput, Textarea } from '@mantine/core'
 import { Controller, useForm } from 'react-hook-form'
@@ -7,16 +7,12 @@ import { taskSchema, type TaskSchemaType } from '../model/taskSchema'
 import styles from './TaskForm.module.css'
 
 interface TaskFormProps {
+  columns: Column[]
   defaultValues?: TaskSchemaType
   submitLabel?: string
   onCancel: () => void
   onSubmit: (values: TaskSchemaType) => void | Promise<void>
 }
-
-const statusOptions = Object.entries(COLUMN_TITLE_BY_ID).map(([value, label]) => ({
-  value,
-  label,
-}))
 
 const inputProps = {
   classNames: {
@@ -27,6 +23,7 @@ const inputProps = {
 }
 
 export const TaskForm = ({
+  columns,
   onCancel,
   onSubmit,
   defaultValues,
@@ -40,7 +37,7 @@ export const TaskForm = ({
     defaultValues: defaultValues || {
       title: '',
       description: '',
-      columnId: 'todo',
+      columnId: columns[0]?.id ?? '',
       priority: 'low',
     },
     mode: 'onTouched',
@@ -54,6 +51,11 @@ export const TaskForm = ({
   const handleCancel = () => {
     onCancel()
   }
+
+  const statusOptions = columns.map((column) => ({
+    value: column.id,
+    label: column.title,
+  }))
 
   return (
     <form onSubmit={handleSubmit(onSubmitModal)}>

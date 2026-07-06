@@ -1,8 +1,10 @@
-import type { Task } from '@/entities/task'
+import type { Task, TasksByColumnId } from '@/entities/task'
 import { arrayMove } from '@dnd-kit/sortable'
-import { isTaskDndColumnData, isTaskDndTaskData } from '../model/guards'
-
-export type TasksByColumnId = Partial<Record<Task['columnId'], Task[]>>
+import {
+  isTaskDndColumnData,
+  isTaskDndSortableColumnData,
+  isTaskDndTaskData,
+} from '../model/guards'
 
 export const makeTasksSnapshot = (
   columnIds: Task['columnId'][],
@@ -25,6 +27,10 @@ export const getTaskDndTargetColumnId = (
 ): Task['columnId'] | null => {
   if (isTaskDndColumnData(overData)) {
     return overData.columnId
+  }
+
+  if (isTaskDndSortableColumnData(overData)) {
+    return overData.column.id
   }
 
   if (isTaskDndTaskData(overData)) {

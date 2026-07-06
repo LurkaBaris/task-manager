@@ -1,14 +1,17 @@
+import { selectColumns, useColumnStore } from '@/entities/column'
 import { TaskForm, useTaskActions, type Task, type TaskSchemaType } from '@/entities/task'
 import { ActionIcon, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { Pencil } from 'lucide-react'
+import { useShallow } from 'zustand/shallow'
 
 interface EditTaskButtonProps {
   task: Task
 }
 
 export const EditTaskButton = ({ task }: EditTaskButtonProps) => {
+  const { columns } = useColumnStore(useShallow(selectColumns))
   const { updateTask } = useTaskActions()
   const [opened, { open, close }] = useDisclosure(false)
 
@@ -47,6 +50,7 @@ export const EditTaskButton = ({ task }: EditTaskButtonProps) => {
 
       <Modal centered onClose={close} opened={opened} title="Редактировать задачу">
         <TaskForm
+          columns={columns}
           onCancel={close}
           onSubmit={handleEditTask}
           defaultValues={task}

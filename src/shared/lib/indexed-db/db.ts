@@ -1,5 +1,6 @@
+import { DEFAULT_COLUMNS, TASK_POSITION_STEP } from '@/shared/config'
 import { openDB, type DBSchema } from 'idb'
-import { INDEXED_DB_NAME, INDEXED_DB_VERSION, TASK_POSITION_STEP } from './config'
+import { INDEXED_DB_NAME, INDEXED_DB_VERSION } from './config'
 
 export interface TaskDbRecord {
   id: string
@@ -9,6 +10,13 @@ export interface TaskDbRecord {
   columnId: string
   priority: string
   position: number
+}
+
+export interface ColumnDbRecord {
+  id: string
+  title: string
+  color: string
+  order: number
 }
 
 interface AppDbSchema extends DBSchema {
@@ -21,9 +29,17 @@ interface AppDbSchema extends DBSchema {
       'by-priority': string
     }
   }
+  columns: {
+    key: string
+    value: ColumnDbRecord
+    indexes: {
+      'by-order': number
+    }
+  }
 }
 
 const TASKS_STORE_NAME = 'tasks'
+const COLUMNS_STORE_NAME = 'columns'
 const UNUSED_TASK_INDEXES: Array<'by-created-at' | 'by-priority'> = ['by-created-at', 'by-priority']
 
 export const appDbPromise = openDB<AppDbSchema>(INDEXED_DB_NAME, INDEXED_DB_VERSION, {
@@ -71,6 +87,16 @@ export const appDbPromise = openDB<AppDbSchema>(INDEXED_DB_NAME, INDEXED_DB_VERS
         if (taskStore.indexNames.contains(indexName)) {
           taskStore.deleteIndex(indexName)
         }
+      }
+    }
+
+    if (oldVersion < 4) {
+      const columnStore = db.createObjectStore(COLUMNS_STORE_NAME, { keyPath: 'id' })
+
+      columnStore.createIndex('by-order', 'order')
+
+      for (const column of DEFAULT_COLUMNS) {
+        await columnStore.put(column)
       }
     }
   },

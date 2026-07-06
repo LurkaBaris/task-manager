@@ -7,10 +7,9 @@ import {
   normalizeTaskPositions,
   normalizeTaskPositionsByOrder,
 } from './position'
-import type { ImportTasksMode, Task } from './types'
+import type { ImportTasksMode, Task, TasksByColumnId } from './types'
 
 type TaskPatch = Partial<Omit<Task, 'id' | 'createdAt'>>
-type TasksByColumnId = Partial<Record<Task['columnId'], Task[]>>
 type MoveTaskParams = {
   task: Task
   targetColumnId: Task['columnId']
@@ -35,6 +34,8 @@ interface ITaskActions {
   addTask: (task: Task) => Promise<void>
   updateTask: (task: Task, patch: TaskPatch) => Promise<void>
   deleteTask: (taskId: Task['id']) => Promise<void>
+  clearColumnTasks: (columnId: Task['columnId']) => void
+  restoreTasks: (tasks: Task[]) => Promise<void>
   moveTask: (params: MoveTaskParams) => Promise<void>
   reorderColumnTasks: (params: ReorderColumnTasksParams) => Promise<void>
   getNextPositionByColumnId: (columnId: Task['columnId']) => number
@@ -65,7 +66,7 @@ const removeTaskFromColumns = (
     ]),
   )
 
-const groupTasksByColumnId = (tasks: Task[]): TasksByColumnId => {
+export const groupTasksByColumnId = (tasks: Task[]): TasksByColumnId => {
   const tasksByColumnId: TasksByColumnId = {}
 
   tasks.forEach((task) => {
@@ -81,7 +82,7 @@ const groupTasksByColumnId = (tasks: Task[]): TasksByColumnId => {
   return tasksByColumnId
 }
 
-const normalizeTasksByColumnId = (tasks: Task[]): Task[] =>
+export const normalizeTasksByColumnId = (tasks: Task[]): Task[] =>
   Object.values(groupTasksByColumnId(tasks)).flatMap((columnTasks) =>
     normalizeTaskPositions(columnTasks ?? []),
   )
@@ -272,6 +273,34 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
       isLoaded: true,
     })
   },
+
+  clearColumnTasks: (columnId) => {
+    set((state) => {
+      const nextTasksByColumnId = { ...state.tasksByColumnId }
+
+      delete nextTasksByColumnId[columnId]
+
+      return {
+        tasksByColumnId: nextTasksByColumnId,
+      }
+    })
+  },
+
+  restoreTasks: async (tasks) => {
+    await taskRepository.putMany(tasks)
+
+    set((state) => {
+      let nextTasksByColumnId = state.tasksByColumnId
+
+      tasks.forEach((task) => {
+        nextTasksByColumnId = upsertTaskInColumns(nextTasksByColumnId, task)
+      })
+
+      return {
+        tasksByColumnId: nextTasksByColumnId,
+      }
+    })
+  },
 }))
 
 export const selectTasks = (state: TaskStore): ITaskState => ({
@@ -291,5 +320,7 @@ export const useTaskActions = () =>
       moveTask: state.moveTask,
       reorderColumnTasks: state.reorderColumnTasks,
       importTasks: state.importTasks,
+      clearColumnTasks: state.clearColumnTasks,
+      restoreTasks: state.restoreTasks,
     })),
   )

@@ -1,65 +1,56 @@
-import { ColumnCard, DEFAULT_COLUMNS } from '@/entities/column'
+import { selectColumns, useColumnActions, useColumnStore } from '@/entities/column'
 import {
   selectTasks,
-  TASK_PRIORITY_OPTIONS,
   TaskCard,
   useTaskActions,
   useTaskStore,
   type TaskPriority,
 } from '@/entities/task'
 import {
-  ColumnTaskSortControl,
   sortTasksBySortOrder,
   TASK_SORT_ORDER,
   useColumnTaskSort,
 } from '@/features/change-column-task-sort'
-import { CreateTaskButton } from '@/features/create-task'
-import { DeleteTaskButton } from '@/features/delete-task'
-import { EditTaskButton } from '@/features/edit-task'
-import { ExportTasksButton } from '@/features/export-tasks'
-import { ImportTasksButton } from '@/features/import-tasks'
-import { DroppableColumn, SortableTask, TaskDndProvider } from '@/features/task-dnd'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import {
-  Button,
-  Flex,
-  Group,
-  MultiSelect,
-  Paper,
-  Pill,
-  Skeleton,
-  Stack,
-  TextInput,
-} from '@mantine/core'
+import { CreateColumnButton } from '@/features/create-column'
+import { TaskDndProvider } from '@/features/task-dnd'
+import { Alert, Paper, Stack, Text, Title } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
-import { Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import styles from './TaskBoard.module.css'
-
-const VISIBLE_PRIORITY_PILLS_COUNT = 2
-const LOADING_COLUMN_TASKS_COUNT = 3
+import { TaskBoardSkeleton } from './TaskBoardSkeleton'
+import { TaskBoardToolbar } from './TaskBoardToolbar'
+import { TaskBoardColumns } from './TaskBoardColumns'
 
 export const TaskBoard = () => {
   const [search, setSearch] = useState('')
   const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([])
-  const [hasLoadError, setHasLoadError] = useState(false)
+  const [hasColumnsLoadError, setHasColumnsLoadError] = useState(false)
+  const [hasTasksLoadError, setHasTasksLoadError] = useState(false)
   const [debouncedSearch] = useDebouncedValue(search, 300)
+  const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
+  const { loadColumns } = useColumnActions()
   const { tasksByColumnId, isLoading, isLoaded } = useTaskStore(useShallow(selectTasks))
   const { loadTasksByColumnIds } = useTaskActions()
-  const { changeColumnSortOrder, getColumnSortOrder } = useColumnTaskSort()
+  const { changeColumnSortOrder, getColumnSortOrder, removeColumnSortOrder } = useColumnTaskSort()
+  const columnIds = useMemo(() => columns.map((column) => column.id), [columns])
+
+  const hasColumns = columns.length > 0
   const normalizedSearch = debouncedSearch.toLowerCase().trim()
-  const isInitialLoading = isLoading && !isLoaded
-  const isBoardLocked = !isLoaded
+  const isTasksReady = !hasColumns || isLoaded
+  const isInitialLoading =
+    !hasColumnsLoadError && (!isColumnsLoaded || (hasColumns && isLoading && !isLoaded))
+  const isBoardLocked = !isColumnsLoaded || !isTasksReady || hasColumnsLoadError
+  const isCreateTaskDisabled = isBoardLocked || !hasColumns
   const isTaskFilterActive = normalizedSearch.length > 0 || selectedPriorities.length > 0
   const isTaskDndDisabled = isBoardLocked || isTaskFilterActive
 
   const visibleTasksByColumnId = useMemo(
     () =>
       new Map(
-        DEFAULT_COLUMNS.map((column) => {
+        columns.map((column) => {
           const columnTasks = tasksByColumnId[column.id] ?? []
+
           const visibleTasks = columnTasks.filter((task) => {
             const matchesSearch =
               normalizedSearch.length === 0 ||
@@ -75,16 +66,41 @@ export const TaskBoard = () => {
           return [column.id, visibleTasks]
         }),
       ),
-    [tasksByColumnId, normalizedSearch, selectedPriorities],
+    [columns, tasksByColumnId, normalizedSearch, selectedPriorities],
   )
 
   useEffect(() => {
     const load = async () => {
       try {
-        setHasLoadError(false)
-        await loadTasksByColumnIds(DEFAULT_COLUMNS.map((column) => column.id))
+        setHasColumnsLoadError(false)
+
+        await loadColumns()
       } catch {
-        setHasLoadError(true)
+        setHasColumnsLoadError(true)
+
+        notifications.show({
+          title: 'Не удалось загрузить колонки',
+          message: 'Попробуйте обновить страницу',
+          color: 'red',
+        })
+      }
+    }
+
+    load()
+  }, [loadColumns])
+
+  useEffect(() => {
+    if (!isColumnsLoaded || hasColumnsLoadError || !hasColumns) {
+      return
+    }
+
+    const load = async () => {
+      try {
+        setHasTasksLoadError(false)
+
+        await loadTasksByColumnIds(columnIds)
+      } catch {
+        setHasTasksLoadError(true)
 
         notifications.show({
           title: 'Не удалось загрузить задачи',
@@ -95,117 +111,40 @@ export const TaskBoard = () => {
     }
 
     load()
-  }, [loadTasksByColumnIds])
+  }, [isColumnsLoaded, hasColumnsLoadError, hasColumns, columnIds, loadTasksByColumnIds])
 
   return (
     <>
-      <Flex align="center" gap="md" className={styles.toolbar}>
-        <TextInput
-          className={styles.searchInput}
-          disabled={isBoardLocked}
-          leftSection={<Search size={16} strokeWidth={2} />}
-          onChange={(event) => setSearch(event.currentTarget.value)}
-          placeholder="Поиск по задачам"
-          value={search}
-        />
+      <TaskBoardToolbar
+        disabled={isBoardLocked}
+        isCreateTaskDisabled={isCreateTaskDisabled}
+        search={search}
+        selectedPriorities={selectedPriorities}
+        onSearchChange={setSearch}
+        onSelectedPrioritiesChange={setSelectedPriorities}
+      />
 
-        <MultiSelect<TaskPriority>
-          className={styles.prioritySelect}
-          styles={{
-            input: {
-              overflow: 'hidden',
-            },
+      {hasColumnsLoadError ? (
+        <Alert color="red" title="Не удалось загрузить колонки">
+          Попробуйте обновить страницу
+        </Alert>
+      ) : isInitialLoading ? (
+        <TaskBoardSkeleton columnsCount={columns.length || 3} />
+      ) : !hasColumns ? (
+        <Paper p="xl" radius="lg" withBorder>
+          <Stack align="center" gap="md">
+            <Title order={3}>Пока нет колонок</Title>
 
-            pillsList: {
-              flexWrap: 'nowrap',
-              maxWidth: '100%',
-              overflowX: 'hidden',
-              overflowY: 'hidden',
-            },
-          }}
-          clearable
-          data={TASK_PRIORITY_OPTIONS}
-          disabled={isBoardLocked}
-          onChange={(values) => setSelectedPriorities(values)}
-          placeholder={selectedPriorities.length === 0 ? 'Приоритеты' : undefined}
-          renderPill={({ value, option, onRemove, disabled }) => {
-            const priorityIndex = selectedPriorities.findIndex((priority) => priority === value)
+            <Text c="dimmed" ta="center">
+              Создайте первую колонку, чтобы начать работу с задачами.
+            </Text>
 
-            if (priorityIndex >= VISIBLE_PRIORITY_PILLS_COUNT) {
-              if (priorityIndex === VISIBLE_PRIORITY_PILLS_COUNT) {
-                return (
-                  <Pill disabled={disabled}>
-                    +{selectedPriorities.length - VISIBLE_PRIORITY_PILLS_COUNT}
-                  </Pill>
-                )
-              }
-
-              return null
-            }
-
-            return (
-              <Pill disabled={disabled} onRemove={onRemove} withRemoveButton={!disabled}>
-                {option?.label ?? value}
-              </Pill>
-            )
-          }}
-          value={selectedPriorities}
-        />
-
-        <Button disabled={isBoardLocked} type="button" variant="light">
-          Создать колонку
-        </Button>
-
-        <ExportTasksButton disabled={isBoardLocked} />
-
-        <ImportTasksButton disabled={isBoardLocked} />
-
-        <CreateTaskButton disabled={isBoardLocked} />
-      </Flex>
-
-      {isInitialLoading ? (
-        <Group
-          align="stretch"
-          aria-busy="true"
-          aria-label="Загрузка задач"
-          className={styles.board}
-          gap="md"
-          grow
-          justify="space-between"
-          wrap="nowrap"
-        >
-          {DEFAULT_COLUMNS.map((column) => (
-            <Paper
-              className={styles.loadingColumn}
-              h="calc(100vh - 100px)"
-              key={column.id}
-              mah="1000px"
-              mih="420px"
-              miw="240px"
-              radius="lg"
-            >
-              <Flex direction="column" h="100%">
-                <Group justify="space-between" wrap="nowrap" pb={22} pt="lg" px="md">
-                  <Skeleton h={20} radius="xl" w="45%" />
-                  <Skeleton h={24} radius="xl" w={32} />
-                </Group>
-
-                <Stack gap="sm" px="md">
-                  {Array.from({ length: LOADING_COLUMN_TASKS_COUNT }, (_, index) => (
-                    <Stack className={styles.loadingTask} gap="xs" key={index}>
-                      <Skeleton h={16} radius="xl" w="75%" />
-                      <Skeleton h={12} radius="xl" w="100%" />
-                      <Skeleton h={12} radius="xl" w="58%" />
-                    </Stack>
-                  ))}
-                </Stack>
-              </Flex>
-            </Paper>
-          ))}
-        </Group>
+            <CreateColumnButton variant="filled" />
+          </Stack>
+        </Paper>
       ) : (
         <TaskDndProvider
-          columnIds={DEFAULT_COLUMNS.map((column) => column.id)}
+          columns={columns}
           disabled={isTaskDndDisabled}
           getColumnTasks={(columnId) =>
             sortTasksBySortOrder(
@@ -218,66 +157,19 @@ export const TaskBoard = () => {
           renderOverlay={(task) => <TaskCard task={task} />}
         >
           {({ overColumnId, getColumnTasks }) => (
-            <Group
-              align="stretch"
-              gap="md"
-              grow
-              justify="space-between"
-              wrap="nowrap"
-              className={styles.board}
-            >
-              {DEFAULT_COLUMNS.map((column) => {
-                const sortOrder = getColumnSortOrder(column.id)
-                const columnTasks = getColumnTasks(column.id)
-
-                return (
-                  <DroppableColumn columnId={column.id} key={column.id}>
-                    {({ setNodeRef }) => (
-                      <ColumnCard
-                        column={column}
-                        count={columnTasks.length}
-                        emptyText={
-                          hasLoadError
-                            ? 'Задачи не загрузились'
-                            : isTaskFilterActive
-                              ? 'По данным фильтрам задач не нашлось'
-                              : undefined
-                        }
-                        listRef={setNodeRef}
-                        isHightlighted={overColumnId === column.id}
-                        headerControls={
-                          <ColumnTaskSortControl
-                            disabled={isBoardLocked}
-                            sortOrder={sortOrder}
-                            onChange={(sortOrder) => changeColumnSortOrder(column.id, sortOrder)}
-                          />
-                        }
-                      >
-                        <SortableContext
-                          items={columnTasks.map((task) => task.id)}
-                          strategy={verticalListSortingStrategy}
-                        >
-                          {columnTasks.map((task) => (
-                            <SortableTask task={task} disabled={isTaskDndDisabled} key={task.id}>
-                              <TaskCard
-                                search={normalizedSearch}
-                                task={task}
-                                actions={
-                                  <>
-                                    <DeleteTaskButton task={task} />
-                                    <EditTaskButton task={task} />
-                                  </>
-                                }
-                              />
-                            </SortableTask>
-                          ))}
-                        </SortableContext>
-                      </ColumnCard>
-                    )}
-                  </DroppableColumn>
-                )
-              })}
-            </Group>
+            <TaskBoardColumns
+              columns={columns}
+              overColumnId={overColumnId}
+              disabled={isBoardLocked}
+              isTaskDndDisabled={isTaskDndDisabled}
+              hasTasksLoadError={hasTasksLoadError}
+              isTaskFilterActive={isTaskFilterActive}
+              normalizedSearch={normalizedSearch}
+              getColumnTasks={getColumnTasks}
+              getColumnSortOrder={getColumnSortOrder}
+              changeColumnSortOrder={changeColumnSortOrder}
+              onRemove={removeColumnSortOrder}
+            />
           )}
         </TaskDndProvider>
       )}

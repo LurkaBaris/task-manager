@@ -1,6 +1,21 @@
-import { taskSchema } from '@/entities/task'
+import { COLUMN_COLOR_OPTIONS, DEFAULT_COLUMNS, type Column } from '@/entities/column'
+import { taskSchema, type Task } from '@/entities/task'
 import { z } from 'zod'
-import { SUPPORTED_TASKS_BACKUP_VERSION } from './types'
+import { LEGACY_TASKS_BACKUP_VERSION, SUPPORTED_TASKS_BACKUP_VERSION } from './types'
+
+const importedColumnSchema = z.object({
+  id: z.string().trim().min(1, 'У колонки должен быть id'),
+  title: z.string().trim().min(1, 'Введите название колонки').max(50, 'Название слишком длинное'),
+  color: z
+    .string()
+    .trim()
+    .min(1, 'У колонки должен быть цвет')
+    .refine(
+      (color) => COLUMN_COLOR_OPTIONS.some((option) => option.value === color),
+      'Неизвестный цвет колонки',
+    ),
+  order: z.number().int().positive('Порядок колонки должен быть положительным числом'),
+})
 
 export const importedTaskSchema = taskSchema.extend({
   id: z.string().trim().min(1),
@@ -8,16 +23,44 @@ export const importedTaskSchema = taskSchema.extend({
   position: z.number().int().positive(),
 })
 
-export const tasksBackupSchema = z
+const legacyBackupSchema = z
   .object({
-    version: z.literal(SUPPORTED_TASKS_BACKUP_VERSION),
+    version: z.literal(LEGACY_TASKS_BACKUP_VERSION),
     exportedAt: z.iso.datetime(),
     tasks: z.array(importedTaskSchema),
   })
+  .strict()
+
+const currentBackupSchema = z
+  .object({
+    version: z.literal(SUPPORTED_TASKS_BACKUP_VERSION),
+    exportedAt: z.iso.datetime(),
+    columns: z.array(importedColumnSchema).min(1, 'В файле должна быть хотя бы одна колонка'),
+    tasks: z.array(importedTaskSchema),
+  })
+  .strict()
+
+export const tasksBackupSchema = z
+  .union([legacyBackupSchema, currentBackupSchema])
+  .transform((backup): { version: 2; exportedAt: string; columns: Column[]; tasks: Task[] } => {
+    if (backup.version === LEGACY_TASKS_BACKUP_VERSION) {
+      return {
+        version: SUPPORTED_TASKS_BACKUP_VERSION,
+        exportedAt: backup.exportedAt,
+        columns: DEFAULT_COLUMNS.map((column) => ({ ...column })),
+        tasks: backup.tasks,
+      }
+    }
+
+    return backup
+  })
   .superRefine((backup, ctx) => {
-    const taskIds = new Set<string>()
     const exportedAtTime = Date.parse(backup.exportedAt)
     const nowWithClockSkew = Date.now() + 60_000
+
+    const columnIds = new Set<string>()
+    const columnOrders = new Set<number>()
+    const taskIds = new Set<string>()
 
     if (exportedAtTime > nowWithClockSkew) {
       ctx.addIssue({
@@ -26,6 +69,28 @@ export const tasksBackupSchema = z
         path: ['exportedAt'],
       })
     }
+
+    backup.columns.forEach((column, index) => {
+      if (columnIds.has(column.id)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'В файле есть повторяющиеся колонки',
+          path: ['columns', index, 'id'],
+        })
+      }
+
+      columnIds.add(column.id)
+
+      if (columnOrders.has(column.order)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'В файле есть колонки с одинаковым порядком',
+          path: ['columns', index, 'order'],
+        })
+      }
+
+      columnOrders.add(column.order)
+    })
 
     backup.tasks.forEach((task, index) => {
       if (taskIds.has(task.id)) {
@@ -37,6 +102,14 @@ export const tasksBackupSchema = z
       }
 
       taskIds.add(task.id)
+
+      if (!columnIds.has(task.columnId)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Задача ссылается на колонку, которой нет в файле',
+          path: ['tasks', index, 'columnId'],
+        })
+      }
 
       if (Date.parse(task.createdAt) > exportedAtTime) {
         ctx.addIssue({

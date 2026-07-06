@@ -1,4 +1,5 @@
-import { useTaskActions, type ImportTasksMode } from '@/entities/task'
+import { useColumnActions } from '@/entities/column'
+import { type ImportTasksMode } from '@/entities/task'
 import { Box, Button, Group, Modal, Paper, ScrollArea, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
@@ -28,7 +29,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
   const [selectedFileContent, setSelectedFileContent] = useState('')
   const [isImporting, setIsImporting] = useState(false)
   const [opened, { open, close }] = useDisclosure(false)
-  const { importTasks } = useTaskActions()
+  const { importBoard } = useColumnActions()
 
   const resetSelectedFile = () => {
     setSelectedFile(null)
@@ -60,11 +61,15 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
     try {
       const backup = parseTasksBackup(selectedFileContent)
 
-      await importTasks(backup.tasks, mode)
+      await importBoard({
+        columns: backup.columns,
+        tasks: backup.tasks,
+        mode,
+      })
 
       notifications.show({
-        title: 'Задачи импортированы',
-        message: `Импортировано задач: ${backup.tasks.length}`,
+        title: 'Данные импортированы',
+        message: `Импортировано колонок: ${backup.columns.length}, задач: ${backup.tasks.length}`,
         color: 'brand',
       })
 
@@ -72,7 +77,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
       close()
     } catch (error) {
       notifications.show({
-        title: 'Не удалось импортировать задачи',
+        title: 'Не удалось импортировать данные',
         message: getImportErrorMessage(error),
         color: 'red',
       })
@@ -126,7 +131,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
         type="file"
       />
 
-      <Modal centered onClose={handleClose} opened={opened} title="Импорт задач">
+      <Modal centered onClose={handleClose} opened={opened} title="Импорт данных">
         <Stack gap="md">
           <Paper bg="gray.0" p="sm" radius="md" withBorder>
             <Stack gap="xs">

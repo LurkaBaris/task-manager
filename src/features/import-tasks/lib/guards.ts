@@ -1,4 +1,4 @@
-import type { ImportTasksMode } from '@/entities/task'
+import { IMPORT_TASKS_MODES, type ImportTasksMode } from '@/entities/task'
 
 export const isImportTasksMode = (value: string): value is ImportTasksMode =>
-  value === 'merge' || value === 'replace'
+  IMPORT_TASKS_MODES.includes(value as ImportTasksMode)

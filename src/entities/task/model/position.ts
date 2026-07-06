@@ -1,4 +1,4 @@
-import { TASK_POSITION_STEP } from '@/shared/lib'
+import { TASK_POSITION_STEP } from '@/shared/config'
 import type { Task } from './types'
 
 const isDefined = <T>(value: T | undefined): value is T => value !== undefined

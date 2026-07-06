@@ -1,7 +1,7 @@
 import type { Column } from '@/entities/column'
 import { useDroppable } from '@dnd-kit/core'
 import type { ReactNode } from 'react'
-import type { TaskDndColumnData } from '../model/types'
+import { DROPPABLE_COLUMN_ID_PREFIX, type TaskDndColumnData } from '../model/types'
 
 interface DroppableColumnProps {
   columnId: Column['id']
@@ -10,7 +10,7 @@ interface DroppableColumnProps {
 
 export const DroppableColumn = ({ columnId, children }: DroppableColumnProps) => {
   const { setNodeRef } = useDroppable({
-    id: columnId,
+    id: `${DROPPABLE_COLUMN_ID_PREFIX}${columnId}`,
     data: {
       type: 'column',
       columnId,

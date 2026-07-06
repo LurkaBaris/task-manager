@@ -1,4 +1,4 @@
-import { DEFAULT_COLUMNS, type Column } from '@/entities/column'
+import { type Column } from '@/entities/column'
 
 export const TASK_SORT_ORDER = {
   Manual: 'manual',
@@ -10,9 +10,6 @@ export type TaskSortOrder = (typeof TASK_SORT_ORDER)[keyof typeof TASK_SORT_ORDE
 export type TaskSortOrderByColumnId = Partial<Record<Column['id'], TaskSortOrder>>
 
 export const TASK_SORT_ORDER_STORAGE_KEY = 'task-board:sort-order-by-column-id'
-
-export const getDefaultSortOrderByColumnId = (): TaskSortOrderByColumnId =>
-  Object.fromEntries(DEFAULT_COLUMNS.map((column) => [column.id, TASK_SORT_ORDER.Newest]))
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -27,11 +24,9 @@ export const parseSortOrderByColumnId = (value: unknown): TaskSortOrderByColumnI
 
   const sortOrderByColumnId: TaskSortOrderByColumnId = {}
 
-  DEFAULT_COLUMNS.forEach((column) => {
-    const sortOrder = value[column.id]
-
+  Object.entries(value).forEach(([columnId, sortOrder]) => {
     if (isTaskSortOrder(sortOrder)) {
-      sortOrderByColumnId[column.id] = sortOrder
+      sortOrderByColumnId[columnId] = sortOrder
     }
   })
 

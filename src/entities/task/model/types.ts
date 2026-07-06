@@ -15,4 +15,7 @@ export interface Task {
   position: number
 }
 
-export type ImportTasksMode = 'merge' | 'replace'
+export const IMPORT_TASKS_MODES = ['merge', 'replace'] as const
+export type ImportTasksMode = (typeof IMPORT_TASKS_MODES)[number]
+
+export type TasksByColumnId = Partial<Record<Task['columnId'], Task[]>>
