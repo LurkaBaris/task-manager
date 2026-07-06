@@ -4,6 +4,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { DeleteUndoNotificationContent } from './DeleteUndoNotificationContent'
 
 interface DeleteTaskButtonProps {
   task: Task
@@ -20,10 +21,14 @@ export const DeleteTaskButton = ({ task }: DeleteTaskButtonProps) => {
     try {
       await deleteTask(task.id)
 
+      const notificationId = `delete-task-${task.id}`
+
       notifications.show({
+        id: notificationId,
         title: 'Вы удалили задачу',
-        message: `Задача (id: ${task.id}) была удалена`,
+        message: <DeleteUndoNotificationContent notificationId={notificationId} task={task} />,
         color: 'brand',
+        autoClose: 5000,
       })
 
       close()
