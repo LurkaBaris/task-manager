@@ -62,9 +62,9 @@ export const ColumnCard = ({
             scrollbar: styles.scrollbar,
             viewport: styles.viewport,
           }}
+          scrollbars="y"
           overscrollBehavior="contain"
           scrollbarSize={6}
-          scrollbars="y"
           type="hover"
         >
           <Stack

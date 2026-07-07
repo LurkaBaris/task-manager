@@ -15,6 +15,15 @@
 
 .board {
   overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+.board::-webkit-scrollbar {
+  display: none;
 }
 
 .loadingColumn {
@@ -28,4 +37,44 @@
   border: 1px solid var(--mantine-color-gray-2);
   border-radius: var(--mantine-radius-md);
   background: var(--mantine-color-gray-0);
+}
+
+.boardWrapper {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+
+.topScrollbar {
+  position: absolute;
+  inset-inline: 0;
+  top: -10px;
+  z-index: 10;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mantine-color-brand-6) transparent;
+}
+
+.topScrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+
+.topScrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.topScrollbar::-webkit-scrollbar-thumb {
+  background: var(--mantine-color-brand-6);
+  border-radius: 9999px;
+}
+
+.topScrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--mantine-color-brand-7);
+}
+
+.topScrollbar > div {
+  height: 1px;
 }
