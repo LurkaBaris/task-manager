@@ -14,8 +14,46 @@ export default defineConfig([
 
   ...tseslint.configs.recommended,
 
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.{ts,tsx}'],
+  })),
+
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+      },
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+
+      'no-empty': ['error', { allowEmptyCatch: true }],
+
+      '@typescript-eslint/no-floating-promises': 'off',
+
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: {
+            attributes: false,
+            properties: false,
+          },
+        },
+      ],
+
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
+
+  {
+    files: ['**/*.{js,jsx}'],
     languageOptions: {
       globals: globals.browser,
     },
@@ -33,7 +71,7 @@ export default defineConfig([
   },
 
   {
-    files: ['*.config.{js,cjs}', 'postcss.config.cjs'],
+    files: ['*.config.{js,cjs,ts}', 'postcss.config.cjs'],
     languageOptions: {
       globals: globals.node,
     },

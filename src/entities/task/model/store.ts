@@ -102,12 +102,13 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
 
     try {
       const tasksByColumnEntries = await Promise.all(
-        columnIds.map(async (columnId) => {
+        columnIds.map(async (columnId): Promise<[string, Task[]]> => {
           const columnTasks = await taskRepository.getByColumnId(columnId)
 
           return [columnId, columnTasks]
         }),
       )
+
       const tasksByColumnId: TasksByColumnId = Object.fromEntries(tasksByColumnEntries)
 
       set({
