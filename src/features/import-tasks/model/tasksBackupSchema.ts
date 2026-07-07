@@ -1,19 +1,10 @@
-import { COLUMN_COLOR_OPTIONS, DEFAULT_COLUMNS, type Column } from '@/entities/column'
+import { columnSchema, DEFAULT_COLUMNS, type Column } from '@/entities/column'
 import { taskSchema, type Task } from '@/entities/task'
 import { z } from 'zod'
 import { LEGACY_TASKS_BACKUP_VERSION, SUPPORTED_TASKS_BACKUP_VERSION } from './types'
 
-const importedColumnSchema = z.object({
+const importedColumnSchema = columnSchema.extend({
   id: z.string().trim().min(1, 'У колонки должен быть id'),
-  title: z.string().trim().min(1, 'Введите название колонки').max(50, 'Название слишком длинное'),
-  color: z
-    .string()
-    .trim()
-    .min(1, 'У колонки должен быть цвет')
-    .refine(
-      (color) => COLUMN_COLOR_OPTIONS.some((option) => option.value === color),
-      'Неизвестный цвет колонки',
-    ),
   order: z.number().int().positive('Порядок колонки должен быть положительным числом'),
 })
 

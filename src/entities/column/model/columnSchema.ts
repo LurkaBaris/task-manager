@@ -1,16 +1,9 @@
 import { z } from 'zod'
-import { COLUMN_COLOR_OPTIONS } from './constants'
+import { COLUMN_COLOR_VALUES } from './constants'
 
 export const columnSchema = z.object({
   title: z.string().trim().min(1, 'Введите название колонки').max(50, 'Название слишком длинное'),
-  color: z
-    .string()
-    .optional()
-    .refine(
-      (color) =>
-        color === undefined || COLUMN_COLOR_OPTIONS.some((option) => option.value === color),
-      'Неизвестный цвет колонки',
-    ),
+  color: z.enum(COLUMN_COLOR_VALUES),
 })
 
 export type ColumnSchemaType = z.infer<typeof columnSchema>
