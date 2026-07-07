@@ -5,12 +5,12 @@
 
 .dragHandle {
   position: absolute;
-  top: 8px;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
 
-  width: 72px;
-  height: 5px;
+  width: 84px;
+  height: 6px;
 
   border: none;
   border-radius: 999px;
@@ -27,7 +27,7 @@
 }
 
 .dragHandle:hover {
-  width: 72px;
+  width: 104px;
 }
 
 .dragHandle:active {
