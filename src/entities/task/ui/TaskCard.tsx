@@ -4,16 +4,15 @@ import type { ReactNode } from 'react'
 import { taskDateFormatter } from '../lib/taskDateFormatter'
 import type { Task } from '../model/types'
 import styles from './TaskCard.module.css'
-import { TaskPriorityBadge } from './TaskPriorityBadge'
-import { TaskStatusBadge } from './TaskStatusBadge'
 
 interface TaskCardProps {
   task: Task
   search?: string
-  actions?: ReactNode
+  headerActions?: ReactNode
+  footerActions?: ReactNode
 }
 
-export const TaskCard = ({ task, actions, search }: TaskCardProps) => {
+export const TaskCard = ({ task, search, headerActions, footerActions }: TaskCardProps) => {
   const createdAt = taskDateFormatter.format(new Date(task.createdAt))
 
   return (
@@ -27,9 +26,9 @@ export const TaskCard = ({ task, actions, search }: TaskCardProps) => {
               </span>
             </Title>
 
-            {actions && (
+            {headerActions && (
               <Flex className={styles.actions} gap="sm" align="center">
-                {actions}
+                {headerActions}
               </Flex>
             )}
           </Flex>
@@ -49,8 +48,11 @@ export const TaskCard = ({ task, actions, search }: TaskCardProps) => {
           </Text>
 
           <Group gap="xs" wrap="wrap">
-            <TaskStatusBadge columnId={task.columnId} />
-            <TaskPriorityBadge priority={task.priority} />
+            {footerActions && (
+              <Flex gap="sm" align="center">
+                {footerActions}
+              </Flex>
+            )}
           </Group>
         </Stack>
       </Stack>

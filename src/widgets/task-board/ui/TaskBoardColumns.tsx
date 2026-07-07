@@ -1,6 +1,8 @@
 import { ColumnCard, type Column } from '@/entities/column'
 import { TaskCard, type Task } from '@/entities/task'
 import { ColumnTaskSortControl, type TaskSortOrder } from '@/features/change-column-task-sort'
+import { ChangeTaskPrioritySelect } from '@/features/change-task-priority'
+import { ChangeTaskStatusSelect } from '@/features/change-task-status'
 import { DeleteColumnButton } from '@/features/delete-column'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { EditTaskButton } from '@/features/edit-task'
@@ -200,10 +202,17 @@ export const TaskBoardColumns = ({
                             <TaskCard
                               search={normalizedSearch}
                               task={task}
-                              actions={
+                              headerActions={
                                 <>
                                   <DeleteTaskButton task={task} data-no-dnd />
                                   <EditTaskButton task={task} data-no-dnd />
+                                </>
+                              }
+                              footerActions={
+                                <>
+                                  <ChangeTaskStatusSelect task={task} disabled={disabled} />
+
+                                  <ChangeTaskPrioritySelect task={task} disabled={disabled} />
                                 </>
                               }
                             />

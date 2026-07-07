@@ -22,6 +22,7 @@
 }
 
 .selectableText {
+  overflow-wrap: anywhere;
   user-select: text;
   cursor: text;
 }

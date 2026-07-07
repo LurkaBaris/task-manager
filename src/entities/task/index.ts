@@ -1,4 +1,5 @@
 export { getAllTasks } from './api/getAllTasks'
+export { TASK_PRIORITY_COLOR } from './model/constants'
 export { createTask } from './model/createTask'
 export { TASK_PRIORITY_OPTIONS } from './model/options'
 export { sortTasksByPosition } from './model/position'
@@ -17,5 +18,6 @@ export {
   type TaskPriority,
   type TasksByColumnId,
 } from './model/types'
+export { BadgeSelect } from './ui/BadgeSelect'
 export { TaskCard } from './ui/TaskCard'
 export { TaskForm } from './ui/TaskForm'
