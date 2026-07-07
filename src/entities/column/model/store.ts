@@ -1,8 +1,4 @@
-import {
-  groupTasksByColumnId,
-  normalizeTasksByColumnId,
-  useTaskStore,
-} from '@/entities/task/model/store'
+import { groupTasksByColumnId, normalizeTasksByColumnId, useTaskStore } from '@/entities/task'
 import type { ImportTasksMode, Task } from '@/entities/task/model/types'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
