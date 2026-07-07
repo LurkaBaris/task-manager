@@ -12,5 +12,9 @@ export const TaskStatusBadge = ({ columnId }: TaskStatusBadgeProps) => {
 
   const column = columns.find((column) => column.id === columnId)
 
-  return <Badge color={column?.color ?? 'gray'}>{column?.title ?? 'Колонка удалена'}</Badge>
+  return (
+    <Badge color={column?.color ?? 'gray'} data-no-dnd>
+      {column?.title ?? 'Колонка удалена'}
+    </Badge>
+  )
 }

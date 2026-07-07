@@ -5,9 +5,7 @@ import {
   closestCorners,
   DndContext,
   DragOverlay,
-  PointerSensor,
   pointerWithin,
-  TouchSensor,
   useSensor,
   useSensors,
   type CollisionDetection,
@@ -33,6 +31,7 @@ import {
   isTaskDndSortableColumnData,
   isTaskDndTaskData,
 } from '../model/guards'
+import { CustomPointerSensor, CustomTouchSensor } from '../model/sensors'
 import styles from './TaskDndProvider.module.css'
 
 interface TaskDndProviderProps {
@@ -77,12 +76,12 @@ export const TaskDndProvider = ({
   const [overColumnId, setOverColumnId] = useState<Task['columnId'] | null>(null)
   const [draftTasksByColumnId, setDraftTasksByColumnId] = useState<TasksByColumnId | null>(null)
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(CustomPointerSensor, {
       activationConstraint: {
         distance: 8,
       },
     }),
-    useSensor(TouchSensor, {
+    useSensor(CustomTouchSensor, {
       activationConstraint: {
         delay: 200,
         tolerance: 8,

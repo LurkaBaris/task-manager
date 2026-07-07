@@ -7,5 +7,9 @@ interface TaskPriorityBadgeProps {
 }
 
 export const TaskPriorityBadge = ({ priority }: TaskPriorityBadgeProps) => {
-  return <Badge color={TASK_PRIORITY_COLOR[priority]}>{TASK_PRIORITY_LABEL[priority]}</Badge>
+  return (
+    <Badge color={TASK_PRIORITY_COLOR[priority]} data-no-dnd>
+      {TASK_PRIORITY_LABEL[priority]}
+    </Badge>
+  )
 }

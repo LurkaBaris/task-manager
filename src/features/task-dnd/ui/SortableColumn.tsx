@@ -45,6 +45,7 @@ export const SortableColumn = ({ column, disabled = false, children }: SortableC
         type="button"
         aria-label="Перетащить колонку"
         disabled={disabled}
+        data-dnd-handle
         {...attributes}
         {...listeners}
       />

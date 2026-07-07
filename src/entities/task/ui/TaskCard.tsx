@@ -20,9 +20,11 @@ export const TaskCard = ({ task, actions, search }: TaskCardProps) => {
     <Card className={styles.card} component="article">
       <Stack gap="sm">
         <Stack gap="xs">
-          <Flex gap="md" align="center" justify="space-between" wrap="wrap">
-            <Title order={3} size="md" c="gray.9" w="70%">
-              {renderHighlightedText(task.title, search ?? '')}
+          <Flex gap="md" align="flex-start" justify="space-between" wrap="nowrap">
+            <Title order={3} size="md" c="gray.9" className={styles.title}>
+              <span data-no-dnd className={styles.selectableText}>
+                {renderHighlightedText(task.title, search ?? '')}
+              </span>
             </Title>
 
             {actions && (
@@ -32,14 +34,18 @@ export const TaskCard = ({ task, actions, search }: TaskCardProps) => {
             )}
           </Flex>
 
-          <Text size="sm" c="gray.7" lh={1.45}>
-            {renderHighlightedText(task.description, search ?? '')}
+          <Text size="sm" c="gray.7" lh={1.45} component="div" className={styles.description}>
+            <span data-no-dnd className={styles.selectableText}>
+              {renderHighlightedText(task.description, search ?? '')}
+            </span>
           </Text>
         </Stack>
 
         <Stack gap={8} pt={10} className={styles.footer}>
           <Text size="xs" c="gray.6" fw={600}>
-            Создано: {createdAt}
+            <span data-no-dnd className={styles.selectableText}>
+              Создано: {createdAt}
+            </span>
           </Text>
 
           <Group gap="xs" wrap="wrap">

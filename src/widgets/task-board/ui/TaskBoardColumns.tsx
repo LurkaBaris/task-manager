@@ -101,8 +101,8 @@ export const TaskBoardColumns = ({
                             task={task}
                             actions={
                               <>
-                                <DeleteTaskButton task={task} />
-                                <EditTaskButton task={task} />
+                                <DeleteTaskButton task={task} data-no-dnd />
+                                <EditTaskButton task={task} data-no-dnd />
                               </>
                             }
                           />

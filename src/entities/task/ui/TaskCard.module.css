@@ -2,8 +2,28 @@
   flex-shrink: 0;
 }
 
+.title {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.actions {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .card .actions * {
   cursor: pointer;
+}
+
+.description {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.selectableText {
+  user-select: text;
+  cursor: text;
 }
 
 .footer {
