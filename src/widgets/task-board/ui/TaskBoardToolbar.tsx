@@ -3,8 +3,8 @@ import { CreateColumnButton } from '@/features/create-column'
 import { CreateTaskButton } from '@/features/create-task'
 import { ExportTasksButton } from '@/features/export-tasks'
 import { ImportTasksButton } from '@/features/import-tasks'
-import { Flex, MultiSelect, Pill, TextInput } from '@mantine/core'
-import { Search } from 'lucide-react'
+import { ActionIcon, Flex, MultiSelect, Pill, Popover, Stack, TextInput } from '@mantine/core'
+import { Search, Settings } from 'lucide-react'
 import styles from './TaskBoard.module.css'
 
 const VISIBLE_PRIORITY_PILLS_COUNT = 2
@@ -77,9 +77,22 @@ export const TaskBoardToolbar = ({
         value={selectedPriorities}
       />
 
-      <ExportTasksButton disabled={disabled} />
-      <ImportTasksButton disabled={disabled} />
-      <CreateColumnButton disabled={disabled} />
+      <Popover position="bottom" withArrow shadow="md">
+        <Popover.Target>
+          <ActionIcon variant="light" size="lg" disabled={disabled} aria-label="Настройки доски">
+            <Settings size={18} />
+          </ActionIcon>
+        </Popover.Target>
+
+        <Popover.Dropdown>
+          <Stack gap="xs">
+            <ExportTasksButton disabled={disabled} />
+            <ImportTasksButton disabled={disabled} />
+            <CreateColumnButton disabled={disabled} />
+          </Stack>
+        </Popover.Dropdown>
+      </Popover>
+
       <CreateTaskButton disabled={isCreateTaskDisabled} />
     </Flex>
   )
