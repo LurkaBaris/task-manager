@@ -20,7 +20,7 @@
 .bodyEmpty {
   min-height: 100%;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .emptyText {
