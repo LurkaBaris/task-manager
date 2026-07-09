@@ -1,4 +1,4 @@
-import type { TagDbRecord } from '@/shared/lib/indexed-db'
+import type { TagDbRecord } from '@/shared/lib'
 import { z } from 'zod'
 import { tagSchema } from '../model/tagSchema'
 import type { Tag } from '../model/types'

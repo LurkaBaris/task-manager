@@ -1,4 +1,4 @@
-import { appDbPromise } from '@/shared/lib/indexed-db'
+import { appDbPromise } from '@/shared/lib'
 import type { Tag } from '../model/types'
 import { mapTagFromDb, mapTagToDb } from './tagMapper'
 

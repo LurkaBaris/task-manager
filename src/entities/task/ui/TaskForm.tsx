@@ -53,7 +53,7 @@ export const TaskForm = ({
       type: DEFAULT_TYPE,
       tagId: undefined,
     },
-    mode: 'onChange',
+    mode: 'onTouched',
     resolver: zodResolver(taskSchema),
   })
 

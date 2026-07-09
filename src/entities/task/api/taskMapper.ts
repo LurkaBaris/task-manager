@@ -1,4 +1,4 @@
-import type { TaskDbRecord } from '@/shared/lib/indexed-db'
+import type { TaskDbRecord } from '@/shared/lib'
 import { z } from 'zod'
 import { taskSchema } from '../model/taskSchema'
 import type { Task } from '../model/types'
