@@ -1,6 +1,12 @@
 export { getAllTasks } from './api/getAllTasks'
 export { mapTaskToDb } from './api/taskMapper'
-export { TASK_PRIORITY_COLOR, TASK_TYPES } from './model/constants'
+export {
+  TASK_PRIORITIES,
+  TASK_PRIORITY_COLOR,
+  TASK_PRIORITY_TITLE,
+  TASK_TYPE_TITLE,
+  TASK_TYPES,
+} from './model/constants'
 export { createTask } from './model/createTask'
 export { TASK_PRIORITY_OPTIONS, TASK_TYPE_OPTIONS } from './model/options'
 export { sortTasksByPosition } from './model/position'

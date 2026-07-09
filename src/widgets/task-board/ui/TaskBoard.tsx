@@ -1,11 +1,5 @@
 import { selectColumns, useColumnActions, useColumnStore } from '@/entities/column'
-import {
-  selectTasks,
-  TaskCard,
-  useTaskActions,
-  useTaskStore,
-  type TaskPriority,
-} from '@/entities/task'
+import { selectTasks, TaskCard, useTaskActions, useTaskStore } from '@/entities/task'
 import {
   sortTasksBySortOrder,
   TASK_SORT_ORDER,
@@ -17,6 +11,12 @@ import { CreateColumnButton } from '@/features/create-column'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { EditTaskButton } from '@/features/edit-task'
 import { TaskDndProvider } from '@/features/task-dnd'
+import {
+  hasActiveTaskFilters,
+  isTaskMatchingFilters,
+  selectTaskFilters,
+  useTaskFiltersStore,
+} from '@/features/task-filters'
 import { Alert, Paper, Stack, Text, Title } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
@@ -28,7 +28,7 @@ import { TaskBoardToolbar } from './TaskBoardToolbar'
 
 export const TaskBoard = () => {
   const [search, setSearch] = useState('')
-  const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([])
+  const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
   const [hasColumnsLoadError, setHasColumnsLoadError] = useState(false)
   const [hasTasksLoadError, setHasTasksLoadError] = useState(false)
   const [debouncedSearch] = useDebouncedValue(search, 300)
@@ -38,15 +38,15 @@ export const TaskBoard = () => {
   const { loadTasksByColumnIds } = useTaskActions()
   const { changeColumnSortOrder, getColumnSortOrder, removeColumnSortOrder } = useColumnTaskSort()
   const columnIds = useMemo(() => columns.map((column) => column.id), [columns])
-
   const hasColumns = columns.length > 0
+  const hasFilters = hasActiveTaskFilters(filters)
   const normalizedSearch = debouncedSearch.toLowerCase().trim()
   const isTasksReady = !hasColumns || isLoaded
   const isInitialLoading =
     !hasColumnsLoadError && (!isColumnsLoaded || (hasColumns && isLoading && !isLoaded))
   const isBoardLocked = !isColumnsLoaded || !isTasksReady || hasColumnsLoadError
   const isCreateTaskDisabled = isBoardLocked || !hasColumns
-  const isTaskFilterActive = normalizedSearch.length > 0 || selectedPriorities.length > 0
+  const isTaskFilterActive = normalizedSearch.length > 0 || hasFilters
   const isTaskDndDisabled = isBoardLocked || isTaskFilterActive
 
   const visibleTasksByColumnId = useMemo(
@@ -56,21 +56,18 @@ export const TaskBoard = () => {
           const columnTasks = tasksByColumnId[column.id] ?? []
 
           const visibleTasks = columnTasks.filter((task) => {
-            const matchesSearch =
+            const isSearchMatching =
               normalizedSearch.length === 0 ||
               task.title.toLowerCase().includes(normalizedSearch) ||
               task.description.toLowerCase().includes(normalizedSearch)
 
-            const matchesPriority =
-              selectedPriorities.length === 0 || selectedPriorities.includes(task.priority)
-
-            return matchesSearch && matchesPriority
+            return isSearchMatching && isTaskMatchingFilters(task, filters)
           })
 
           return [column.id, visibleTasks]
         }),
       ),
-    [columns, tasksByColumnId, normalizedSearch, selectedPriorities],
+    [columns, tasksByColumnId, normalizedSearch, filters],
   )
 
   useEffect(() => {
@@ -123,9 +120,7 @@ export const TaskBoard = () => {
         disabled={isBoardLocked}
         isCreateTaskDisabled={isCreateTaskDisabled}
         search={search}
-        selectedPriorities={selectedPriorities}
         onSearchChange={setSearch}
-        onSelectedPrioritiesChange={setSelectedPriorities}
       />
 
       {hasColumnsLoadError ? (
