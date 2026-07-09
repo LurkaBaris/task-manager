@@ -1,0 +1,48 @@
+.card {
+  height: 100%;
+}
+
+.content {
+  height: 100%;
+}
+
+.heading {
+  min-width: 0;
+}
+
+.totalBadge {
+  flex-shrink: 0;
+  text-transform: none;
+}
+
+.totalBadgeLabel {
+  text-transform: none;
+}
+
+.chartBox {
+  width: min(100%, 360px);
+  height: 250px;
+  margin: auto auto 0;
+}
+
+.emptyChart {
+  display: flex;
+  min-height: 250px;
+  margin-top: auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-gray-0);
+}
+
+@media (max-width: 768px) {
+  .chartBox {
+    width: min(100%, 320px);
+    height: 230px;
+  }
+
+  .emptyChart {
+    min-height: 230px;
+  }
+}

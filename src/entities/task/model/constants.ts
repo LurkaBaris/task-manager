@@ -18,9 +18,9 @@ export const TASK_PRIORITY_COLOR = Object.fromEntries(
 ) as Record<TaskPriority, string>
 
 export const TASK_TYPE_CONFIG = [
-  { id: 'task', title: 'Task' },
-  { id: 'bug', title: 'Bug' },
-  { id: 'story', title: 'Story' },
+  { id: 'task', title: 'Task', color: 'brand' },
+  { id: 'bug', title: 'Bug', color: 'priorityHigh' },
+  { id: 'story', title: 'Story', color: 'statusTodo' },
 ] as const
 
 export const TASK_TYPES = TASK_TYPE_CONFIG.map(({ id }) => id)

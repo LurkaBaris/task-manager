@@ -1,0 +1,11 @@
+.dot {
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.emptyChart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+}

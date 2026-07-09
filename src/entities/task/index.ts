@@ -4,6 +4,7 @@ export {
   TASK_PRIORITIES,
   TASK_PRIORITY_COLOR,
   TASK_PRIORITY_TITLE,
+  TASK_TYPE_CONFIG,
   TASK_TYPE_TITLE,
   TASK_TYPES,
 } from './model/constants'

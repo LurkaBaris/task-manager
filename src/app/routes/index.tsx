@@ -1,16 +1,35 @@
-import { ErrorPage } from '@/pages/error'
-import { HomePage } from '@/pages/home'
 import { ROUTES } from '@/shared/config'
+import { Center, Loader } from '@mantine/core'
+import { Suspense, type ReactNode } from 'react'
 import { AppLayout } from '../ui/AppLayout'
+import { LazyErrorPage, LazyHomePage, LazyStatisticPage } from './lazyPages'
+
+const withSuspense = (element: ReactNode) => {
+  return (
+    <Suspense
+      fallback={
+        <Center h="100%">
+          <Loader size="sm" />
+        </Center>
+      }
+    >
+      {element}
+    </Suspense>
+  )
+}
 
 export const routes = [
   {
     element: <AppLayout />,
-    errorElement: <ErrorPage />,
+    errorElement: withSuspense(<LazyErrorPage />),
     children: [
       {
         path: ROUTES.HOME,
-        element: <HomePage />,
+        element: withSuspense(<LazyHomePage />),
+      },
+      {
+        path: ROUTES.STATISTIC,
+        element: withSuspense(<LazyStatisticPage />),
       },
     ],
   },

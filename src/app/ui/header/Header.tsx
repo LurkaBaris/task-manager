@@ -1,5 +1,5 @@
-import { AppShell, Container, Group, Text } from '@mantine/core'
 import { ROUTES } from '@/shared/config'
+import { AppShell, Container, Group, Text } from '@mantine/core'
 import { NavLink } from 'react-router-dom'
 import styles from './Header.module.css'
 
@@ -23,6 +23,15 @@ export const Header = () => {
             to={ROUTES.HOME}
           >
             Главная
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) =>
+              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+            }
+            to={ROUTES.STATISTIC}
+          >
+            Статистика
           </NavLink>
         </nav>
       </Container>
