@@ -1,5 +1,4 @@
-import { groupTasksByColumnId, normalizeTasksByColumnId, useTaskStore } from '@/entities/task'
-import type { ImportTasksMode, Task } from '@/entities/task/model/types'
+import { useTaskStore } from '@/entities/task'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 import { columnRepository } from '../api/columnRepository'
@@ -18,13 +17,8 @@ interface ColumnActions {
   createColumn: (patch: ColumnSchemaType) => Promise<void>
   deleteColumn: (columnId: Column['id']) => Promise<void>
   reorderColumns: (columns: Column[]) => Promise<void>
-  importColumns: (columns: Column[], mode: ImportTasksMode) => Promise<void>
-  importBoard: (params: {
-    columns: Column[]
-    tasks: Task[]
-    mode: ImportTasksMode
-  }) => Promise<void>
   restoreColumn: (column: Column) => Promise<void>
+  setColumns: (columns: Column[]) => void
 }
 
 export const normalizeColumnOrder = (columns: Column[]): Column[] =>
@@ -44,6 +38,13 @@ export const useColumnStore = create<ColumnState & ColumnActions>()((set, get) =
 
     const columns = await columnRepository.getAll()
 
+    set({
+      columns,
+      isLoaded: true,
+    })
+  },
+
+  setColumns: (columns) => {
     set({
       columns,
       isLoaded: true,
@@ -93,63 +94,6 @@ export const useColumnStore = create<ColumnState & ColumnActions>()((set, get) =
     }
   },
 
-  importColumns: async (columns, mode) => {
-    const normalizedColumns =
-      mode === 'replace'
-        ? normalizeColumnOrder(columns)
-        : normalizeColumnOrder(
-            [
-              ...new Map(
-                [...get().columns, ...columns].map((column) => [column.id, column]),
-              ).values(),
-            ].sort((a, b) => a.order - b.order),
-          )
-
-    await columnRepository.putMany(normalizedColumns)
-
-    set({
-      columns: normalizedColumns,
-      isLoaded: true,
-    })
-  },
-
-  importBoard: async ({ columns, tasks, mode }) => {
-    const currentTasks = Object.values(useTaskStore.getState().tasksByColumnId).flatMap(
-      (columnTasks) => columnTasks ?? [],
-    )
-    let columnsToImport = columns
-    let tasksToImport = tasks
-
-    if (mode === 'merge') {
-      const columnsById = new Map(get().columns.map((column) => [column.id, column]))
-      const importedTaskIds = new Set(tasks.map((task) => task.id))
-
-      columns.forEach((column) => {
-        columnsById.set(column.id, column)
-      })
-
-      columnsToImport = [...columnsById.values()].sort((a, b) => a.order - b.order)
-      tasksToImport = [...currentTasks.filter((task) => !importedTaskIds.has(task.id)), ...tasks]
-    }
-
-    const normalizedColumns = normalizeColumnOrder(columnsToImport)
-    const normalizedTasks = normalizeTasksByColumnId(tasksToImport)
-
-    await columnRepository.replaceBoard({
-      columns: normalizedColumns,
-      tasks: normalizedTasks,
-    })
-
-    set({
-      columns: normalizedColumns,
-      isLoaded: true,
-    })
-    useTaskStore.setState({
-      tasksByColumnId: groupTasksByColumnId(normalizedTasks),
-      isLoaded: true,
-    })
-  },
-
   restoreColumn: async (column) => {
     const columnsById = new Map(get().columns.map((column) => [column.id, column]))
 
@@ -179,8 +123,7 @@ export const useColumnActions = () =>
       createColumn: state.createColumn,
       deleteColumn: state.deleteColumn,
       reorderColumns: state.reorderColumns,
-      importColumns: state.importColumns,
-      importBoard: state.importBoard,
       restoreColumn: state.restoreColumn,
+      setColumns: state.setColumns,
     })),
   )

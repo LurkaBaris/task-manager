@@ -1,9 +1,12 @@
 import type { Column } from '@/entities/column'
-import type { TASK_PRIORITY_CONFIG } from './constants'
+import type { Tag } from '@/entities/tag'
+import type { TASK_PRIORITY_CONFIG, TASK_TYPE_CONFIG } from './constants'
 
 export type TaskPriorityConfig = (typeof TASK_PRIORITY_CONFIG)[number]
-
 export type TaskPriority = TaskPriorityConfig['id']
+
+export type TaskTypeConfig = (typeof TASK_TYPE_CONFIG)[number]
+export type TaskType = TaskTypeConfig['id']
 
 export interface Task {
   id: string
@@ -13,9 +16,8 @@ export interface Task {
   columnId: Column['id']
   priority: TaskPriority
   position: number
+  type: TaskType
+  tagId?: Tag['id']
 }
-
-export const IMPORT_TASKS_MODES = ['merge', 'replace'] as const
-export type ImportTasksMode = (typeof IMPORT_TASKS_MODES)[number]
 
 export type TasksByColumnId = Partial<Record<Task['columnId'], Task[]>>

@@ -7,7 +7,7 @@ import {
   normalizeTaskPositions,
   normalizeTaskPositionsByOrder,
 } from './position'
-import type { ImportTasksMode, Task, TasksByColumnId } from './types'
+import type { Task, TasksByColumnId } from './types'
 
 type TaskPatch = Partial<Omit<Task, 'id' | 'createdAt'>>
 type MoveTaskParams = {
@@ -39,7 +39,7 @@ interface ITaskActions {
   moveTask: (params: MoveTaskParams) => Promise<void>
   reorderColumnTasks: (params: ReorderColumnTasksParams) => Promise<void>
   getNextPositionByColumnId: (columnId: Task['columnId']) => number
-  importTasks: (tasks: Task[], mode: ImportTasksMode) => Promise<void>
+  setTasks: (tasks: Task[]) => void
 }
 
 export type TaskStore = ITaskState & ITaskActions
@@ -118,6 +118,13 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
     } finally {
       set({ isLoading: false })
     }
+  },
+
+  setTasks: (tasks) => {
+    set({
+      tasksByColumnId: groupTasksByColumnId(tasks),
+      isLoaded: true,
+    })
   },
 
   addTask: async (task) => {
@@ -245,41 +252,11 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
     })
   },
 
-  importTasks: async (tasks, mode) => {
-    if (mode === 'replace') {
-      const normalizedTasks = normalizeTasksByColumnId(tasks)
-
-      await taskRepository.replaceAll(normalizedTasks)
-
-      set({
-        tasksByColumnId: groupTasksByColumnId(normalizedTasks),
-        isLoaded: true,
-      })
-
-      return
-    }
-
-    const importedTaskIds = new Set(tasks.map((task) => task.id))
-
-    const currentTasks = Object.values(get().tasksByColumnId)
-      .flatMap((columnTasks) => columnTasks ?? [])
-      .filter((task) => !importedTaskIds.has(task.id))
-
-    const normalizedTasks = normalizeTasksByColumnId([...currentTasks, ...tasks])
-
-    await taskRepository.putMany(normalizedTasks)
-
-    set({
-      tasksByColumnId: groupTasksByColumnId(normalizedTasks),
-      isLoaded: true,
-    })
-  },
-
   clearColumnTasks: (columnId) => {
     set((state) => {
       const nextTasksByColumnId = { ...state.tasksByColumnId }
 
-      delete nextTasksByColumnId[columnId]
+      nextTasksByColumnId[columnId] = undefined
 
       return {
         tasksByColumnId: nextTasksByColumnId,
@@ -320,8 +297,8 @@ export const useTaskActions = () =>
       getNextPositionByColumnId: state.getNextPositionByColumnId,
       moveTask: state.moveTask,
       reorderColumnTasks: state.reorderColumnTasks,
-      importTasks: state.importTasks,
       clearColumnTasks: state.clearColumnTasks,
       restoreTasks: state.restoreTasks,
+      setTasks: state.setTasks,
     })),
   )

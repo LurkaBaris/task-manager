@@ -3,6 +3,7 @@ export const TASK_POSITION_STEP = 1000
 export const COLUMN_ORDER_STEP = 1000
 
 export const DEFAULT_COLUMN_COLOR = 'brand'
+export const DEFAULT_TYPE = 'task'
 
 export const COLUMN_COLOR_OPTIONS = [
   { value: 'brand', label: 'Бирюзовый' },

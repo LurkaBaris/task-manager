@@ -31,11 +31,13 @@ export const BadgeSelect = <T extends string>({
   const handleSelect = async (nextValue: string) => {
     combobox.closeDropdown()
 
-    if (nextValue === value) {
+    const option = options.find((option) => option.value === nextValue)
+
+    if (!option || option.value === value) {
       return
     }
 
-    await onChange(nextValue as T)
+    await onChange(option.value)
   }
 
   return (

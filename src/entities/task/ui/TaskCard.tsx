@@ -5,14 +5,26 @@ import { taskDateFormatter } from '../lib/taskDateFormatter'
 import type { Task } from '../model/types'
 import styles from './TaskCard.module.css'
 
+interface TaskCardMetaItem {
+  label: string
+  content: ReactNode
+}
+
 interface TaskCardProps {
   task: Task
   search?: string
   headerActions?: ReactNode
+  metaItems?: TaskCardMetaItem[]
   footerActions?: ReactNode
 }
 
-export const TaskCard = ({ task, search, headerActions, footerActions }: TaskCardProps) => {
+export const TaskCard = ({
+  task,
+  search,
+  headerActions,
+  metaItems,
+  footerActions,
+}: TaskCardProps) => {
   const createdAt = taskDateFormatter.format(new Date(task.createdAt))
 
   return (
@@ -38,6 +50,20 @@ export const TaskCard = ({ task, search, headerActions, footerActions }: TaskCar
               {renderHighlightedText(task.description, search ?? '')}
             </span>
           </Text>
+
+          {metaItems?.length && (
+            <Stack gap={2} w="fit-content" maw="100%" data-no-dnd>
+              {metaItems.map((item) => (
+                <Group key={item.label} gap={10} w="fit-content" maw="100%" wrap="nowrap">
+                  <Text size="13px" c="gray.6" fw={600} style={{ flexShrink: 0 }}>
+                    {item.label}:
+                  </Text>
+
+                  <div style={{ minWidth: 0 }}>{item.content}</div>
+                </Group>
+              ))}
+            </Stack>
+          )}
         </Stack>
 
         <Stack gap={8} pt={10} className={styles.footer}>
@@ -47,13 +73,13 @@ export const TaskCard = ({ task, search, headerActions, footerActions }: TaskCar
             </span>
           </Text>
 
-          <Group gap="xs" wrap="wrap">
-            {footerActions && (
-              <Flex gap="sm" align="center">
+          {footerActions && (
+            <Group gap="xs" wrap="wrap">
+              <Flex gap="sm" align="center" wrap="wrap">
                 {footerActions}
               </Flex>
-            )}
-          </Group>
+            </Group>
+          )}
         </Stack>
       </Stack>
     </Card>

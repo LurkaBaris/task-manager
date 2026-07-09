@@ -1,4 +1,5 @@
 import { getAllColumns } from '@/entities/column'
+import { getAllTags } from '@/entities/tag'
 import { getAllTasks } from '@/entities/task'
 import { Button } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
@@ -22,7 +23,11 @@ export const ExportTasksButton = ({ disabled = false }: ExportTasksButtonProps) 
     setIsExporting(true)
 
     try {
-      const [columns, tasks] = await Promise.all([getAllColumns(), getAllTasks()])
+      const [columns, tasks, tags] = await Promise.all([
+        getAllColumns(),
+        getAllTasks(),
+        getAllTags(),
+      ])
 
       if (columns.length === 0) {
         notifications.show({
@@ -33,13 +38,17 @@ export const ExportTasksButton = ({ disabled = false }: ExportTasksButtonProps) 
         return
       }
 
-      const backup = createTasksBackup({ columns, tasks })
+      const backup = createTasksBackup({
+        columns,
+        tasks,
+        tags,
+      })
 
       downloadJsonFile('task-manager-backup.json', backup)
 
       notifications.show({
         title: 'Скачивание началось',
-        message: `Экспортировано колонок: ${columns.length}, задач: ${tasks.length}`,
+        message: `Экспортировано колонок: ${columns.length}, задач: ${tasks.length}, тегов: ${tags.length}`,
         color: 'brand',
       })
     } catch {

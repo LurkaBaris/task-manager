@@ -1,2 +1,2 @@
 export { appDbPromise } from './db'
-export type { ColumnDbRecord, TaskDbRecord } from './db'
+export type { ColumnDbRecord, TagDbRecord, TaskDbRecord } from './db'

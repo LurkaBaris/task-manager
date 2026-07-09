@@ -20,6 +20,7 @@ import {
 } from '@dnd-kit/sortable'
 import { Group } from '@mantine/core'
 import { useRef, useState, type UIEvent, type WheelEvent } from 'react'
+import { getTaskCardActions } from '../lib/getTaskCardActions'
 import styles from './TaskBoard.module.css'
 
 interface TaskBoardColumnsProps {
@@ -144,7 +145,6 @@ export const TaskBoardColumns = ({
         align="stretch"
         className={styles.board}
         gap="md"
-        grow
         justify="space-between"
         wrap="nowrap"
         ref={(node) => {
@@ -208,6 +208,7 @@ export const TaskBoardColumns = ({
                                   <EditTaskButton task={task} data-no-dnd />
                                 </>
                               }
+                              metaItems={getTaskCardActions({ task, disabled })}
                               footerActions={
                                 <>
                                   <ChangeTaskStatusSelect task={task} disabled={disabled} />

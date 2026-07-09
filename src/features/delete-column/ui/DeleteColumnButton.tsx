@@ -1,9 +1,11 @@
 import { useColumnActions, type Column } from '@/entities/column'
+import { useTagActions } from '@/entities/tag'
 import { selectTasks, useTaskActions, useTaskStore } from '@/entities/task'
 import { ActionIcon, Button, Group, Modal, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { Trash2 } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { DeleteColumnUndoNotificationContent } from './DeleteColumnUndoNotificationContent'
 
@@ -20,14 +22,49 @@ export const DeleteColumnButton = ({
 }: DeleteColumnButtonProps) => {
   const { deleteColumn } = useColumnActions()
   const { clearColumnTasks } = useTaskActions()
+  const { removeTagsIfUnused } = useTagActions()
   const { tasksByColumnId } = useTaskStore(useShallow(selectTasks))
   const [opened, { open, close }] = useDisclosure(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  const columnTasks = tasksByColumnId[column.id] ?? []
+  const columnTasks = tasksByColumnId[column.id]
+
+  const columnTaskTagIds = useMemo(() => {
+    if (!columnTasks) return []
+
+    return Array.from(
+      columnTasks.reduce((tagIds, task) => {
+        if (task.tagId) {
+          tagIds.add(task.tagId)
+        }
+
+        return tagIds
+      }, new Set<string>()),
+    )
+  }, [columnTasks])
+
+  const handleDeletedColumnNotificationClose = useCallback(async () => {
+    if (!columnTaskTagIds.length) {
+      return
+    }
+
+    try {
+      await removeTagsIfUnused(columnTaskTagIds)
+    } catch {
+      notifications.show({
+        title: 'Не удалось очистить теги',
+        message: 'Некоторые теги остались в списке, попробуйте обновить страницу',
+        color: 'red',
+      })
+    }
+  }, [columnTaskTagIds, removeTagsIfUnused])
 
   const handleDelete = async () => {
+    setIsDeleting(true)
+
     try {
       await deleteColumn(column.id)
+
       clearColumnTasks(column.id)
       onRemove(column.id)
 
@@ -40,11 +77,12 @@ export const DeleteColumnButton = ({
           <DeleteColumnUndoNotificationContent
             column={column}
             notificationId={notificationId}
-            tasks={columnTasks}
+            tasks={columnTasks ?? []}
           />
         ),
         color: 'brand',
         autoClose: 5000,
+        onClose: handleDeletedColumnNotificationClose,
       })
 
       close()
@@ -54,6 +92,8 @@ export const DeleteColumnButton = ({
         message: 'Попробуйте ещё раз',
         color: 'red',
       })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -62,7 +102,7 @@ export const DeleteColumnButton = ({
       <ActionIcon
         aria-label="Удалить колонку"
         color="red"
-        disabled={disabled}
+        disabled={disabled || isDeleting}
         onClick={open}
         type="button"
         variant="subtle"
@@ -77,15 +117,15 @@ export const DeleteColumnButton = ({
           </Text>
 
           <Text c="dimmed" size="sm">
-            Задач в колонке: {columnTasks.length}
+            Задач в колонке: {columnTasks?.length ?? 0}
           </Text>
 
           <Group justify="flex-end">
-            <Button type="button" variant="default" onClick={close}>
+            <Button disabled={isDeleting} type="button" variant="default" onClick={close}>
               Отмена
             </Button>
 
-            <Button color="red" type="button" onClick={handleDelete}>
+            <Button color="red" loading={isDeleting} type="button" onClick={handleDelete}>
               Удалить
             </Button>
           </Group>

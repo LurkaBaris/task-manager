@@ -11,16 +11,20 @@ import {
   TASK_SORT_ORDER,
   useColumnTaskSort,
 } from '@/features/change-column-task-sort'
+import { ChangeTaskPrioritySelect } from '@/features/change-task-priority'
+import { ChangeTaskStatusSelect } from '@/features/change-task-status'
 import { CreateColumnButton } from '@/features/create-column'
+import { DeleteTaskButton } from '@/features/delete-task'
+import { EditTaskButton } from '@/features/edit-task'
 import { TaskDndProvider } from '@/features/task-dnd'
 import { Alert, Paper, Stack, Text, Title } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
+import { TaskBoardColumns } from './TaskBoardColumns'
 import { TaskBoardSkeleton } from './TaskBoardSkeleton'
 import { TaskBoardToolbar } from './TaskBoardToolbar'
-import { TaskBoardColumns } from './TaskBoardColumns'
 
 export const TaskBoard = () => {
   const [search, setSearch] = useState('')
@@ -154,7 +158,23 @@ export const TaskBoard = () => {
           }
           isColumnManual={(columnId) => getColumnSortOrder(columnId) === TASK_SORT_ORDER.Manual}
           setColumnManual={(columnId) => changeColumnSortOrder(columnId, TASK_SORT_ORDER.Manual)}
-          renderOverlay={(task) => <TaskCard task={task} />}
+          renderOverlay={(task) => (
+            <TaskCard
+              task={task}
+              headerActions={
+                <>
+                  <EditTaskButton task={task} disabled />
+                  <DeleteTaskButton task={task} disabled />
+                </>
+              }
+              footerActions={
+                <>
+                  <ChangeTaskStatusSelect task={task} disabled />
+                  <ChangeTaskPrioritySelect task={task} disabled />
+                </>
+              }
+            />
+          )}
         >
           {({ overColumnId, getColumnTasks }) => (
             <TaskBoardColumns

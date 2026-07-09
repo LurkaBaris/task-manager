@@ -1,10 +1,19 @@
 import { type Column } from '@/entities/column'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Group, Select, Stack, TextInput, Textarea } from '@mantine/core'
+import type { ReactElement } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { TASK_PRIORITY_OPTIONS } from '../model/options'
+import { DEFAULT_TYPE } from '../model/constants'
+import { TASK_PRIORITY_OPTIONS, TASK_TYPE_OPTIONS } from '../model/options'
 import { taskSchema, type TaskSchemaType } from '../model/taskSchema'
 import styles from './TaskForm.module.css'
+
+interface TaskFormTagFieldProps {
+  value?: TaskSchemaType['tagId']
+  error?: string
+  disabled: boolean
+  onChange: (tagId: TaskSchemaType['tagId']) => void
+}
 
 interface TaskFormProps {
   columns: Column[]
@@ -12,6 +21,7 @@ interface TaskFormProps {
   submitLabel?: string
   onCancel: () => void
   onSubmit: (values: TaskSchemaType) => void | Promise<void>
+  renderTagField?: (props: TaskFormTagFieldProps) => ReactElement
 }
 
 const inputProps = {
@@ -28,6 +38,7 @@ export const TaskForm = ({
   onSubmit,
   defaultValues,
   submitLabel = 'Создать',
+  renderTagField,
 }: TaskFormProps) => {
   const {
     control,
@@ -39,17 +50,15 @@ export const TaskForm = ({
       description: '',
       columnId: columns[0]?.id ?? '',
       priority: 'low',
+      type: DEFAULT_TYPE,
+      tagId: undefined,
     },
-    mode: 'onTouched',
+    mode: 'onChange',
     resolver: zodResolver(taskSchema),
   })
 
   const onSubmitModal = async (values: TaskSchemaType) => {
     await onSubmit(values)
-  }
-
-  const handleCancel = () => {
-    onCancel()
   }
 
   const statusOptions = columns.map((column) => ({
@@ -120,8 +129,38 @@ export const TaskForm = ({
           )}
         />
 
+        <Controller
+          name="type"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Select
+              {...inputProps}
+              {...field}
+              allowDeselect={false}
+              data={TASK_TYPE_OPTIONS}
+              error={fieldState.error?.message}
+              label="Тип"
+            />
+          )}
+        />
+
+        {renderTagField && (
+          <Controller
+            name="tagId"
+            control={control}
+            render={({ field, fieldState }) =>
+              renderTagField({
+                value: field.value,
+                error: fieldState.error?.message,
+                disabled: isSubmitting,
+                onChange: field.onChange,
+              })
+            }
+          />
+        )}
+
         <Group justify="flex-end">
-          <Button color="gray" onClick={handleCancel} type="button" variant="subtle">
+          <Button color="gray" onClick={onCancel} type="button" variant="subtle">
             Отмена
           </Button>
 

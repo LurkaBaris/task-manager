@@ -1,4 +1,4 @@
-import { DEFAULT_COLUMNS, TASK_POSITION_STEP } from '@/shared/config'
+import { DEFAULT_COLUMNS, DEFAULT_TYPE, TASK_POSITION_STEP } from '@/shared/config'
 import { openDB, type DBSchema } from 'idb'
 import { INDEXED_DB_NAME, INDEXED_DB_VERSION } from './config'
 
@@ -10,6 +10,8 @@ export interface TaskDbRecord {
   columnId: string
   priority: string
   position: number
+  type: string
+  tagId?: string
 }
 
 export interface ColumnDbRecord {
@@ -17,6 +19,11 @@ export interface ColumnDbRecord {
   title: string
   color: string
   order: number
+}
+
+export interface TagDbRecord {
+  id: string
+  name: string
 }
 
 interface AppDbSchema extends DBSchema {
@@ -36,10 +43,16 @@ interface AppDbSchema extends DBSchema {
       'by-order': number
     }
   }
+  tags: {
+    key: string
+    value: TagDbRecord
+  }
 }
 
 const TASKS_STORE_NAME = 'tasks'
 const COLUMNS_STORE_NAME = 'columns'
+const TAGS_STORE_NAME = 'tags'
+
 const UNUSED_TASK_INDEXES: Array<'by-created-at' | 'by-priority'> = ['by-created-at', 'by-priority']
 
 export const appDbPromise = openDB<AppDbSchema>(INDEXED_DB_NAME, INDEXED_DB_VERSION, {
@@ -97,6 +110,26 @@ export const appDbPromise = openDB<AppDbSchema>(INDEXED_DB_NAME, INDEXED_DB_VERS
 
       for (const column of DEFAULT_COLUMNS) {
         await columnStore.put(column)
+      }
+    }
+
+    if (oldVersion < 5) {
+      db.createObjectStore(TAGS_STORE_NAME, { keyPath: 'id' })
+
+      const taskStore = transaction.objectStore(TASKS_STORE_NAME)
+
+      let cursor = await taskStore.openCursor()
+
+      while (cursor) {
+        const task = cursor.value
+
+        await cursor.update({
+          ...task,
+          type: task.type || DEFAULT_TYPE,
+          tagId: undefined,
+        })
+
+        cursor = await cursor.continue()
       }
     }
   },

@@ -1,3 +1,4 @@
+export { DEFAULT_TYPE } from '@/shared/config'
 import type { TaskPriority } from './types'
 
 export const TASK_PRIORITY_CONFIG = [
@@ -16,3 +17,11 @@ export const TASK_PRIORITY_SELECT_DATA = TASK_PRIORITY_CONFIG.map(({ id, title }
 export const TASK_PRIORITY_COLOR = Object.fromEntries(
   TASK_PRIORITY_CONFIG.map(({ id, color }) => [id, color]),
 ) as Record<TaskPriority, string>
+
+export const TASK_TYPE_CONFIG = [
+  { id: 'task', title: 'Task' },
+  { id: 'bug', title: 'Bug' },
+  { id: 'story', title: 'Story' },
+] as const
+
+export const TASK_TYPES = TASK_TYPE_CONFIG.map(({ id }) => id)

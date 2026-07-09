@@ -1,12 +1,12 @@
-import { useColumnActions } from '@/entities/column'
-import { type ImportTasksMode } from '@/entities/task'
 import { Box, Button, Group, Modal, Paper, ScrollArea, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { Upload } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useRef, useState, type ChangeEvent } from 'react'
 import { getImportErrorMessage } from '../lib/getImportErrorMessage'
 import { parseTasksBackup } from '../lib/parseTasksBackup'
+import { IMPORT_TASKS_MODE, type ImportTasksMode } from '../model/types'
+import { useImportBoard } from '../model/useImportBoard'
 import styles from './ImportTasksButton.module.css'
 
 interface ImportTasksButtonProps {
@@ -29,7 +29,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
   const [selectedFileContent, setSelectedFileContent] = useState('')
   const [isImporting, setIsImporting] = useState(false)
   const [opened, { open, close }] = useDisclosure(false)
-  const { importBoard } = useColumnActions()
+  const { importBoard } = useImportBoard()
 
   const resetSelectedFile = () => {
     setSelectedFile(null)
@@ -64,12 +64,13 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
       await importBoard({
         columns: backup.columns,
         tasks: backup.tasks,
+        tags: backup.tags,
         mode,
       })
 
       notifications.show({
         title: 'Данные импортированы',
-        message: `Импортировано колонок: ${backup.columns.length}, задач: ${backup.tasks.length}`,
+        message: `Импортировано колонок: ${backup.columns.length}, задач: ${backup.tasks.length}, тегов: ${backup.tags.length}`,
         color: 'brand',
       })
 
@@ -84,6 +85,33 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
     } finally {
       setIsImporting(false)
     }
+  }
+
+  const handleInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget
+    const file = input.files?.[0]
+
+    if (!file) {
+      return
+    }
+
+    const isJsonFile = file.type === 'application/json' || file.name.toLowerCase().endsWith('.json')
+
+    if (!isJsonFile) {
+      input.value = ''
+
+      notifications.show({
+        title: 'Вы выбрали не тот формат файла',
+        message: 'Попробуйте выбрать файл в формате JSON',
+        color: 'red',
+      })
+
+      return
+    }
+
+    await handleSelectFile(file)
+
+    input.value = ''
   }
 
   return (
@@ -102,31 +130,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
       <input
         accept=".json,application/json"
         hidden
-        onChange={async (event) => {
-          const input = event.currentTarget
-          const file = input.files?.[0]
-
-          if (!file) {
-            return
-          }
-
-          const isJsonFile =
-            file.type === 'application/json' || file.name.toLowerCase().endsWith('.json')
-
-          if (!isJsonFile) {
-            input.value = ''
-            notifications.show({
-              title: 'Вы выбрали не тот формат файла',
-              message: 'Попробуйте выбрать другой файл',
-              color: 'red',
-            })
-            return
-          }
-
-          await handleSelectFile(file)
-
-          input.value = ''
-        }}
+        onChange={handleInputChange}
         ref={inputRef}
         type="file"
       />
@@ -155,7 +159,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
             <Button
               disabled={!selectedFile || isImporting}
               loading={isImporting}
-              onClick={() => handleImportFile('merge')}
+              onClick={() => handleImportFile(IMPORT_TASKS_MODE.Merge)}
               type="button"
               variant="light"
             >
@@ -166,7 +170,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
               color="red"
               disabled={!selectedFile || isImporting}
               loading={isImporting}
-              onClick={() => handleImportFile('replace')}
+              onClick={() => handleImportFile(IMPORT_TASKS_MODE.Replace)}
               type="button"
             >
               Заменить все

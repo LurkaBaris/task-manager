@@ -1,6 +1,7 @@
 .draggable {
   position: relative;
   height: 100%;
+  flex: 1 1 0;
 }
 
 .dragHandle {
@@ -8,19 +9,14 @@
   top: 6px;
   left: 50%;
   transform: translateX(-50%);
-
   width: 84px;
   height: 6px;
-
   border: none;
   border-radius: 999px;
-
   background-color: var(--mantine-color-brand-filled);
-
   cursor: grab;
   touch-action: none;
   z-index: 10;
-
   transition:
     width 120ms ease,
     opacity 120ms ease;

@@ -3,7 +3,8 @@ import { CreateColumnButton } from '@/features/create-column'
 import { CreateTaskButton } from '@/features/create-task'
 import { ExportTasksButton } from '@/features/export-tasks'
 import { ImportTasksButton } from '@/features/import-tasks'
-import { ActionIcon, Flex, MultiSelect, Pill, Popover, Stack, TextInput } from '@mantine/core'
+import { ActionsDropdown } from '@/shared/ui'
+import { ActionIcon, Flex, MultiSelect, Pill, Stack, TextInput } from '@mantine/core'
 import { Search, Settings } from 'lucide-react'
 import styles from './TaskBoard.module.css'
 
@@ -77,21 +78,20 @@ export const TaskBoardToolbar = ({
         value={selectedPriorities}
       />
 
-      <Popover position="bottom" withArrow shadow="md">
-        <Popover.Target>
+      <ActionsDropdown
+        disabled={disabled}
+        trigger={
           <ActionIcon variant="light" size="lg" disabled={disabled} aria-label="Настройки доски">
             <Settings size={18} />
           </ActionIcon>
-        </Popover.Target>
-
-        <Popover.Dropdown>
-          <Stack gap="xs">
-            <ExportTasksButton disabled={disabled} />
-            <ImportTasksButton disabled={disabled} />
-            <CreateColumnButton disabled={disabled} />
-          </Stack>
-        </Popover.Dropdown>
-      </Popover>
+        }
+      >
+        <Stack gap={8}>
+          <ExportTasksButton disabled={disabled} />
+          <ImportTasksButton disabled={disabled} />
+          <CreateColumnButton disabled={disabled} />
+        </Stack>
+      </ActionsDropdown>
 
       <CreateTaskButton disabled={isCreateTaskDisabled} />
     </Flex>

@@ -12,6 +12,8 @@ export const createTask = (data: ICreateTaskSchema): Task => {
     description: data.description,
     columnId: data.columnId,
     priority: data.priority,
+    type: data.type,
+    tagId: data.tagId,
     createdAt: new Date().toISOString(),
     position: data.position,
   }

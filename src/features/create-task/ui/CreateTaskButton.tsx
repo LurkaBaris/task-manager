@@ -1,4 +1,5 @@
 import { selectColumns, useColumnStore } from '@/entities/column'
+import { selectTags, TagSelect, useTagActions, useTagStore } from '@/entities/tag'
 import {
   createTask,
   TaskForm,
@@ -10,6 +11,7 @@ import { Button, Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import clsx from 'clsx'
+import { useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import styles from './CreateTaskButton.module.css'
 
@@ -20,14 +22,40 @@ interface CreateTaskButtonProps {
 
 export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButtonProps) => {
   const { columns } = useColumnStore(useShallow(selectColumns))
+  const { tags } = useTagStore(useShallow(selectTags))
   const { addTask, getNextPositionByColumnId } = useTaskActions()
+  const { createTagIfNotExists, removeTagsIfUnused } = useTagActions()
   const [opened, { open, close }] = useDisclosure(false)
+  const [draftTagName, setDraftTagName] = useState('')
+
+  const handleClose = () => {
+    setDraftTagName('')
+    close()
+  }
 
   const handleCreateTask = async (values: TaskSchemaType) => {
-    const position = getNextPositionByColumnId(values.columnId)
-    const newTask: Task = createTask({ ...values, position })
+    const normalizedDraftTagName = draftTagName.trim()
+    const existingTag = tags.find(
+      (tag) => tag.name.toLowerCase() === normalizedDraftTagName.toLowerCase(),
+    )
+
+    let tagId = values.tagId
+    let createdTagId: string | undefined
 
     try {
+      if (!tagId && normalizedDraftTagName) {
+        const tag = await createTagIfNotExists(normalizedDraftTagName)
+
+        tagId = tag.id
+
+        if (!existingTag) {
+          createdTagId = tag.id
+        }
+      }
+
+      const position = getNextPositionByColumnId(values.columnId)
+      const newTask: Task = createTask({ ...values, tagId, position })
+
       await addTask(newTask)
 
       notifications.show({
@@ -36,8 +64,12 @@ export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButt
         color: 'brand',
       })
 
-      close()
+      handleClose()
     } catch {
+      if (createdTagId) {
+        await removeTagsIfUnused([createdTagId])
+      }
+
       notifications.show({
         title: `Не удалось создать задачу «${values.title}»`,
         message: 'Попробуйте еще раз',
@@ -57,8 +89,30 @@ export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButt
         Создать задачу
       </Button>
 
-      <Modal centered onClose={close} opened={opened} title="Создать задачу">
-        <TaskForm onCancel={close} onSubmit={handleCreateTask} columns={columns} />
+      <Modal centered onClose={handleClose} opened={opened} title="Создать задачу">
+        <TaskForm
+          columns={columns}
+          onCancel={handleClose}
+          onSubmit={handleCreateTask}
+          renderTagField={({ value, error, disabled, onChange }) => (
+            <TagSelect
+              value={value}
+              draftValue={draftTagName}
+              label="Тег"
+              error={error}
+              disabled={disabled}
+              placeholder="Укажите тег"
+              onChange={(tagId) => {
+                setDraftTagName('')
+                onChange(tagId)
+              }}
+              onCreate={(name) => {
+                setDraftTagName(name)
+                onChange(undefined)
+              }}
+            />
+          )}
+        />
       </Modal>
     </>
   )
