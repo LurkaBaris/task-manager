@@ -12,7 +12,7 @@ export const chartOptions: ChartOptions<'bar'> = {
       callbacks: {
         label: (context) => {
           const label = context.dataset.label ?? 'Значение'
-          const value = Number(context.parsed.y)
+          const value = Number(context.parsed.x)
 
           return `${label}: ${value}`
         },
@@ -22,20 +22,19 @@ export const chartOptions: ChartOptions<'bar'> = {
   scales: {
     x: {
       stacked: true,
-      grid: {
-        display: false,
-      },
-      ticks: {
-        autoSkip: true,
-        maxRotation: 0,
-      },
-    },
-    y: {
-      stacked: true,
       beginAtZero: true,
       ticks: {
         precision: 0,
         stepSize: 1,
+      },
+    },
+    y: {
+      stacked: true,
+      grid: {
+        display: false,
+      },
+      ticks: {
+        autoSkip: false,
       },
     },
   },
