@@ -12,6 +12,12 @@ export const LazyStatisticPage = lazy(() =>
   })),
 )
 
+export const LazyTaskDetailsPage = lazy(() =>
+  import('@/pages/task-details').then((module) => ({
+    default: module.TaskDetailsPage,
+  })),
+)
+
 export const LazyErrorPage = lazy(() =>
   import('@/pages/error').then((module) => ({
     default: module.ErrorPage,

@@ -1,8 +1,7 @@
-import { selectColumns, useColumnActions, useColumnStore } from '@/entities/column'
-import { selectTasks, useTaskActions, useTaskStore } from '@/entities/task'
+import { selectColumns, useColumnStore } from '@/entities/column'
+import { selectTasks, useTaskStore } from '@/entities/task'
 import { StatisticPieCard, StatisticStackedBarCard } from '@/shared/ui'
 import {
-  Alert,
   Box,
   Group,
   Paper,
@@ -13,8 +12,7 @@ import {
   Title,
   useMantineTheme,
 } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { getTasksFromColumns } from '../lib/getTasksFromColumns'
 import { mapColumnsToStatisticPieItems } from '../lib/mapColumnsToStatisticPieItems'
@@ -23,23 +21,16 @@ import { mapTaskTypesByColumnsToStackedBarData } from '../lib/mapTaskTypesByColu
 
 export const TaskStatistics = () => {
   const theme = useMantineTheme()
-  const [hasLoadError, setHasLoadError] = useState(false)
   const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
   const {
     tasksByColumnId,
     isLoading: isTasksLoading,
     isLoaded: isTasksLoaded,
   } = useTaskStore(useShallow(selectTasks))
-  const { loadColumns } = useColumnActions()
-  const { loadTasksByColumnIds } = useTaskActions()
 
   const sortedColumns = useMemo(() => {
     return [...columns].sort((firstColumn, secondColumn) => firstColumn.order - secondColumn.order)
   }, [columns])
-
-  const columnIds = useMemo(() => {
-    return sortedColumns.map((column) => column.id)
-  }, [sortedColumns])
 
   const tasks = useMemo(() => {
     return getTasksFromColumns(tasksByColumnId)
@@ -58,60 +49,7 @@ export const TaskStatistics = () => {
   }, [sortedColumns, tasksByColumnId, theme])
 
   const isInitialLoading =
-    !hasLoadError &&
-    (!isColumnsLoaded || (sortedColumns.length > 0 && isTasksLoading && !isTasksLoaded))
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setHasLoadError(false)
-
-        await loadColumns()
-      } catch {
-        setHasLoadError(true)
-
-        notifications.show({
-          title: 'Не удалось загрузить колонки',
-          message: 'Попробуйте обновить страницу',
-          color: 'red',
-        })
-      }
-    }
-
-    load()
-  }, [loadColumns])
-
-  useEffect(() => {
-    if (!isColumnsLoaded || hasLoadError || columnIds.length === 0) {
-      return
-    }
-
-    const load = async () => {
-      try {
-        setHasLoadError(false)
-
-        await loadTasksByColumnIds(columnIds)
-      } catch {
-        setHasLoadError(true)
-
-        notifications.show({
-          title: 'Не удалось загрузить задачи',
-          message: 'Попробуйте обновить страницу',
-          color: 'red',
-        })
-      }
-    }
-
-    load()
-  }, [columnIds, hasLoadError, isColumnsLoaded, loadTasksByColumnIds])
-
-  if (hasLoadError) {
-    return (
-      <Alert color="red" title="Не удалось загрузить статистику">
-        Попробуйте обновить страницу
-      </Alert>
-    )
-  }
+    !isColumnsLoaded || (sortedColumns.length > 0 && isTasksLoading && !isTasksLoaded)
 
   return (
     <Stack gap="md">

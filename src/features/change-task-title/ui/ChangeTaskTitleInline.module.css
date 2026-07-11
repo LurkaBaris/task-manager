@@ -1,0 +1,101 @@
+.titleText {
+  display: inline;
+  max-width: 100%;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-height: 1.2;
+}
+
+.titleText span {
+  white-space: pre-wrap;
+}
+
+.titleEditButton {
+  display: inline-flex;
+  margin-left: 10px;
+  vertical-align: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.titleText:hover .titleEditButton,
+.titleEditButton:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.titleEditor {
+  display: flex;
+  align-items: flex-start;
+  max-width: 100%;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.titleInputSlot {
+  display: inline-grid;
+  width: fit-content;
+  max-width: calc(100% - 66px);
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.titleInputSlot::after {
+  grid-area: 1 / 1;
+  min-height: 36px;
+  padding: 0;
+  color: transparent;
+  content: attr(data-value);
+  font-size: 30px;
+  font-weight: 750;
+  line-height: 1.2;
+  overflow-wrap: normal;
+  visibility: hidden;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+.titleInput {
+  grid-area: 1 / 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--mantine-color-gray-9);
+  font-family: inherit;
+  font-size: 30px;
+  font-weight: 750;
+  line-height: 1.2;
+  overflow-wrap: normal;
+  resize: none;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+.titleActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-top: 4px;
+  flex: 0 0 auto;
+  margin-left: 4px;
+}
+
+@media (hover: none) {
+  .titleEditButton {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .titleEditButton {
+    transition: none;
+  }
+}

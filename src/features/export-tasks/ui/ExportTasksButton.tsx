@@ -1,12 +1,13 @@
 import { getAllColumns } from '@/entities/column'
 import { getAllTags } from '@/entities/tag'
 import { getAllTasks } from '@/entities/task'
+import { getAllTaskComments } from '@/entities/task-comment'
 import { Button } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { Download } from 'lucide-react'
 import { useState } from 'react'
 import { createTasksBackup } from '../lib/createTasksBackup'
-import { downloadJsonFile } from '../lib/downloadJsonFile'
+import { useDownloadJsonFile } from '../model/useDownloadJsonFile'
 
 interface ExportTasksButtonProps {
   disabled?: boolean
@@ -14,6 +15,7 @@ interface ExportTasksButtonProps {
 
 export const ExportTasksButton = ({ disabled = false }: ExportTasksButtonProps) => {
   const [isExporting, setIsExporting] = useState(false)
+  const downloadJsonFile = useDownloadJsonFile()
 
   const handleExport = async () => {
     if (isExporting) {
@@ -23,10 +25,11 @@ export const ExportTasksButton = ({ disabled = false }: ExportTasksButtonProps) 
     setIsExporting(true)
 
     try {
-      const [columns, tasks, tags] = await Promise.all([
+      const [columns, tasks, tags, comments] = await Promise.all([
         getAllColumns(),
         getAllTasks(),
         getAllTags(),
+        getAllTaskComments(),
       ])
 
       if (columns.length === 0) {
@@ -38,17 +41,21 @@ export const ExportTasksButton = ({ disabled = false }: ExportTasksButtonProps) 
         return
       }
 
-      const backup = createTasksBackup({
+      const taskIds = new Set(tasks.map((task) => task.id))
+      const exportableComments = comments.filter((comment) => taskIds.has(comment.taskId))
+
+      const backup = await createTasksBackup({
         columns,
         tasks,
         tags,
+        comments: exportableComments,
       })
 
       downloadJsonFile('task-manager-backup.json', backup)
 
       notifications.show({
         title: 'Скачивание началось',
-        message: `Экспортировано колонок: ${columns.length}, задач: ${tasks.length}, тегов: ${tags.length}`,
+        message: `Экспортировано колонок: ${columns.length}, задач: ${tasks.length}, тегов: ${tags.length}, комментариев: ${exportableComments.length}`,
         color: 'brand',
       })
     } catch {

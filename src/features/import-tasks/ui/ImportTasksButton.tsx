@@ -2,7 +2,8 @@ import { Box, Button, Group, Modal, Paper, ScrollArea, Stack, Text } from '@mant
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { Upload } from 'lucide-react'
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { formatJsonPreview } from '../lib/formatJsonPreview'
 import { getImportErrorMessage } from '../lib/getImportErrorMessage'
 import { parseTasksBackup } from '../lib/parseTasksBackup'
 import { IMPORT_TASKS_MODE, type ImportTasksMode } from '../model/types'
@@ -13,15 +14,7 @@ interface ImportTasksButtonProps {
   disabled?: boolean
 }
 
-const formatJsonPreview = (fileContent: string): string => {
-  if (!fileContent) return 'Файл не выбран'
-
-  try {
-    return JSON.stringify(JSON.parse(fileContent), null, 2)
-  } catch {
-    return fileContent
-  }
-}
+const MAX_IMPORT_FILE_SIZE = 100 * 1024 * 1024
 
 export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -30,6 +23,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
   const [isImporting, setIsImporting] = useState(false)
   const [opened, { open, close }] = useDisclosure(false)
   const { importBoard } = useImportBoard()
+  const filePreview = useMemo(() => formatJsonPreview(selectedFileContent), [selectedFileContent])
 
   const resetSelectedFile = () => {
     setSelectedFile(null)
@@ -65,12 +59,13 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
         columns: backup.columns,
         tasks: backup.tasks,
         tags: backup.tags,
+        comments: backup.comments,
         mode,
       })
 
       notifications.show({
         title: 'Данные импортированы',
-        message: `Импортировано колонок: ${backup.columns.length}, задач: ${backup.tasks.length}, тегов: ${backup.tags.length}`,
+        message: `Импортировано колонок: ${backup.columns.length}, задач: ${backup.tasks.length}, тегов: ${backup.tags.length}, комментариев: ${backup.comments.length}`,
         color: 'brand',
       })
 
@@ -103,6 +98,18 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
       notifications.show({
         title: 'Вы выбрали не тот формат файла',
         message: 'Попробуйте выбрать файл в формате JSON',
+        color: 'red',
+      })
+
+      return
+    }
+
+    if (file.size > MAX_IMPORT_FILE_SIZE) {
+      input.value = ''
+
+      notifications.show({
+        title: 'Файл слишком большой',
+        message: 'Размер файла импорта не должен превышать 100 МБ',
         color: 'red',
       })
 
@@ -145,7 +152,7 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
 
               <ScrollArea h={280} offsetScrollbars type="auto">
                 <Box className={styles.previewCode} component="pre">
-                  {formatJsonPreview(selectedFileContent)}
+                  {filePreview}
                 </Box>
               </ScrollArea>
             </Stack>

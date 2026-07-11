@@ -33,7 +33,7 @@ export const MetaControlInput = ({
 }: MetaControlInputProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const sizerValue = displayValue.trim() || inputProps.placeholder || ' '
+  const sizerValue = displayValue || inputProps.placeholder || ' '
 
   const handleRootMouseDown: MouseEventHandler<HTMLDivElement> = (event) => {
     onMouseDown?.(event)

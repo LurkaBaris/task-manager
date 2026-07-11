@@ -6,4 +6,4 @@ export {
   DEFAULT_TYPE,
   TASK_POSITION_STEP,
 } from './defaultBoardConfig'
-export { ROUTES } from './routes'
+export { ROUTES, getTaskDetailsRoute } from './routes'

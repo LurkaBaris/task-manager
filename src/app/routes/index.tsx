@@ -2,7 +2,7 @@ import { ROUTES } from '@/shared/config'
 import { Center, Loader } from '@mantine/core'
 import { Suspense, type ReactNode } from 'react'
 import { AppLayout } from '../ui/AppLayout'
-import { LazyErrorPage, LazyHomePage, LazyStatisticPage } from './lazyPages'
+import { LazyErrorPage, LazyHomePage, LazyStatisticPage, LazyTaskDetailsPage } from './lazyPages'
 
 const withSuspense = (element: ReactNode) => {
   return (
@@ -30,6 +30,10 @@ export const routes = [
       {
         path: ROUTES.STATISTIC,
         element: withSuspense(<LazyStatisticPage />),
+      },
+      {
+        path: ROUTES.TASK_DETAILS,
+        element: withSuspense(<LazyTaskDetailsPage />),
       },
     ],
   },

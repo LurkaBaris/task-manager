@@ -1,27 +1,47 @@
 import { useTagActions } from '@/entities/tag'
 import { useTaskActions, type Task } from '@/entities/task'
-import { ActionIcon, Button, Group, Modal, Stack, Text } from '@mantine/core'
+import {
+  deleteTaskCommentsByTaskId,
+  getTaskCommentsByTaskId,
+  restoreTaskComments,
+  type TaskComment,
+} from '@/entities/task-comment'
+import { ActionIcon, Button, Group, Modal, Stack, Text, type ActionIconProps } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { Trash2 } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { DeleteUndoNotificationContent } from './DeleteUndoNotificationContent'
 
 interface DeleteTaskButtonProps {
   task: Task
   disabled?: boolean
+  onDeleted?: () => void
+  onRestored?: () => void
+  size?: ActionIconProps['size']
+  variant?: ActionIconProps['variant']
+  iconSize?: number
 }
 
-export const DeleteTaskButton = ({ task, disabled }: DeleteTaskButtonProps) => {
-  const { deleteTask } = useTaskActions()
+export const DeleteTaskButton = ({
+  task,
+  disabled,
+  onDeleted,
+  onRestored,
+  size = 'md',
+  variant,
+  iconSize = 16,
+}: DeleteTaskButtonProps) => {
+  const { deleteTask, restoreTasks } = useTaskActions()
   const { removeTagsIfUnused } = useTagActions()
   const [opened, { open, close }] = useDisclosure(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleTaskRestored = useCallback(() => {
+    onRestored?.()
+  }, [onRestored])
 
   const handleDeletedTaskNotificationClose = useCallback(async () => {
-    if (!task.tagId) {
-      return
-    }
+    if (!task.tagId) return
 
     try {
       await removeTagsIfUnused([task.tagId])
@@ -35,31 +55,51 @@ export const DeleteTaskButton = ({ task, disabled }: DeleteTaskButtonProps) => {
   }, [removeTagsIfUnused, task.tagId])
 
   const handleDeleteTask = async () => {
-    setIsDeleting(true)
+    close()
+    onDeleted?.()
+
+    let deletedComments: TaskComment[] = []
 
     try {
-      await deleteTask(task.id)
+      deletedComments = await getTaskCommentsByTaskId(task.id)
+
+      await Promise.all([deleteTask(task.id), deleteTaskCommentsByTaskId(task.id)])
 
       const notificationId = `delete-task-${task.id}`
 
       notifications.show({
         id: notificationId,
         title: `Удалена задача «${task.title}»`,
-        message: <DeleteUndoNotificationContent notificationId={notificationId} task={task} />,
+        message: (
+          <DeleteUndoNotificationContent
+            notificationId={notificationId}
+            task={task}
+            comments={deletedComments}
+            onRestored={handleTaskRestored}
+          />
+        ),
         color: 'brand',
         autoClose: 5000,
         onClose: handleDeletedTaskNotificationClose,
       })
-
-      close()
     } catch {
+      try {
+        await Promise.all([restoreTasks([task]), restoreTaskComments(deletedComments)])
+      } catch {
+        notifications.show({
+          title: 'Не удалось откатить удаление полностью',
+          message: 'Обновите страницу и проверьте задачу',
+          color: 'red',
+        })
+      }
+
+      onRestored?.()
+
       notifications.show({
         title: `Не удалось удалить задачу «${task.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
       })
-    } finally {
-      setIsDeleting(false)
     }
   }
 
@@ -70,13 +110,14 @@ export const DeleteTaskButton = ({ task, disabled }: DeleteTaskButtonProps) => {
         type="button"
         aria-label="Удалить задачу"
         title="Удалить"
-        size="md"
+        size={size}
         radius="md"
         color="red"
+        variant={variant}
         data-no-dnd
         disabled={disabled}
       >
-        <Trash2 size={16} strokeWidth={2} data-no-dnd />
+        <Trash2 size={iconSize} strokeWidth={2} data-no-dnd />
       </ActionIcon>
 
       <Modal centered onClose={close} opened={opened} title="Удалить задачу">
@@ -86,17 +127,11 @@ export const DeleteTaskButton = ({ task, disabled }: DeleteTaskButtonProps) => {
           </Text>
 
           <Group justify="flex-end">
-            <Button
-              color="gray"
-              disabled={isDeleting}
-              onClick={close}
-              type="button"
-              variant="subtle"
-            >
+            <Button color="gray" onClick={close} type="button" variant="subtle">
               Отмена
             </Button>
 
-            <Button color="red" loading={isDeleting} onClick={handleDeleteTask} type="button">
+            <Button color="red" onClick={handleDeleteTask} type="button">
               Удалить
             </Button>
           </Group>

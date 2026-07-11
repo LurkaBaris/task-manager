@@ -26,6 +26,22 @@ export interface TagDbRecord {
   name: string
 }
 
+export interface TaskCommentAttachmentDbRecord {
+  id: string
+  name: string
+  type: string
+  size: number
+  file: Blob
+}
+
+export interface TaskCommentDbRecord {
+  id: string
+  taskId: string
+  text: string
+  createdAt: string
+  attachments: TaskCommentAttachmentDbRecord[]
+}
+
 interface AppDbSchema extends DBSchema {
   tasks: {
     key: string
@@ -47,11 +63,20 @@ interface AppDbSchema extends DBSchema {
     key: string
     value: TagDbRecord
   }
+  taskComments: {
+    key: string
+    value: TaskCommentDbRecord
+    indexes: {
+      'by-task-id': string
+      'by-created-at': string
+    }
+  }
 }
 
 const TASKS_STORE_NAME = 'tasks'
 const COLUMNS_STORE_NAME = 'columns'
 const TAGS_STORE_NAME = 'tags'
+const TASK_COMMENTS_STORE_NAME = 'taskComments'
 
 const UNUSED_TASK_INDEXES: Array<'by-created-at' | 'by-priority'> = ['by-created-at', 'by-priority']
 
@@ -131,6 +156,15 @@ export const appDbPromise = openDB<AppDbSchema>(INDEXED_DB_NAME, INDEXED_DB_VERS
 
         cursor = await cursor.continue()
       }
+    }
+
+    if (oldVersion < 6) {
+      const taskCommentsStore = db.createObjectStore(TASK_COMMENTS_STORE_NAME, {
+        keyPath: 'id',
+      })
+
+      taskCommentsStore.createIndex('by-task-id', 'taskId')
+      taskCommentsStore.createIndex('by-created-at', 'createdAt')
     }
   },
 })

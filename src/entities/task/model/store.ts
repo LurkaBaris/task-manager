@@ -164,11 +164,25 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
   },
 
   deleteTask: async (taskId) => {
-    await taskRepository.delete(taskId)
+    const deletedTask = Object.values(get().tasksByColumnId)
+      .flatMap((columnTasks) => columnTasks ?? [])
+      .find((task) => task.id === taskId)
 
     set((state) => ({
       tasksByColumnId: removeTaskFromColumns(state.tasksByColumnId, taskId),
     }))
+
+    try {
+      await taskRepository.delete(taskId)
+    } catch (error) {
+      if (deletedTask) {
+        set((state) => ({
+          tasksByColumnId: upsertTaskInColumns(state.tasksByColumnId, deletedTask),
+        }))
+      }
+
+      throw error
+    }
   },
 
   getNextPositionByColumnId: (columnId) => {

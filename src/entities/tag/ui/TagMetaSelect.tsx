@@ -111,7 +111,7 @@ export const TagMetaSelect = ({
         </Box>
       </Combobox.Target>
 
-      <Combobox.Dropdown data-no-dnd>
+      <Combobox.Dropdown data-no-dnd miw={208} p={3} w={208}>
         <TagOptions
           value={value}
           filteredTags={filteredTags}
@@ -119,6 +119,7 @@ export const TagMetaSelect = ({
           isTagsLoading={isTagsLoading}
           isLoading={isLoading}
           canCreateTag={canCreateTag}
+          compact
           onCreate={handleCreateTag}
         />
       </Combobox.Dropdown>

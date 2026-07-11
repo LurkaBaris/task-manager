@@ -44,7 +44,7 @@ export const metaControlTextSizerStyles = ({
   height: 24,
   paddingRight: withRightSection ? META_CONTROL_RIGHT_SECTION_WIDTH : 0,
   overflow: 'hidden',
-  whiteSpace: 'nowrap',
+  whiteSpace: 'pre',
   textOverflow: 'ellipsis',
   visibility: 'hidden',
   fontSize: 14,

@@ -10,6 +10,7 @@ interface TagOptionsProps {
   isTagsLoading: boolean
   isLoading: boolean
   canCreateTag: boolean
+  compact?: boolean
   onCreate: () => void | Promise<void>
 }
 
@@ -20,6 +21,7 @@ export const TagOptions = ({
   isTagsLoading,
   isLoading,
   canCreateTag,
+  compact = false,
   onCreate,
 }: TagOptionsProps) => {
   const handleCreateMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
@@ -33,8 +35,8 @@ export const TagOptions = ({
   return (
     <Combobox.Options data-no-dnd>
       {isTagsLoading && (
-        <Group gap={8} px={10} py={8} wrap="nowrap" data-no-dnd>
-          <Loader size={16} color="brand" />
+        <Group gap={8} px={compact ? 8 : 10} py={compact ? 6 : 8} wrap="nowrap" data-no-dnd>
+          <Loader size={compact ? 14 : 16} color="brand" />
 
           <Text size="sm" c="dimmed">
             Загрузка тегов...
@@ -43,8 +45,8 @@ export const TagOptions = ({
       )}
 
       {!isTagsLoading && isLoading && (
-        <Group gap={8} px={10} py={8} wrap="nowrap" data-no-dnd>
-          <Loader size={16} color="brand" />
+        <Group gap={8} px={compact ? 8 : 10} py={compact ? 6 : 8} wrap="nowrap" data-no-dnd>
+          <Loader size={compact ? 14 : 16} color="brand" />
 
           <Text size="sm" c="dimmed">
             Поиск...
@@ -55,13 +57,19 @@ export const TagOptions = ({
       {!isTagsLoading && !isLoading && (
         <>
           {filteredTags.map((tag) => (
-            <Combobox.Option key={tag.id} value={tag.id} px={10} py={6} data-no-dnd>
+            <Combobox.Option
+              key={tag.id}
+              value={tag.id}
+              px={compact ? 8 : 10}
+              py={compact ? 5 : 6}
+              data-no-dnd
+            >
               <Group justify="space-between" gap={8} wrap="nowrap">
                 <Text size="sm" truncate>
                   {tag.name}
                 </Text>
 
-                {tag.id === value && <CheckIcon size={12} />}
+                {tag.id === value && <CheckIcon size={compact ? 11 : 12} />}
               </Group>
             </Combobox.Option>
           ))}
@@ -76,9 +84,9 @@ export const TagOptions = ({
               justify="flex-start"
               leftSection={<Plus size={14} />}
               data-no-dnd
-              h="auto"
-              px={10}
-              py={6}
+              h={compact ? 32 : 'auto'}
+              px={compact ? 8 : 10}
+              py={compact ? 4 : 6}
               mt={filteredTags.length && 4}
               onMouseDown={handleCreateMouseDown}
               onClick={handleCreateClick}

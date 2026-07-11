@@ -1,5 +1,5 @@
-import { selectColumns, useColumnActions, useColumnStore } from '@/entities/column'
-import { selectTasks, TaskCard, useTaskActions, useTaskStore } from '@/entities/task'
+import { selectColumns, useColumnStore } from '@/entities/column'
+import { selectTasks, TaskCard, useTaskStore } from '@/entities/task'
 import {
   sortTasksBySortOrder,
   TASK_SORT_ORDER,
@@ -17,10 +17,9 @@ import {
   selectTaskFilters,
   useTaskFiltersStore,
 } from '@/features/task-filters'
-import { Alert, Paper, Stack, Text, Title } from '@mantine/core'
+import { Paper, Stack, Text, Title } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { TaskBoardColumns } from './TaskBoardColumns'
 import { TaskBoardSkeleton } from './TaskBoardSkeleton'
@@ -29,22 +28,16 @@ import { TaskBoardToolbar } from './TaskBoardToolbar'
 export const TaskBoard = () => {
   const [search, setSearch] = useState('')
   const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
-  const [hasColumnsLoadError, setHasColumnsLoadError] = useState(false)
-  const [hasTasksLoadError, setHasTasksLoadError] = useState(false)
   const [debouncedSearch] = useDebouncedValue(search, 300)
   const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
-  const { loadColumns } = useColumnActions()
   const { tasksByColumnId, isLoading, isLoaded } = useTaskStore(useShallow(selectTasks))
-  const { loadTasksByColumnIds } = useTaskActions()
   const { changeColumnSortOrder, getColumnSortOrder, removeColumnSortOrder } = useColumnTaskSort()
-  const columnIds = useMemo(() => columns.map((column) => column.id), [columns])
   const hasColumns = columns.length > 0
   const hasFilters = hasActiveTaskFilters(filters)
   const normalizedSearch = debouncedSearch.toLowerCase().trim()
   const isTasksReady = !hasColumns || isLoaded
-  const isInitialLoading =
-    !hasColumnsLoadError && (!isColumnsLoaded || (hasColumns && isLoading && !isLoaded))
-  const isBoardLocked = !isColumnsLoaded || !isTasksReady || hasColumnsLoadError
+  const isInitialLoading = !isColumnsLoaded || (hasColumns && isLoading && !isLoaded)
+  const isBoardLocked = !isColumnsLoaded || !isTasksReady
   const isCreateTaskDisabled = isBoardLocked || !hasColumns
   const isTaskFilterActive = normalizedSearch.length > 0 || hasFilters
   const isTaskDndDisabled = isBoardLocked || isTaskFilterActive
@@ -70,50 +63,6 @@ export const TaskBoard = () => {
     [columns, tasksByColumnId, normalizedSearch, filters],
   )
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setHasColumnsLoadError(false)
-
-        await loadColumns()
-      } catch {
-        setHasColumnsLoadError(true)
-
-        notifications.show({
-          title: 'Не удалось загрузить колонки',
-          message: 'Попробуйте обновить страницу',
-          color: 'red',
-        })
-      }
-    }
-
-    load()
-  }, [loadColumns])
-
-  useEffect(() => {
-    if (!isColumnsLoaded || hasColumnsLoadError || !hasColumns) {
-      return
-    }
-
-    const load = async () => {
-      try {
-        setHasTasksLoadError(false)
-
-        await loadTasksByColumnIds(columnIds)
-      } catch {
-        setHasTasksLoadError(true)
-
-        notifications.show({
-          title: 'Не удалось загрузить задачи',
-          message: 'Попробуйте обновить страницу',
-          color: 'red',
-        })
-      }
-    }
-
-    load()
-  }, [isColumnsLoaded, hasColumnsLoadError, hasColumns, columnIds, loadTasksByColumnIds])
-
   return (
     <>
       <TaskBoardToolbar
@@ -123,11 +72,7 @@ export const TaskBoard = () => {
         onSearchChange={setSearch}
       />
 
-      {hasColumnsLoadError ? (
-        <Alert color="red" title="Не удалось загрузить колонки">
-          Попробуйте обновить страницу
-        </Alert>
-      ) : isInitialLoading ? (
+      {isInitialLoading ? (
         <TaskBoardSkeleton columnsCount={columns.length || 3} />
       ) : !hasColumns ? (
         <Paper p="xl" radius="lg" withBorder>
@@ -177,7 +122,7 @@ export const TaskBoard = () => {
               overColumnId={overColumnId}
               disabled={isBoardLocked}
               isTaskDndDisabled={isTaskDndDisabled}
-              hasTasksLoadError={hasTasksLoadError}
+              hasTasksLoadError={false}
               isTaskFilterActive={isTaskFilterActive}
               normalizedSearch={normalizedSearch}
               getColumnTasks={getColumnTasks}

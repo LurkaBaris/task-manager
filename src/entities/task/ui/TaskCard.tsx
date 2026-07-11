@@ -1,6 +1,8 @@
+import { getTaskDetailsRoute } from '@/shared/config'
 import { renderHighlightedText } from '@/shared/lib'
 import { Card, Flex, Group, Stack, Text, Title } from '@mantine/core'
 import type { ReactNode } from 'react'
+import { NavLink } from 'react-router-dom'
 import { taskDateFormatter } from '../lib/taskDateFormatter'
 import type { Task } from '../model/types'
 import styles from './TaskCard.module.css'
@@ -32,11 +34,13 @@ export const TaskCard = ({
       <Stack gap="sm">
         <Stack gap="xs">
           <Flex gap="md" align="flex-start" justify="space-between" wrap="nowrap">
-            <Title order={3} size="md" c="gray.9" className={styles.title}>
-              <span data-no-dnd className={styles.selectableText}>
-                {renderHighlightedText(task.title, search ?? '')}
-              </span>
-            </Title>
+            <NavLink to={getTaskDetailsRoute(task.id)} data-no-dnd className={styles.link}>
+              <Title order={3} size="md" c="gray.9" className={styles.title}>
+                <span data-no-dnd className={styles.selectableText}>
+                  {renderHighlightedText(task.title, search ?? '')}
+                </span>
+              </Title>
+            </NavLink>
 
             {headerActions && (
               <Flex className={styles.actions} gap="sm" align="center">

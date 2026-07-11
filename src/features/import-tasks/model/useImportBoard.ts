@@ -6,6 +6,11 @@ import {
 } from '@/entities/column'
 import { getAllTags, useTagActions, type Tag } from '@/entities/tag'
 import { getAllTasks, normalizeTasksByColumnId, useTaskActions, type Task } from '@/entities/task'
+import {
+  getAllTaskComments,
+  sortTaskCommentsByCreatedAt,
+  type TaskComment,
+} from '@/entities/task-comment'
 import { importBoardRepository } from '../api/importBoardRepository'
 import { IMPORT_TASKS_MODE, type ImportTasksMode } from './types'
 
@@ -13,6 +18,7 @@ interface ImportBoardParams {
   columns: Column[]
   tasks: Task[]
   tags: Tag[]
+  comments: TaskComment[]
   mode: ImportTasksMode
 }
 
@@ -25,16 +31,18 @@ export const useImportBoard = () => {
   const { setTasks } = useTaskActions()
   const { setTags } = useTagActions()
 
-  const importBoard = async ({ columns, tasks, tags, mode }: ImportBoardParams) => {
+  const importBoard = async ({ columns, tasks, tags, comments, mode }: ImportBoardParams) => {
     let columnsToImport = columns
     let tasksToImport = tasks
     let tagsToImport = tags
+    let commentsToImport = comments
 
     if (mode === IMPORT_TASKS_MODE.Merge) {
-      const [currentColumns, currentTasks, currentTags] = await Promise.all([
+      const [currentColumns, currentTasks, currentTags, currentComments] = await Promise.all([
         getAllColumns(),
         getAllTasks(),
         getAllTags(),
+        getAllTaskComments(),
       ])
 
       const columnsById = new Map(currentColumns.map((column) => [column.id, column]))
@@ -42,6 +50,7 @@ export const useImportBoard = () => {
       const tagIdByName = new Map(currentTags.map((tag) => [normalizeTagName(tag.name), tag.id]))
       const replacedTagIds = new Map<Tag['id'], Tag['id']>()
       const importedTaskIds = new Set(tasks.map((task) => task.id))
+      const importedCommentIds = new Set(comments.map((comment) => comment.id))
 
       columns.forEach((column) => {
         columnsById.set(column.id, column)
@@ -83,6 +92,10 @@ export const useImportBoard = () => {
         ...currentTasks.filter((task) => !importedTaskIds.has(task.id)),
         ...remappedTasks,
       ]
+      commentsToImport = sortTaskCommentsByCreatedAt([
+        ...currentComments.filter((comment) => !importedCommentIds.has(comment.id)),
+        ...comments,
+      ])
     }
 
     const normalizedColumns = normalizeColumnOrder(columnsToImport)
@@ -92,6 +105,7 @@ export const useImportBoard = () => {
       columns: normalizedColumns,
       tasks: normalizedTasks,
       tags: tagsToImport,
+      comments: commentsToImport,
     })
 
     setColumns(normalizedColumns)

@@ -1,0 +1,30 @@
+.avatar {
+  border: 1px solid var(--mantine-color-brand-3);
+}
+
+.commentText {
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+.attachmentCard {
+  border-color: var(--mantine-color-gray-2);
+  transition: border-color 160ms ease;
+}
+
+.attachmentCard:hover {
+  border-color: var(--mantine-color-brand-3);
+}
+
+.attachmentIcon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--mantine-radius-md);
+}
+
+.attachmentPreview {
+  flex-shrink: 0;
+  border: 1px solid var(--mantine-color-gray-2);
+}

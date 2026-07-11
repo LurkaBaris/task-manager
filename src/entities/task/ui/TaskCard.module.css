@@ -5,6 +5,7 @@
 .title {
   flex: 1 1 0;
   min-width: 0;
+  cursor: pointer;
 }
 
 .actions {
@@ -24,9 +25,20 @@
 .selectableText {
   overflow-wrap: anywhere;
   user-select: text;
-  cursor: text;
 }
 
 .footer {
   border-top: 1px solid var(--mantine-color-gray-3);
+}
+
+.link {
+  text-decoration: none;
+}
+
+.link .selectableText {
+  transition: all 0.3s;
+}
+
+.link .selectableText:hover {
+  color: var(--mantine-color-brand-6);
 }

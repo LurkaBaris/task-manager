@@ -1,5 +1,6 @@
 export { getAllTasks } from './api/getAllTasks'
 export { mapTaskToDb } from './api/taskMapper'
+export { taskDateFormatter } from './lib/taskDateFormatter'
 export {
   TASK_PRIORITIES,
   TASK_PRIORITY_COLOR,
