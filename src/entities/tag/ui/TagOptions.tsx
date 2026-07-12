@@ -29,7 +29,7 @@ export const TagOptions = ({
   }
 
   const handleCreateClick = () => {
-    onCreate()
+    void onCreate()
   }
 
   return (

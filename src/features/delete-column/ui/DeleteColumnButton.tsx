@@ -1,6 +1,12 @@
 import { useColumnActions, type Column } from '@/entities/column'
 import { useTagActions } from '@/entities/tag'
 import { selectTasks, useTaskActions, useTaskStore } from '@/entities/task'
+import {
+  deleteTaskCommentsByTaskId,
+  getTaskCommentsByTaskIds,
+  restoreTaskComments,
+  type TaskComment,
+} from '@/entities/task-comment'
 import { ActionIcon, Button, Group, Modal, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
@@ -20,8 +26,8 @@ export const DeleteColumnButton = ({
   onRemove,
   disabled = false,
 }: DeleteColumnButtonProps) => {
-  const { deleteColumn } = useColumnActions()
-  const { clearColumnTasks } = useTaskActions()
+  const { deleteColumn, restoreColumn } = useColumnActions()
+  const { clearColumnTasks, restoreTasks } = useTaskActions()
   const { removeTagsIfUnused } = useTagActions()
   const { tasksByColumnId } = useTaskStore(useShallow(selectTasks))
   const [opened, { open, close }] = useDisclosure(false)
@@ -61,9 +67,15 @@ export const DeleteColumnButton = ({
 
   const handleDelete = async () => {
     setIsDeleting(true)
+    let deletedComments: TaskComment[] = []
 
     try {
-      await deleteColumn(column.id)
+      deletedComments = await getTaskCommentsByTaskIds((columnTasks ?? []).map((task) => task.id))
+
+      await Promise.all([
+        deleteColumn(column.id),
+        ...(columnTasks ?? []).map((task) => deleteTaskCommentsByTaskId(task.id)),
+      ])
 
       clearColumnTasks(column.id)
       onRemove(column.id)
@@ -78,6 +90,7 @@ export const DeleteColumnButton = ({
             column={column}
             notificationId={notificationId}
             tasks={columnTasks ?? []}
+            comments={deletedComments}
           />
         ),
         color: 'brand',
@@ -87,6 +100,17 @@ export const DeleteColumnButton = ({
 
       close()
     } catch {
+      try {
+        await restoreColumn(column)
+        await Promise.all([restoreTasks(columnTasks ?? []), restoreTaskComments(deletedComments)])
+      } catch {
+        notifications.show({
+          title: 'Не удалось откатить удаление полностью',
+          message: 'Обновите страницу и проверьте данные колонки',
+          color: 'red',
+        })
+      }
+
       notifications.show({
         title: 'Не удалось удалить колонку',
         message: 'Попробуйте ещё раз',

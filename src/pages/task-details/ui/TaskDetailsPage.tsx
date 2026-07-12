@@ -72,9 +72,16 @@ export const TaskDetailsPage = () => {
             />
           </Group>
 
-          <Grid align="stretch" gap={{ base: 'xl', md: 32 }}>
-            <Grid.Col span={{ base: 12, md: 5, lg: 4 }}>
-              <Box bg="gray.0" className={styles.metaPanel} p="md">
+          <Grid gap="xl">
+            <Grid.Col span={{ base: 12, md: 5, lg: 4 }} pos="relative">
+              <Box
+                bg="gray.0"
+                className={styles.metaPanel}
+                p="md"
+                h="fit-content"
+                pos="sticky"
+                top="calc(64px + var(--mantine-spacing-md))"
+              >
                 <Stack gap="md">
                   <Text c="gray.9" component="h2" fw={700} m={0} size="sm">
                     Сведения

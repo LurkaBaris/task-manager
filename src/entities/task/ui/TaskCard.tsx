@@ -34,13 +34,13 @@ export const TaskCard = ({
       <Stack gap="sm">
         <Stack gap="xs">
           <Flex gap="md" align="flex-start" justify="space-between" wrap="nowrap">
-            <NavLink to={getTaskDetailsRoute(task.id)} data-no-dnd className={styles.link}>
-              <Title order={3} size="md" c="gray.9" className={styles.title}>
+            <Title order={3} size="md" c="gray.9" className={styles.title}>
+              <NavLink to={getTaskDetailsRoute(task.id)} data-no-dnd className={styles.link}>
                 <span data-no-dnd className={styles.selectableText}>
                   {renderHighlightedText(task.title, search ?? '')}
                 </span>
-              </Title>
-            </NavLink>
+              </NavLink>
+            </Title>
 
             {headerActions && (
               <Flex className={styles.actions} gap="sm" align="center">
@@ -49,7 +49,14 @@ export const TaskCard = ({
             )}
           </Flex>
 
-          <Text size="sm" c="gray.7" lh={1.45} component="div" className={styles.description}>
+          <Text
+            size="sm"
+            c="gray.7"
+            lh={1.45}
+            component="div"
+            lineClamp={2}
+            className={styles.description}
+          >
             <span data-no-dnd className={styles.selectableText}>
               {renderHighlightedText(task.description, search ?? '')}
             </span>

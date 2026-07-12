@@ -1,5 +1,11 @@
 import { selectColumns, useColumnStore } from '@/entities/column'
-import { selectTags, TagSelect, useTagActions, useTagStore } from '@/entities/tag'
+import {
+  resolveSelectedTag,
+  selectTags,
+  TagSelect,
+  useTagActions,
+  useTagStore,
+} from '@/entities/tag'
 import {
   createTask,
   TaskForm,
@@ -34,24 +40,18 @@ export const CreateTaskButton = ({ className, disabled = false }: CreateTaskButt
   }
 
   const handleCreateTask = async (values: TaskSchemaType) => {
-    const normalizedDraftTagName = draftTagName.trim()
-    const existingTag = tags.find(
-      (tag) => tag.name.toLowerCase() === normalizedDraftTagName.toLowerCase(),
-    )
-
-    let tagId = values.tagId
     let createdTagId: string | undefined
 
     try {
-      if (!tagId && normalizedDraftTagName) {
-        const tag = await createTagIfNotExists(normalizedDraftTagName)
+      const resolvedTag = await resolveSelectedTag({
+        selectedTagId: values.tagId,
+        draftTagName,
+        tags,
+        createTagIfNotExists,
+      })
+      const tagId = resolvedTag.tag?.id
 
-        tagId = tag.id
-
-        if (!existingTag) {
-          createdTagId = tag.id
-        }
-      }
+      createdTagId = resolvedTag.createdTag?.id
 
       const position = getNextPositionByColumnId(values.columnId)
       const newTask: Task = createTask({ ...values, tagId, position })

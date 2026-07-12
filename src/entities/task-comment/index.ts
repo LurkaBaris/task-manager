@@ -1,7 +1,7 @@
 export { deleteTaskComment } from './api/deleteTaskComment'
 export { deleteTaskCommentsByTaskId } from './api/deleteTaskCommentsByTaskId'
 export { getAllTaskComments } from './api/getAllTaskComments'
-export { getTaskCommentsByTaskId } from './api/getTaskCommentsByTaskId'
+export { getTaskCommentsByTaskIds } from './api/getTaskCommentsByTaskIds'
 export { restoreTaskComment } from './api/restoreTaskComment'
 export { restoreTaskComments } from './api/restoreTaskComments'
 export { saveTaskComment } from './api/saveTaskComment'

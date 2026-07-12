@@ -18,11 +18,17 @@ export const taskCommentRepository = {
     return sortTaskCommentsByCreatedAt(comments)
   },
 
-  async getByTaskId(taskId: TaskComment['taskId']): Promise<TaskComment[]> {
-    const db = await appDbPromise
-    const comments = await db.getAllFromIndex(TASK_COMMENTS_STORE_NAME, 'by-task-id', taskId)
+  async getByTaskIds(taskIds: TaskComment['taskId'][]): Promise<TaskComment[]> {
+    if (taskIds.length === 0) return []
 
-    return sortTaskCommentsByCreatedAt(comments)
+    const db = await appDbPromise
+    const transaction = db.transaction(TASK_COMMENTS_STORE_NAME, 'readonly')
+    const taskIdIndex = transaction.store.index('by-task-id')
+    const commentsByTask = await Promise.all(taskIds.map((taskId) => taskIdIndex.getAll(taskId)))
+
+    await transaction.done
+
+    return sortTaskCommentsByCreatedAt(commentsByTask.flat())
   },
 
   async put(comment: TaskComment): Promise<void> {

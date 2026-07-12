@@ -1,17 +1,20 @@
 import { useColumnActions, type Column } from '@/entities/column'
 import { useTaskActions, type Task } from '@/entities/task'
+import { restoreTaskComments, type TaskComment } from '@/entities/task-comment'
 import { Button, Stack, Text } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 
 interface DeleteColumnUndoNotificationContentProps {
   column: Column
   tasks: Task[]
+  comments: TaskComment[]
   notificationId: string
 }
 
 export const DeleteColumnUndoNotificationContent = ({
   column,
   tasks,
+  comments,
   notificationId,
 }: DeleteColumnUndoNotificationContentProps) => {
   const { restoreColumn } = useColumnActions()
@@ -20,7 +23,7 @@ export const DeleteColumnUndoNotificationContent = ({
   const handleClick = async () => {
     try {
       await restoreColumn(column)
-      await restoreTasks(tasks)
+      await Promise.all([restoreTasks(tasks), restoreTaskComments(comments)])
 
       notifications.hide(notificationId)
 

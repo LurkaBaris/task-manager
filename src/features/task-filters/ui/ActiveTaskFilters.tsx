@@ -1,7 +1,7 @@
-import { selectTags, useTagActions, useTagStore } from '@/entities/tag'
+import { selectTags, useTagStore } from '@/entities/tag'
 import { TASK_PRIORITY_TITLE, TASK_TYPE_TITLE } from '@/entities/task'
 import { Group } from '@mantine/core'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { hasActiveTaskFilters } from '../model/helpers'
 import { selectTaskFilters, useTaskFilterActions, useTaskFiltersStore } from '../model/store'
@@ -23,16 +23,7 @@ const getFiltersWithoutValue = (filters: TaskFilters, filterKey: ActiveFilterKey
 export const ActiveTaskFilters = ({ disabled = false }: ActiveTaskFiltersProps) => {
   const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
   const { setFilters } = useTaskFilterActions()
-  const { tags, isLoaded } = useTagStore(useShallow(selectTags))
-  const { loadTags } = useTagActions()
-
-  useEffect(() => {
-    if (filters.tagIds.length === 0 || isLoaded) {
-      return
-    }
-
-    loadTags()
-  }, [filters.tagIds.length, isLoaded, loadTags])
+  const { tags } = useTagStore(useShallow(selectTags))
 
   const tagNameById = useMemo(() => {
     return new Map(tags.map((tag) => [tag.id, tag.name]))

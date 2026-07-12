@@ -36,8 +36,6 @@ export default defineConfig([
 
       'no-empty': ['error', { allowEmptyCatch: true }],
 
-      '@typescript-eslint/no-floating-promises': 'off',
-
       '@typescript-eslint/no-misused-promises': [
         'error',
         {

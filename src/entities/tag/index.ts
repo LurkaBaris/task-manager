@@ -1,5 +1,6 @@
 export { getAllTags } from './api/getAllTags'
 export { mapTagToDb } from './api/tagMapper'
+export { resolveSelectedTag } from './lib/resolveSelectedTag'
 export { selectTags, useTagActions, useTagStore } from './model/store'
 export { tagSchema, type TagSchemaType } from './model/tagSchema'
 export type { Tag } from './model/types'

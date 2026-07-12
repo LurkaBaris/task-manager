@@ -1,4 +1,5 @@
 import { selectColumns, useColumnActions, useColumnStore } from '@/entities/column'
+import { useTagActions } from '@/entities/tag'
 import { useTaskActions } from '@/entities/task'
 import { Alert, AppShell, Container } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
@@ -12,6 +13,7 @@ export const AppLayout = () => {
   const [hasLoadError, setHasLoadError] = useState(false)
   const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
   const { loadColumns } = useColumnActions()
+  const { loadTags } = useTagActions()
   const { loadTasksByColumnIds } = useTaskActions()
   const columnIds = useMemo(() => columns.map((column) => column.id), [columns])
   const hasColumns = columns.length > 0
@@ -21,20 +23,20 @@ export const AppLayout = () => {
       try {
         setHasLoadError(false)
 
-        await loadColumns()
+        await Promise.all([loadColumns(), loadTags()])
       } catch {
         setHasLoadError(true)
 
         notifications.show({
-          title: 'Не удалось загрузить колонки',
+          title: 'Не удалось загрузить данные',
           message: 'Попробуйте обновить страницу',
           color: 'red',
         })
       }
     }
 
-    load()
-  }, [loadColumns])
+    void load()
+  }, [loadColumns, loadTags])
 
   useEffect(() => {
     if (!isColumnsLoaded || hasLoadError || !hasColumns) {
@@ -57,7 +59,7 @@ export const AppLayout = () => {
       }
     }
 
-    load()
+    void load()
   }, [columnIds, hasColumns, hasLoadError, isColumnsLoaded, loadTasksByColumnIds])
 
   return (

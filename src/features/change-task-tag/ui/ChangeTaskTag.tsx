@@ -1,4 +1,10 @@
-import { selectTags, TagMetaSelect, useTagActions, useTagStore } from '@/entities/tag'
+import {
+  resolveSelectedTag,
+  selectTags,
+  TagMetaSelect,
+  useTagActions,
+  useTagStore,
+} from '@/entities/tag'
 import { useTaskActions, type Task } from '@/entities/task'
 import { notifications } from '@mantine/notifications'
 import { useShallow } from 'zustand/shallow'
@@ -61,19 +67,20 @@ export const ChangeTaskTag = ({ task, disabled = false }: ChangeTaskTagProps) =>
   }
 
   const handleTagCreate = async (name: string) => {
-    const normalizedName = name.trim().toLowerCase()
-    const existingTag = tags.find((tag) => tag.name.toLowerCase() === normalizedName)
-
     let createdTagId: string | undefined
 
     try {
-      const tag = await createTagIfNotExists(name)
+      const resolvedTag = await resolveSelectedTag({
+        draftTagName: name,
+        tags,
+        createTagIfNotExists,
+      })
 
-      if (!existingTag) {
-        createdTagId = tag.id
-      }
+      createdTagId = resolvedTag.createdTag?.id
 
-      await applyTaskTag(tag.id, `Тег изменен на «${tag.name}»`)
+      if (!resolvedTag.tag) return
+
+      await applyTaskTag(resolvedTag.tag.id, `Тег изменен на «${resolvedTag.tag.name}»`)
     } catch {
       if (createdTagId) {
         try {

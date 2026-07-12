@@ -1,10 +1,10 @@
 import { useCombobox } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
-import { useEffect, useMemo, useState, type KeyboardEvent } from 'react'
+import { useMemo, useState, type KeyboardEvent } from 'react'
 import { useShallow } from 'zustand/shallow'
-import { selectTags, useTagActions, useTagStore } from '../model/store'
-import type { Tag } from '../model/types'
+import { selectTags, useTagStore } from './store'
+import type { Tag } from './types'
 
 interface UseTagSelectParams {
   value?: Tag['id']
@@ -23,16 +23,15 @@ const TAG_SEARCH_DEBOUNCE_MS = 250
 export const useTagSelect = ({ value, draftValue, onChange, onCreate }: UseTagSelectParams) => {
   const combobox = useCombobox()
   const { tags, isLoaded } = useTagStore(useShallow(selectTags))
-  const { loadTags } = useTagActions()
   const [search, setSearch] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [clearedSnapshot, setClearedSnapshot] = useState<ClearedSnapshot | null>(null)
 
-  const normalizedDraftValue = draftValue?.trim()
+  const normalizedDraftValue = draftValue?.trim() || undefined
   const selectedTag = tags.find((tag) => tag.id === value)
   const isLocallyCleared =
     clearedSnapshot?.value === value && clearedSnapshot?.draftValue === normalizedDraftValue
-  const currentValue = isLocallyCleared ? '' : (selectedTag?.name ?? normalizedDraftValue ?? '')
+  const currentValue = isLocallyCleared ? '' : (normalizedDraftValue ?? selectedTag?.name ?? '')
   const inputValue = isEditing ? search : currentValue
 
   const [debouncedSearch] = useDebouncedValue(isEditing ? search : '', TAG_SEARCH_DEBOUNCE_MS)
@@ -59,27 +58,10 @@ export const useTagSelect = ({ value, draftValue, onChange, onCreate }: UseTagSe
     combobox.closeDropdown()
   }
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        await loadTags()
-      } catch (error) {
-        console.error('Не удалось загрузить теги', error)
-
-        notifications.show({
-          title: 'Теги не загрузились',
-          message: 'Попробуйте открыть список тегов еще раз',
-          color: 'red',
-        })
-      }
-    }
-
-    load()
-  }, [loadTags])
-
   const handleSearchChange = (value: string) => {
     setSearch(value)
     setIsEditing(true)
+    combobox.resetSelectedOption()
     combobox.openDropdown()
   }
 
@@ -172,14 +154,14 @@ export const useTagSelect = ({ value, draftValue, onChange, onCreate }: UseTagSe
     }
 
     event.preventDefault()
+    event.stopPropagation()
+    combobox.resetSelectedOption()
 
     await handleCreateTag()
   }
 
   return {
     combobox,
-    tags,
-    value,
     inputValue,
     filteredTags,
     trimmedSearch,

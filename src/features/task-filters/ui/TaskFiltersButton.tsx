@@ -1,4 +1,4 @@
-import { selectTags, useTagActions, useTagStore, type Tag } from '@/entities/tag'
+import { selectTags, useTagStore, type Tag } from '@/entities/tag'
 import {
   TASK_PRIORITY_OPTIONS,
   TASK_TYPE_OPTIONS,
@@ -80,7 +80,6 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
   const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
   const { setFilters } = useTaskFilterActions()
   const { tags, isLoaded } = useTagStore(useShallow(selectTags))
-  const { loadTags } = useTagActions()
   const {
     control,
     handleSubmit,
@@ -131,14 +130,6 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
     reset(filters)
   }, [filters, opened, reset])
 
-  const handleLoadTags = () => {
-    if (isLoaded) {
-      return
-    }
-
-    loadTags()
-  }
-
   const handleApplyFilters = handleSubmit((values) => {
     setFilters(values)
     setOpened(false)
@@ -188,7 +179,7 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
         <Box
           component="form"
           onSubmit={(event) => {
-            handleApplyFilters(event)
+            void handleApplyFilters(event)
           }}
         >
           <Stack gap="sm">
@@ -299,8 +290,6 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
                   value={field.value}
                   onBlur={field.onBlur}
                   onChange={field.onChange}
-                  onClick={handleLoadTags}
-                  onFocus={handleLoadTags}
                 />
               )}
             />

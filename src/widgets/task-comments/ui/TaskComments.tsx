@@ -1,5 +1,5 @@
 import {
-  getTaskCommentsByTaskId,
+  getTaskCommentsByTaskIds,
   sortTaskCommentsByCreatedAt,
   TaskCommentCard,
   type TaskComment,
@@ -24,7 +24,7 @@ export const TaskComments = ({ taskId }: TaskCommentsProps) => {
 
     const loadComments = async () => {
       try {
-        const comments = await getTaskCommentsByTaskId(taskId)
+        const comments = await getTaskCommentsByTaskIds([taskId])
 
         if (isActive) {
           setComments(comments)
@@ -40,7 +40,7 @@ export const TaskComments = ({ taskId }: TaskCommentsProps) => {
       }
     }
 
-    loadComments()
+    void loadComments()
 
     return () => {
       isActive = false

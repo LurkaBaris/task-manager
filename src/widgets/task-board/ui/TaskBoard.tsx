@@ -1,5 +1,5 @@
 import { selectColumns, useColumnStore } from '@/entities/column'
-import { selectTasks, TaskCard, useTaskStore } from '@/entities/task'
+import { selectTasks, TaskCard, useTaskStore, type Task } from '@/entities/task'
 import {
   sortTasksBySortOrder,
   TASK_SORT_ORDER,
@@ -8,8 +8,8 @@ import {
 import { ChangeTaskPrioritySelect } from '@/features/change-task-priority'
 import { ChangeTaskStatusSelect } from '@/features/change-task-status'
 import { CreateColumnButton } from '@/features/create-column'
-import { DeleteTaskButton } from '@/features/delete-task'
-import { EditTaskButton } from '@/features/edit-task'
+import { DeleteTaskAction, DeleteTaskModal } from '@/features/delete-task'
+import { EditTaskAction, EditTaskModal } from '@/features/edit-task'
 import { TaskDndProvider } from '@/features/task-dnd'
 import {
   hasActiveTaskFilters,
@@ -24,9 +24,11 @@ import { useShallow } from 'zustand/shallow'
 import { TaskBoardColumns } from './TaskBoardColumns'
 import { TaskBoardSkeleton } from './TaskBoardSkeleton'
 import { TaskBoardToolbar } from './TaskBoardToolbar'
+import type { TaskDialogState } from '../model/TaskDialogState'
 
 export const TaskBoard = () => {
   const [search, setSearch] = useState('')
+  const [taskDialogState, setTaskDialogState] = useState<TaskDialogState>(null)
   const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
   const [debouncedSearch] = useDebouncedValue(search, 300)
   const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
@@ -41,6 +43,18 @@ export const TaskBoard = () => {
   const isCreateTaskDisabled = isBoardLocked || !hasColumns
   const isTaskFilterActive = normalizedSearch.length > 0 || hasFilters
   const isTaskDndDisabled = isBoardLocked || isTaskFilterActive
+
+  const closeTaskDialog = () => {
+    setTaskDialogState(null)
+  }
+
+  const openEditTaskDialog = (task: Task) => {
+    setTaskDialogState({ type: 'edit', task })
+  }
+
+  const openDeleteTaskDialog = (task: Task) => {
+    setTaskDialogState({ type: 'delete', task })
+  }
 
   const visibleTasksByColumnId = useMemo(
     () =>
@@ -103,8 +117,8 @@ export const TaskBoard = () => {
               task={task}
               headerActions={
                 <>
-                  <EditTaskButton task={task} disabled />
-                  <DeleteTaskButton task={task} disabled />
+                  <EditTaskAction disabled />
+                  <DeleteTaskAction disabled />
                 </>
               }
               footerActions={
@@ -122,16 +136,25 @@ export const TaskBoard = () => {
               overColumnId={overColumnId}
               disabled={isBoardLocked}
               isTaskDndDisabled={isTaskDndDisabled}
-              hasTasksLoadError={false}
               isTaskFilterActive={isTaskFilterActive}
               normalizedSearch={normalizedSearch}
               getColumnTasks={getColumnTasks}
               getColumnSortOrder={getColumnSortOrder}
               changeColumnSortOrder={changeColumnSortOrder}
               onRemove={removeColumnSortOrder}
+              onEditTask={openEditTaskDialog}
+              onDeleteTask={openDeleteTaskDialog}
             />
           )}
         </TaskDndProvider>
+      )}
+
+      {taskDialogState?.type === 'edit' && (
+        <EditTaskModal task={taskDialogState.task} opened onClose={closeTaskDialog} />
+      )}
+
+      {taskDialogState?.type === 'delete' && (
+        <DeleteTaskModal task={taskDialogState.task} opened onClose={closeTaskDialog} />
       )}
     </>
   )

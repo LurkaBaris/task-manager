@@ -1,4 +1,3 @@
-import { useTaskStore } from '@/entities/task'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 import { columnRepository } from '../api/columnRepository'
@@ -68,7 +67,6 @@ export const useColumnStore = create<ColumnState & ColumnActions>()((set, get) =
 
   deleteColumn: async (columnId) => {
     await columnRepository.deleteWithTasks(columnId)
-    useTaskStore.getState().clearColumnTasks(columnId)
 
     set((state) => ({
       columns: state.columns.filter((column) => column.id !== columnId),

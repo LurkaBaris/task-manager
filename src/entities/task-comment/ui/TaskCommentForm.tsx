@@ -94,7 +94,7 @@ export const TaskCommentForm = ({
     }
 
     event.preventDefault()
-    submitForm()
+    void submitForm()
   }
 
   return (

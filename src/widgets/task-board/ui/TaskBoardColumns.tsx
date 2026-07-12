@@ -3,9 +3,11 @@ import { TaskCard, type Task } from '@/entities/task'
 import { ColumnTaskSortControl, type TaskSortOrder } from '@/features/change-column-task-sort'
 import { ChangeTaskPrioritySelect } from '@/features/change-task-priority'
 import { ChangeTaskStatusSelect } from '@/features/change-task-status'
+import { ChangeTaskTag } from '@/features/change-task-tag'
+import { ChangeTaskType } from '@/features/change-task-type'
 import { DeleteColumnButton } from '@/features/delete-column'
-import { DeleteTaskButton } from '@/features/delete-task'
-import { EditTaskButton } from '@/features/edit-task'
+import { DeleteTaskAction } from '@/features/delete-task'
+import { EditTaskAction } from '@/features/edit-task'
 import {
   DroppableColumn,
   SORTABLE_COLUMN_ID_PREFIX,
@@ -20,7 +22,6 @@ import {
 } from '@dnd-kit/sortable'
 import { Group } from '@mantine/core'
 import { useRef, useState, type UIEvent, type WheelEvent } from 'react'
-import { getTaskCardActions } from '../lib/getTaskCardActions'
 import styles from './TaskBoard.module.css'
 
 interface TaskBoardColumnsProps {
@@ -28,10 +29,11 @@ interface TaskBoardColumnsProps {
   overColumnId: Task['columnId'] | null
   disabled: boolean
   isTaskDndDisabled: boolean
-  hasTasksLoadError: boolean
   isTaskFilterActive: boolean
   normalizedSearch: string
   onRemove: (columnId: Column['id']) => void
+  onEditTask: (task: Task) => void
+  onDeleteTask: (task: Task) => void
   getColumnTasks: (columnId: Column['id']) => Task[]
   getColumnSortOrder: (columnId: Column['id']) => TaskSortOrder
   changeColumnSortOrder: (columnId: Column['id'], sortOrder: TaskSortOrder) => void
@@ -44,13 +46,14 @@ export const TaskBoardColumns = ({
   overColumnId,
   disabled,
   isTaskDndDisabled,
-  hasTasksLoadError,
   isTaskFilterActive,
   normalizedSearch,
   getColumnTasks,
   getColumnSortOrder,
   changeColumnSortOrder,
   onRemove,
+  onEditTask,
+  onDeleteTask,
 }: TaskBoardColumnsProps) => {
   const boardRef = useRef<HTMLDivElement | null>(null)
   const topScrollbarRef = useRef<HTMLDivElement | null>(null)
@@ -170,11 +173,7 @@ export const TaskBoardColumns = ({
                       column={column}
                       count={columnTasks.length}
                       emptyText={
-                        hasTasksLoadError
-                          ? 'Задачи не загрузились'
-                          : isTaskFilterActive
-                            ? 'По данным фильтрам задач не нашлось'
-                            : undefined
+                        isTaskFilterActive ? 'По данным фильтрам задач не нашлось' : undefined
                       }
                       headerControls={
                         <ColumnTaskSortControl
@@ -204,11 +203,20 @@ export const TaskBoardColumns = ({
                               task={task}
                               headerActions={
                                 <>
-                                  <DeleteTaskButton task={task} data-no-dnd />
-                                  <EditTaskButton task={task} data-no-dnd />
+                                  <DeleteTaskAction onClick={() => onDeleteTask(task)} />
+                                  <EditTaskAction onClick={() => onEditTask(task)} />
                                 </>
                               }
-                              metaItems={getTaskCardActions({ task, disabled })}
+                              metaItems={[
+                                {
+                                  label: 'Тег',
+                                  content: <ChangeTaskTag task={task} disabled={disabled} />,
+                                },
+                                {
+                                  label: 'Тип',
+                                  content: <ChangeTaskType task={task} disabled={disabled} />,
+                                },
+                              ]}
                               footerActions={
                                 <>
                                   <ChangeTaskStatusSelect task={task} disabled={disabled} />

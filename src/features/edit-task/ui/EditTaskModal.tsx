@@ -1,51 +1,49 @@
 import { selectColumns, useColumnStore } from '@/entities/column'
-import { selectTags, TagSelect, useTagActions, useTagStore } from '@/entities/tag'
+import {
+  resolveSelectedTag,
+  selectTags,
+  TagSelect,
+  useTagActions,
+  useTagStore,
+} from '@/entities/tag'
 import { TaskForm, useTaskActions, type Task, type TaskSchemaType } from '@/entities/task'
-import { ActionIcon, Modal } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { Modal } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 
-interface EditTaskButtonProps {
+interface EditTaskModalProps {
   task: Task
-  disabled?: boolean
+  opened: boolean
+  onClose: () => void
 }
 
-export const EditTaskButton = ({ task, disabled }: EditTaskButtonProps) => {
+export const EditTaskModal = ({ task, opened, onClose }: EditTaskModalProps) => {
   const { columns } = useColumnStore(useShallow(selectColumns))
   const { tags } = useTagStore(useShallow(selectTags))
   const { updateTask } = useTaskActions()
   const { createTagIfNotExists, removeTagsIfUnused } = useTagActions()
-  const [opened, { open, close }] = useDisclosure(false)
   const [draftTagName, setDraftTagName] = useState('')
 
   const handleClose = () => {
     setDraftTagName('')
-    close()
+    onClose()
   }
 
   const handleEditTask = async (values: TaskSchemaType) => {
     const previousTagId = task.tagId
-    const normalizedDraftTagName = draftTagName.trim()
-    const existingTag = tags.find(
-      (tag) => tag.name.toLowerCase() === normalizedDraftTagName.toLowerCase(),
-    )
-
-    let tagId = values.tagId
     let createdTagId: string | undefined
 
     try {
-      if (!tagId && normalizedDraftTagName) {
-        const tag = await createTagIfNotExists(normalizedDraftTagName)
+      const resolvedTag = await resolveSelectedTag({
+        selectedTagId: values.tagId,
+        draftTagName,
+        tags,
+        createTagIfNotExists,
+      })
+      const tagId = resolvedTag.tag?.id
 
-        tagId = tag.id
-
-        if (!existingTag) {
-          createdTagId = tag.id
-        }
-      }
+      createdTagId = resolvedTag.createdTag?.id
 
       await updateTask(task, {
         ...values,
@@ -93,47 +91,32 @@ export const EditTaskButton = ({ task, disabled }: EditTaskButtonProps) => {
   }
 
   return (
-    <>
-      <ActionIcon
-        onClick={open}
-        type="button"
-        aria-label="Редактировать задачу"
-        title="Редактировать"
-        size="md"
-        radius="md"
-        data-no-dnd
-        disabled={disabled}
-      >
-        <Pencil size={16} strokeWidth={2} data-no-dnd />
-      </ActionIcon>
-
-      <Modal centered onClose={handleClose} opened={opened} title="Редактировать задачу">
-        <TaskForm
-          columns={columns}
-          onCancel={handleClose}
-          onSubmit={handleEditTask}
-          defaultValues={task}
-          submitLabel="Обновить"
-          renderTagField={({ value, error, disabled, onChange }) => (
-            <TagSelect
-              value={value}
-              draftValue={draftTagName}
-              label="Тег"
-              error={error}
-              disabled={disabled}
-              placeholder="Введите тег"
-              onChange={(tagId) => {
-                setDraftTagName('')
-                onChange(tagId)
-              }}
-              onCreate={(name) => {
-                setDraftTagName(name)
-                onChange(undefined)
-              }}
-            />
-          )}
-        />
-      </Modal>
-    </>
+    <Modal centered onClose={handleClose} opened={opened} title="Редактировать задачу">
+      <TaskForm
+        columns={columns}
+        onCancel={handleClose}
+        onSubmit={handleEditTask}
+        defaultValues={task}
+        submitLabel="Обновить"
+        renderTagField={({ value, error, disabled, onChange }) => (
+          <TagSelect
+            value={value}
+            draftValue={draftTagName}
+            label="Тег"
+            error={error}
+            disabled={disabled}
+            placeholder="Введите тег"
+            onChange={(tagId) => {
+              setDraftTagName('')
+              onChange(tagId)
+            }}
+            onCreate={(name) => {
+              setDraftTagName(name)
+              onChange(undefined)
+            }}
+          />
+        )}
+      />
+    </Modal>
   )
 }

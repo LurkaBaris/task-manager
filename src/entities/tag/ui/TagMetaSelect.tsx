@@ -61,17 +61,8 @@ export const TagMetaSelect = ({
     await handleClearTag()
   }
 
-  const handleOptionSubmit = async (optionValue: string) => {
-    if (canCreateTag && optionValue === trimmedSearch) {
-      await handleCreateTag()
-      return
-    }
-
-    await handleSelectTag(optionValue)
-  }
-
   return (
-    <MetaCombobox store={combobox} onOptionSubmit={handleOptionSubmit}>
+    <MetaCombobox store={combobox} onOptionSubmit={handleSelectTag}>
       <Combobox.Target>
         <Box data-no-dnd style={{ display: 'inline-flex' }}>
           <MetaControlInput
