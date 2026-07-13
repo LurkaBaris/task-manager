@@ -8,4 +8,5 @@ export {
 } from './indexed-db'
 
 export { renderHighlightedText } from './renderHighlightedText'
+export { pluralize } from './pluralize'
 export { useInlineEdit, type InlineEditSubmitResult } from './useInlineEdit'

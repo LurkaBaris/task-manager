@@ -1,6 +1,6 @@
 import { selectColumns, useColumnStore } from '@/entities/column'
 import { selectTasks, useTaskStore } from '@/entities/task'
-import { StatisticPieCard, StatisticStackedBarCard } from '@/shared/ui'
+import { StatisticDoughnutCard, StatisticPieCard, StatisticStackedBarCard } from '@/shared/ui'
 import {
   Box,
   Group,
@@ -89,7 +89,7 @@ export const TaskStatistics = () => {
               title="Задачи по колонкам"
             />
 
-            <StatisticPieCard
+            <StatisticDoughnutCard
               description="Распределение всех задач по уровню приоритета"
               items={priorityStatisticItems}
               title="Задачи по приоритетам"
