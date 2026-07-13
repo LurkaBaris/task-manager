@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 
 export const META_CONTROL_MAX_TEXT_LENGTH = 20
 export const META_CONTROL_RIGHT_SECTION_WIDTH = 24
+export const META_CONTROL_RIGHT_SECTION_WITH_ICON_WIDTH = 48
 export const META_CONTROL_TEXT_ICON_GAP = 8
 
 export const metaControlLabelStyles: CSSProperties = {
@@ -34,15 +35,15 @@ export const metaControlSizerStyles: CSSProperties = {
 }
 
 export const metaControlTextSizerStyles = ({
-  withRightSection = false,
+  rightSectionWidth = 0,
 }: {
-  withRightSection?: boolean
+  rightSectionWidth?: number
 } = {}): CSSProperties => ({
   display: 'block',
   maxWidth: `${META_CONTROL_MAX_TEXT_LENGTH}ch`,
   minWidth: 1,
   height: 24,
-  paddingRight: withRightSection ? META_CONTROL_RIGHT_SECTION_WIDTH : 0,
+  paddingRight: rightSectionWidth,
   overflow: 'hidden',
   whiteSpace: 'pre',
   textOverflow: 'ellipsis',
@@ -102,8 +103,10 @@ export const metaControlChevronStyles: CSSProperties = {
 
 export const metaControlSelectStyles = ({
   disabled,
+  rightSectionWidth = META_CONTROL_RIGHT_SECTION_WIDTH,
 }: {
   disabled: boolean
+  rightSectionWidth?: number
 }): SelectProps['styles'] => ({
   root: {
     position: 'absolute',
@@ -127,7 +130,7 @@ export const metaControlSelectStyles = ({
     height: 24,
     minHeight: 24,
     padding: 0,
-    paddingRight: META_CONTROL_RIGHT_SECTION_WIDTH,
+    paddingRight: rightSectionWidth,
     border: 'none',
     borderRadius: 0,
     outline: 'none',
@@ -145,7 +148,7 @@ export const metaControlSelectStyles = ({
     WebkitUserSelect: 'none',
   },
   section: {
-    width: META_CONTROL_RIGHT_SECTION_WIDTH,
+    width: rightSectionWidth,
     right: 0,
     color: 'var(--mantine-color-brand-light-color)',
     pointerEvents: 'none',
@@ -153,13 +156,16 @@ export const metaControlSelectStyles = ({
     WebkitUserSelect: 'none',
   },
   dropdown: {
-    minWidth: 220,
+    minWidth: 180,
     overflow: 'hidden',
     borderRadius: 12,
     padding: 4,
   },
   option: {
+    width: '100%',
+    boxSizing: 'border-box',
     borderRadius: 8,
+    padding: '6px 12px',
   },
 })
 

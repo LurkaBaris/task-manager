@@ -1,4 +1,5 @@
 export { DEFAULT_TYPE } from '@/shared/config'
+import { BookOpen, Bug, ListTodo } from 'lucide-react'
 import type { TaskPriority, TaskType } from './types'
 
 export const TASK_PRIORITY_CONFIG = [
@@ -18,9 +19,24 @@ export const TASK_PRIORITY_COLOR = Object.fromEntries(
 ) as Record<TaskPriority, string>
 
 export const TASK_TYPE_CONFIG = [
-  { id: 'task', title: 'Task', color: 'brand' },
-  { id: 'bug', title: 'Bug', color: 'priorityHigh' },
-  { id: 'story', title: 'Story', color: 'statusTodo' },
+  {
+    id: 'task',
+    title: 'Task',
+    color: 'brand',
+    icon: ListTodo,
+  },
+  {
+    id: 'bug',
+    title: 'Bug',
+    color: 'priorityHigh',
+    icon: Bug,
+  },
+  {
+    id: 'story',
+    title: 'Story',
+    color: 'statusTodo',
+    icon: BookOpen,
+  },
 ] as const
 
 export const TASK_TYPES = TASK_TYPE_CONFIG.map(({ id }) => id)
