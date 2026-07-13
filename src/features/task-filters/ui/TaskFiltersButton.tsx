@@ -19,12 +19,12 @@ import {
   Text,
   type MultiSelectProps,
 } from '@mantine/core'
-import { ChevronDown, RotateCcw, SlidersHorizontal } from 'lucide-react'
+import { ChevronDown, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Controller, useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useShallow } from 'zustand/shallow'
 import { VISIBLE_SELECT_FILTER_PILLS_COUNT } from '../model/contstants'
-import { getActiveTaskFiltersCount, hasActiveTaskFilters } from '../model/helpers'
+import { getActiveTaskFiltersCount } from '../model/helpers'
 import { selectTaskFilters, useTaskFilterActions, useTaskFiltersStore } from '../model/store'
 import { taskFiltersSchema, type TaskFiltersSchemaType } from '../model/taskFiltersSchema'
 import styles from './TaskFiltersButton.module.css'
@@ -98,28 +98,6 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
     }))
   }, [tags])
 
-  const draftPriorities = useWatch({
-    control,
-    name: 'priorities',
-  })
-
-  const draftTypes = useWatch({
-    control,
-    name: 'types',
-  })
-
-  const draftTagIds = useWatch({
-    control,
-    name: 'tagIds',
-  })
-
-  const draftFilters: TaskFiltersSchemaType = {
-    priorities: draftPriorities ?? EMPTY_FILTERS.priorities,
-    types: draftTypes ?? EMPTY_FILTERS.types,
-    tagIds: draftTagIds ?? EMPTY_FILTERS.tagIds,
-  }
-
-  const hasDraftFilters = hasActiveTaskFilters(draftFilters)
   const activeFiltersCount = getActiveTaskFiltersCount(filters)
 
   useEffect(() => {
@@ -134,10 +112,6 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
     setFilters(values)
     setOpened(false)
   })
-
-  const handleResetDraftFilters = () => {
-    reset(EMPTY_FILTERS)
-  }
 
   const handleCancelFilters = () => {
     reset(filters)
@@ -187,17 +161,6 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
               <Text fw={600} size="sm">
                 Фильтры задач
               </Text>
-
-              <Button
-                disabled={!hasDraftFilters || disabled}
-                leftSection={<RotateCcw size={14} />}
-                size="xs"
-                type="button"
-                variant="subtle"
-                onClick={handleResetDraftFilters}
-              >
-                Сбросить
-              </Button>
             </Group>
 
             <Divider />

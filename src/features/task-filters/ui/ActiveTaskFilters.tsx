@@ -7,6 +7,7 @@ import { hasActiveTaskFilters } from '../model/helpers'
 import { selectTaskFilters, useTaskFilterActions, useTaskFiltersStore } from '../model/store'
 import type { TaskFilters } from '../model/types'
 import { ActiveFilterPill } from './ActiveFilterPill'
+import { DeleteTaskFiltersButton } from './DeleteTaskFiltersButton'
 
 interface ActiveTaskFiltersProps {
   disabled?: boolean
@@ -60,7 +61,7 @@ export const ActiveTaskFilters = ({ disabled = false }: ActiveTaskFiltersProps) 
   }
 
   return (
-    <Group gap="xs" w="100%">
+    <Group gap="xs" w="100%" wrap="wrap">
       {activeFilters.map((filter) => (
         <ActiveFilterPill
           disabled={disabled}
@@ -72,6 +73,8 @@ export const ActiveTaskFilters = ({ disabled = false }: ActiveTaskFiltersProps) 
           }}
         />
       ))}
+
+      <DeleteTaskFiltersButton disabled={disabled} />
     </Group>
   )
 }
