@@ -2,7 +2,7 @@ import { Badge, Box, Grid, Group, Paper, Stack, Text, Title } from '@mantine/cor
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
 import type { ReactNode } from 'react'
 import type { StatisticPieItem } from '../model/types'
-import styles from './StatisticPieCard.module.css'
+import styles from './StatisticCard.module.css'
 import { StatisticPieLegend } from './StatisticPieLegend'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
