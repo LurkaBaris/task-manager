@@ -21,10 +21,10 @@ import { Paper, Stack, Text, Title } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
+import type { TaskDialogState } from '../model/TaskDialogState'
 import { TaskBoardColumns } from './TaskBoardColumns'
 import { TaskBoardSkeleton } from './TaskBoardSkeleton'
 import { TaskBoardToolbar } from './TaskBoardToolbar'
-import type { TaskDialogState } from '../model/TaskDialogState'
 
 export const TaskBoard = () => {
   const [search, setSearch] = useState('')
@@ -117,8 +117,8 @@ export const TaskBoard = () => {
               task={task}
               headerActions={
                 <>
-                  <EditTaskAction disabled />
                   <DeleteTaskAction disabled />
+                  <EditTaskAction disabled />
                 </>
               }
               footerActions={
