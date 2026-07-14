@@ -17,7 +17,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 import { arrayMove } from '@dnd-kit/sortable'
 import { notifications } from '@mantine/notifications'
 import type { ReactNode } from 'react'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   findTaskColumnId,
   getTaskDndNextTasksByColumnId,
@@ -47,17 +47,20 @@ interface TaskDndProviderProps {
   disabled?: boolean
 }
 
+interface DragOverFrameState {
+  frameId: number | null
+  event: DragOverEvent | null
+  overColumnId: Task['columnId'] | null
+  positionKey: string | null
+}
+
 const shouldInsertTaskAfter = (
   active: DragOverEvent['active'],
   over: NonNullable<DragOverEvent['over']>,
 ) => {
   const activeRect = active.rect.current.translated ?? active.rect.current.initial
 
-  if (!activeRect) {
-    return false
-  }
-
-  return activeRect.top > over.rect.top + over.rect.height / 2
+  return Boolean(activeRect && activeRect.top > over.rect.top + over.rect.height / 2)
 }
 
 export const TaskDndProvider = ({
@@ -75,6 +78,13 @@ export const TaskDndProvider = ({
   const activeTaskRef = useRef<Task | null>(null)
   const [overColumnId, setOverColumnId] = useState<Task['columnId'] | null>(null)
   const [draftTasksByColumnId, setDraftTasksByColumnId] = useState<TasksByColumnId | null>(null)
+  const draftTasksByColumnIdRef = useRef<TasksByColumnId | null>(null)
+  const dragOverFrameRef = useRef<DragOverFrameState>({
+    frameId: null,
+    event: null,
+    overColumnId: null,
+    positionKey: null,
+  })
   const sensors = useSensors(
     useSensor(CustomPointerSensor, {
       activationConstraint: {
@@ -90,17 +100,73 @@ export const TaskDndProvider = ({
   )
   const columnIds = useMemo(() => columns.map((el) => el.id), [columns])
 
+  const getTasksSnapshot = (): TasksByColumnId => makeTasksSnapshot(columnIds, getColumnTasks)
+
+  const getVisibleColumnTasks = (columnId: Column['id']) =>
+    draftTasksByColumnId?.[columnId] ?? getColumnTasks(columnId)
+
+  const cancelPendingDragOver = () => {
+    const dragOverFrame = dragOverFrameRef.current
+
+    if (dragOverFrame.frameId !== null) {
+      cancelAnimationFrame(dragOverFrame.frameId)
+    }
+
+    dragOverFrame.frameId = null
+    dragOverFrame.event = null
+    dragOverFrame.overColumnId = null
+    dragOverFrame.positionKey = null
+  }
+
   const resetDragState = () => {
+    cancelPendingDragOver()
     activeTaskRef.current = null
+    draftTasksByColumnIdRef.current = null
     setActiveTask(null)
     setOverColumnId(null)
     setDraftTasksByColumnId(null)
   }
 
-  const getTasksSnapshot = (): TasksByColumnId => makeTasksSnapshot(columnIds, getColumnTasks)
+  const setNextOverColumnId = (nextOverColumnId: Task['columnId'] | null) => {
+    const dragOverFrame = dragOverFrameRef.current
 
-  const getVisibleColumnTasks = (columnId: Column['id']) =>
-    draftTasksByColumnId?.[columnId] ?? getColumnTasks(columnId)
+    if (dragOverFrame.overColumnId === nextOverColumnId) {
+      return
+    }
+
+    dragOverFrame.overColumnId = nextOverColumnId
+    setOverColumnId(nextOverColumnId)
+  }
+
+  const shouldProcessDragOverPosition = (positionKey: string): boolean => {
+    const dragOverFrame = dragOverFrameRef.current
+
+    if (dragOverFrame.positionKey === positionKey) {
+      return false
+    }
+
+    dragOverFrame.positionKey = positionKey
+    return true
+  }
+
+  const getDragOverPositionKey = ({
+    currentColumnId,
+    targetColumnId,
+    overTask,
+    insertAfter,
+  }: {
+    currentColumnId: Task['columnId'] | undefined
+    targetColumnId: Task['columnId']
+    overTask: Task | undefined
+    insertAfter: boolean
+  }): string =>
+    [currentColumnId ?? 'none', targetColumnId, overTask?.id ?? 'column', insertAfter].join(':')
+
+  useEffect(() => {
+    return () => {
+      cancelPendingDragOver()
+    }
+  }, [])
 
   const handleDragStart = ({ active }: DragStartEvent) => {
     if (disabled) {
@@ -113,64 +179,121 @@ export const TaskDndProvider = ({
       return
     }
 
+    const tasksSnapshot = getTasksSnapshot()
+
+    cancelPendingDragOver()
+    dragOverFrameRef.current.overColumnId = null
     activeTaskRef.current = activeData.task
+    draftTasksByColumnIdRef.current = tasksSnapshot
     setActiveTask(activeData.task)
-    setDraftTasksByColumnId(getTasksSnapshot())
   }
 
   const handleDragCancel = () => {
     resetDragState()
   }
 
-  const handleDragOver = ({ active, over }: DragOverEvent) => {
+  const processDragOver = ({ active, over }: DragOverEvent) => {
     const draggedTask = activeTaskRef.current
 
     if (disabled || !over || !draggedTask) {
-      setOverColumnId(null)
+      setNextOverColumnId(null)
+      dragOverFrameRef.current.positionKey = null
       return
     }
 
+    const tasksByColumnId = draftTasksByColumnIdRef.current ?? getTasksSnapshot()
     const overData = over.data.current
-
-    const visibleTasksByColumnId = draftTasksByColumnId ?? getTasksSnapshot()
-    const targetColumnId = getTaskDndTargetColumnId(columnIds, visibleTasksByColumnId, overData)
+    const targetColumnId = getTaskDndTargetColumnId(columnIds, tasksByColumnId, overData)
 
     if (!targetColumnId) {
-      setOverColumnId(null)
       return
     }
 
-    setOverColumnId((current) => (current === targetColumnId ? current : targetColumnId))
+    setNextOverColumnId(targetColumnId)
 
-    setDraftTasksByColumnId((current) => {
-      const tasksByColumnId = current ?? getTasksSnapshot()
-      const sourceColumnId = findTaskColumnId(columnIds, tasksByColumnId, draggedTask.id)
+    const currentColumnId = findTaskColumnId(columnIds, tasksByColumnId, draggedTask.id)
+    const overTask = isTaskDndTaskData(overData) ? overData.task : undefined
+    const insertAfter = overTask ? shouldInsertTaskAfter(active, over) : false
+    const positionKey = getDragOverPositionKey({
+      currentColumnId,
+      targetColumnId,
+      overTask,
+      insertAfter,
+    })
 
-      if (!sourceColumnId) {
-        return tasksByColumnId
-      }
+    if (!shouldProcessDragOverPosition(positionKey) || !currentColumnId) {
+      return
+    }
 
-      const nextTasksByColumnId = getTaskDndNextTasksByColumnId({
-        tasksByColumnId,
-        task: draggedTask,
-        sourceColumnId,
-        targetColumnId,
-        overTask: isTaskDndTaskData(overData) ? overData.task : undefined,
-        insertAfter: shouldInsertTaskAfter(active, over),
-      })
+    if (
+      currentColumnId === targetColumnId &&
+      targetColumnId === draggedTask.columnId &&
+      draftTasksByColumnIdRef.current === null
+    ) {
+      return
+    }
 
-      return hasTaskDndOrderChanged({
+    const nextTasksByColumnId = getTaskDndNextTasksByColumnId({
+      tasksByColumnId,
+      task: draggedTask,
+      sourceColumnId: currentColumnId,
+      targetColumnId,
+      overTask,
+      insertAfter,
+    })
+
+    if (
+      hasTaskDndOrderChanged({
         tasksByColumnId,
         nextTasksByColumnId,
-        sourceColumnId,
+        sourceColumnId: currentColumnId,
         targetColumnId,
       })
-        ? nextTasksByColumnId
-        : tasksByColumnId
+    ) {
+      draftTasksByColumnIdRef.current = nextTasksByColumnId
+      setDraftTasksByColumnId(nextTasksByColumnId)
+    }
+  }
+
+  const flushPendingDragOver = () => {
+    const dragOverFrame = dragOverFrameRef.current
+
+    if (dragOverFrame.frameId !== null) {
+      cancelAnimationFrame(dragOverFrame.frameId)
+      dragOverFrame.frameId = null
+    }
+
+    const pendingEvent = dragOverFrame.event
+    dragOverFrame.event = null
+
+    if (pendingEvent) {
+      processDragOver(pendingEvent)
+    }
+  }
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const dragOverFrame = dragOverFrameRef.current
+    dragOverFrame.event = event
+
+    if (dragOverFrame.frameId !== null) {
+      return
+    }
+
+    dragOverFrame.frameId = requestAnimationFrame(() => {
+      dragOverFrame.frameId = null
+
+      const pendingEvent = dragOverFrame.event
+      dragOverFrame.event = null
+
+      if (pendingEvent) {
+        processDragOver(pendingEvent)
+      }
     })
   }
 
   const handleDragEnd = async ({ active, over }: DragEndEvent) => {
+    flushPendingDragOver()
+
     const activeData = active.data.current
 
     if (disabled || !over) {
@@ -228,16 +351,28 @@ export const TaskDndProvider = ({
 
     const sourceColumnId = draggedTask.columnId
     const tasksSnapshot = getTasksSnapshot()
-    const nextTasksByColumnId = draftTasksByColumnId ?? tasksSnapshot
+    const previewTasksByColumnId = draftTasksByColumnIdRef.current ?? tasksSnapshot
 
     const targetColumnId =
-      findTaskColumnId(columnIds, nextTasksByColumnId, draggedTask.id) ??
-      getTaskDndTargetColumnId(columnIds, nextTasksByColumnId, overData)
+      findTaskColumnId(columnIds, previewTasksByColumnId, draggedTask.id) ??
+      getTaskDndTargetColumnId(columnIds, previewTasksByColumnId, overData)
 
     if (!targetColumnId) {
       resetDragState()
       return
     }
+
+    const isOverDraggedTask = isTaskDndTaskData(overData) && overData.task.id === draggedTask.id
+    const nextTasksByColumnId = isOverDraggedTask
+      ? previewTasksByColumnId
+      : getTaskDndNextTasksByColumnId({
+          tasksByColumnId: tasksSnapshot,
+          task: draggedTask,
+          sourceColumnId,
+          targetColumnId,
+          overTask: isTaskDndTaskData(overData) ? overData.task : undefined,
+          insertAfter: shouldInsertTaskAfter(active, over),
+        })
 
     if (
       !hasTaskDndOrderChanged({

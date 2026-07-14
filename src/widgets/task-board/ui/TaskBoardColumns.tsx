@@ -1,28 +1,12 @@
-import { ColumnCard, type Column } from '@/entities/column'
-import { TaskCard, type Task } from '@/entities/task'
-import { ColumnTaskSortControl, type TaskSortOrder } from '@/features/change-column-task-sort'
-import { ChangeTaskPrioritySelect } from '@/features/change-task-priority'
-import { ChangeTaskStatusSelect } from '@/features/change-task-status'
-import { ChangeTaskTag } from '@/features/change-task-tag'
-import { ChangeTaskType } from '@/features/change-task-type'
-import { DeleteColumnButton } from '@/features/delete-column'
-import { DeleteTaskAction } from '@/features/delete-task'
-import { EditTaskAction } from '@/features/edit-task'
-import {
-  DroppableColumn,
-  SORTABLE_COLUMN_ID_PREFIX,
-  SORTABLE_TASK_ID_PREFIX,
-  SortableColumn,
-  SortableTask,
-} from '@/features/task-dnd'
-import {
-  horizontalListSortingStrategy,
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+import { type Column } from '@/entities/column'
+import { type Task } from '@/entities/task'
+import { type TaskSortOrder } from '@/features/change-column-task-sort'
+import { SORTABLE_COLUMN_ID_PREFIX } from '@/features/task-dnd'
+import { horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable'
 import { Group } from '@mantine/core'
 import { useRef, useState, type UIEvent, type WheelEvent } from 'react'
 import styles from './TaskBoard.module.css'
+import { TaskBoardColumn } from './TaskBoardColumn'
 
 interface TaskBoardColumnsProps {
   columns: Column[]
@@ -166,72 +150,21 @@ export const TaskBoardColumns = ({
             const columnTasks = getColumnTasks(column.id)
 
             return (
-              <SortableColumn column={column} disabled={disabled} key={column.id}>
-                <DroppableColumn columnId={column.id}>
-                  {({ setNodeRef }) => (
-                    <ColumnCard
-                      column={column}
-                      count={columnTasks.length}
-                      emptyText={
-                        isTaskFilterActive ? 'По данным фильтрам задач не нашлось' : undefined
-                      }
-                      headerControls={
-                        <ColumnTaskSortControl
-                          disabled={disabled}
-                          sortOrder={sortOrder}
-                          onChange={(sortOrder) => changeColumnSortOrder(column.id, sortOrder)}
-                        />
-                      }
-                      topRightAction={
-                        <DeleteColumnButton
-                          column={column}
-                          disabled={disabled}
-                          onRemove={onRemove}
-                        />
-                      }
-                      isHightlighted={overColumnId === column.id}
-                      listRef={setNodeRef}
-                    >
-                      <SortableContext
-                        items={columnTasks.map((task) => `${SORTABLE_TASK_ID_PREFIX}${task.id}`)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        {columnTasks.map((task) => (
-                          <SortableTask disabled={isTaskDndDisabled} key={task.id} task={task}>
-                            <TaskCard
-                              search={normalizedSearch}
-                              task={task}
-                              headerActions={
-                                <>
-                                  <DeleteTaskAction onClick={() => onDeleteTask(task)} />
-                                  <EditTaskAction onClick={() => onEditTask(task)} />
-                                </>
-                              }
-                              metaItems={[
-                                {
-                                  label: 'Тег',
-                                  content: <ChangeTaskTag task={task} disabled={disabled} />,
-                                },
-                                {
-                                  label: 'Тип',
-                                  content: <ChangeTaskType task={task} disabled={disabled} />,
-                                },
-                              ]}
-                              footerActions={
-                                <>
-                                  <ChangeTaskStatusSelect task={task} disabled={disabled} />
-
-                                  <ChangeTaskPrioritySelect task={task} disabled={disabled} />
-                                </>
-                              }
-                            />
-                          </SortableTask>
-                        ))}
-                      </SortableContext>
-                    </ColumnCard>
-                  )}
-                </DroppableColumn>
-              </SortableColumn>
+              <TaskBoardColumn
+                changeColumnSortOrder={changeColumnSortOrder}
+                column={column}
+                columnTasks={columnTasks}
+                disabled={disabled}
+                isHighlighted={overColumnId === column.id}
+                isTaskDndDisabled={isTaskDndDisabled}
+                isTaskFilterActive={isTaskFilterActive}
+                key={column.id}
+                normalizedSearch={normalizedSearch}
+                sortOrder={sortOrder}
+                onDeleteTask={onDeleteTask}
+                onEditTask={onEditTask}
+                onRemove={onRemove}
+              />
             )
           })}
         </SortableContext>
