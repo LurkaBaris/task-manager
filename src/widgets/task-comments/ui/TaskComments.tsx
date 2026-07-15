@@ -1,9 +1,13 @@
 import {
   getTaskCommentsByTaskIds,
-  sortTaskCommentsByCreatedAt,
   TaskCommentCard,
   type TaskComment,
 } from '@/entities/task-comment'
+import {
+  sortTaskCommentsByDate,
+  TaskCommentSortButton,
+  useTaskCommentSort,
+} from '@/features/change-task-comment-sort'
 import { CreateTaskComment } from '@/features/create-task-comment'
 import { DeleteTaskCommentButton } from '@/features/delete-task-comment'
 import { EditTaskCommentButton } from '@/features/edit-task-comment'
@@ -18,6 +22,8 @@ interface TaskCommentsProps {
 
 export const TaskComments = ({ taskId }: TaskCommentsProps) => {
   const [comments, setComments] = useState<TaskComment[]>([])
+  const { sortOrder, toggleSortOrder } = useTaskCommentSort()
+  const sortedComments = sortTaskCommentsByDate(comments, sortOrder)
 
   useEffect(() => {
     let isActive = true
@@ -67,26 +73,30 @@ export const TaskComments = ({ taskId }: TaskCommentsProps) => {
         (comment) => comment.id !== restoredComment.id,
       )
 
-      return sortTaskCommentsByCreatedAt([...commentsWithoutRestored, restoredComment])
+      return [...commentsWithoutRestored, restoredComment]
     })
   }
 
   return (
     <section className={styles.comments}>
       <Stack gap="lg">
-        <Group gap="xs">
-          <Text c="gray.9" component="h2" fw={700} m={0} size="md">
-            Комментарии
-          </Text>
+        <Group gap="sm" justify="space-between" wrap="nowrap" align="center">
+          <Group gap="xs" wrap="nowrap" align="center">
+            <Text c="gray.9" component="h2" fw={700} m={0} size="md">
+              Комментарии
+            </Text>
 
-          <Badge color="brand" size="sm" variant="light">
-            {comments.length}
-          </Badge>
+            <Badge color="brand" size="sm" variant="light">
+              {comments.length}
+            </Badge>
+          </Group>
+
+          <TaskCommentSortButton sortOrder={sortOrder} onToggle={toggleSortOrder} />
         </Group>
 
         {comments.length > 0 && (
           <Stack gap="sm">
-            {comments.map((comment) => (
+            {sortedComments.map((comment) => (
               <TaskCommentCard
                 key={comment.id}
                 comment={comment}
