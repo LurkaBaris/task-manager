@@ -1,9 +1,14 @@
-import { TASK_TYPE_CONFIG, TASK_TYPE_OPTIONS, useTaskActions, type Task } from '@/entities/task'
+import {
+  isTaskType,
+  TASK_TYPE_CONFIG,
+  TASK_TYPE_OPTIONS,
+  useTaskActions,
+  type Task,
+} from '@/entities/task'
 import { MetaSelect } from '@/shared/ui'
 import { Box, Group, Text, ThemeIcon } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { Check } from 'lucide-react'
-import { isTaskType } from '../model/guards'
 
 interface ChangeTaskTypeProps {
   task: Task

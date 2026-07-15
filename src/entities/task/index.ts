@@ -10,6 +10,7 @@ export {
   TASK_TYPES,
 } from './model/constants'
 export { createTask } from './model/createTask'
+export { isTaskPriority, isTaskType } from './model/guards'
 export { TASK_PRIORITY_OPTIONS, TASK_TYPE_OPTIONS } from './model/options'
 export { sortTasksByPosition } from './model/position'
 export {

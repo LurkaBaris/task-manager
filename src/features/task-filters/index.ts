@@ -1,5 +1,5 @@
 export { hasActiveTaskFilters, isTaskMatchingFilters } from './model/helpers'
-export { selectTaskFilters, useTaskFiltersStore } from './model/store'
+export type { TaskFilters } from './model/types'
 export { ActiveTaskFilters } from './ui/ActiveTaskFilters'
 export { DeleteTaskFiltersButton } from './ui/DeleteTaskFiltersButton'
 export { TaskFiltersButton } from './ui/TaskFiltersButton'

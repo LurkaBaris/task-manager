@@ -14,29 +14,36 @@ import { TaskDndProvider } from '@/features/task-dnd'
 import {
   hasActiveTaskFilters,
   isTaskMatchingFilters,
-  selectTaskFilters,
-  useTaskFiltersStore,
+  type TaskFilters,
 } from '@/features/task-filters'
 import { Paper, Stack, Text, Title } from '@mantine/core'
-import { useDebouncedValue } from '@mantine/hooks'
 import { useMemo, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import type { TaskDialogState } from '../model/TaskDialogState'
+import { useTaskBoardQuery } from '../model/useTaskBoardQuery'
 import { TaskBoardColumns } from './TaskBoardColumns'
 import { TaskBoardSkeleton } from './TaskBoardSkeleton'
 import { TaskBoardToolbar } from './TaskBoardToolbar'
 
 export const TaskBoard = () => {
-  const [search, setSearch] = useState('')
   const [taskDialogState, setTaskDialogState] = useState<TaskDialogState>(null)
-  const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
-  const [debouncedSearch] = useDebouncedValue(search, 300)
+  const { boardQuery, debouncedQuery, setQuery, setFilters, resetFilters } = useTaskBoardQuery()
+
+  const filters = useMemo<TaskFilters>(
+    () => ({
+      priorities: boardQuery.priorities,
+      types: boardQuery.types,
+      tagIds: boardQuery.tagIds,
+    }),
+    [boardQuery.priorities, boardQuery.tagIds, boardQuery.types],
+  )
+
+  const normalizedSearch = debouncedQuery.toLowerCase().trim()
   const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
   const { tasksByColumnId, isLoading, isLoaded } = useTaskStore(useShallow(selectTasks))
   const { changeColumnSortOrder, getColumnSortOrder, removeColumnSortOrder } = useColumnTaskSort()
   const hasColumns = columns.length > 0
   const hasFilters = hasActiveTaskFilters(filters)
-  const normalizedSearch = debouncedSearch.toLowerCase().trim()
   const isTasksReady = !hasColumns || isLoaded
   const isInitialLoading = !isColumnsLoaded || (hasColumns && isLoading && !isLoaded)
   const isBoardLocked = !isColumnsLoaded || !isTasksReady
@@ -81,9 +88,12 @@ export const TaskBoard = () => {
     <>
       <TaskBoardToolbar
         disabled={isBoardLocked}
+        filters={filters}
         isCreateTaskDisabled={isCreateTaskDisabled}
-        search={search}
-        onSearchChange={setSearch}
+        search={boardQuery.query}
+        onFiltersChange={setFilters}
+        onFiltersReset={resetFilters}
+        onSearchChange={setQuery}
       />
 
       {isInitialLoading ? (

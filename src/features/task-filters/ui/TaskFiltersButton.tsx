@@ -25,12 +25,14 @@ import { Controller, useForm } from 'react-hook-form'
 import { useShallow } from 'zustand/shallow'
 import { VISIBLE_SELECT_FILTER_PILLS_COUNT } from '../model/contstants'
 import { getActiveTaskFiltersCount } from '../model/helpers'
-import { selectTaskFilters, useTaskFilterActions, useTaskFiltersStore } from '../model/store'
 import { taskFiltersSchema, type TaskFiltersSchemaType } from '../model/taskFiltersSchema'
+import type { TaskFilters } from '../model/types'
 import styles from './TaskFiltersButton.module.css'
 
 interface TaskFiltersButtonProps {
+  filters: TaskFilters
   disabled?: boolean
+  onChange: (filters: TaskFilters) => void
 }
 
 const EMPTY_FILTERS: TaskFiltersSchemaType = {
@@ -75,10 +77,12 @@ const getLimitedPillRenderer = (
   }
 }
 
-export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) => {
+export const TaskFiltersButton = ({
+  filters,
+  disabled = false,
+  onChange,
+}: TaskFiltersButtonProps) => {
   const [opened, setOpened] = useState(false)
-  const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
-  const { setFilters } = useTaskFilterActions()
   const { tags, isLoaded } = useTagStore(useShallow(selectTags))
   const {
     control,
@@ -109,7 +113,7 @@ export const TaskFiltersButton = ({ disabled = false }: TaskFiltersButtonProps) 
   }, [filters, opened, reset])
 
   const handleApplyFilters = handleSubmit((values) => {
-    setFilters(values)
+    onChange(values)
     setOpened(false)
   })
 

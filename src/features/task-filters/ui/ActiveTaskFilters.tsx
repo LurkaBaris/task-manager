@@ -4,13 +4,15 @@ import { Group } from '@mantine/core'
 import { useMemo } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { hasActiveTaskFilters } from '../model/helpers'
-import { selectTaskFilters, useTaskFilterActions, useTaskFiltersStore } from '../model/store'
 import type { TaskFilters } from '../model/types'
 import { ActiveFilterPill } from './ActiveFilterPill'
 import { DeleteTaskFiltersButton } from './DeleteTaskFiltersButton'
 
 interface ActiveTaskFiltersProps {
+  filters: TaskFilters
   disabled?: boolean
+  onChange: (filters: TaskFilters) => void
+  onReset: () => void
 }
 
 type ActiveFilterKey = keyof TaskFilters
@@ -21,9 +23,12 @@ const getFiltersWithoutValue = (filters: TaskFilters, filterKey: ActiveFilterKey
   tagIds: filterKey === 'tagIds' ? [] : filters.tagIds,
 })
 
-export const ActiveTaskFilters = ({ disabled = false }: ActiveTaskFiltersProps) => {
-  const filters = useTaskFiltersStore(useShallow(selectTaskFilters))
-  const { setFilters } = useTaskFilterActions()
+export const ActiveTaskFilters = ({
+  filters,
+  disabled = false,
+  onChange,
+  onReset,
+}: ActiveTaskFiltersProps) => {
   const { tags } = useTagStore(useShallow(selectTags))
 
   const tagNameById = useMemo(() => {
@@ -69,12 +74,12 @@ export const ActiveTaskFilters = ({ disabled = false }: ActiveTaskFiltersProps) 
           title={filter.title}
           values={filter.values}
           onRemove={() => {
-            setFilters(getFiltersWithoutValue(filters, filter.key))
+            onChange(getFiltersWithoutValue(filters, filter.key))
           }}
         />
       ))}
 
-      <DeleteTaskFiltersButton disabled={disabled} />
+      <DeleteTaskFiltersButton disabled={disabled} onReset={onReset} />
     </Group>
   )
 }
