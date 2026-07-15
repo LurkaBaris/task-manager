@@ -1,13 +1,24 @@
 import react from '@vitejs/plugin-react'
-import path from 'node:path'
-import { defineConfig } from 'vite'
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vitest/config'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+
+  test: {
+    environment: 'node',
+    include: ['src/**/*.test.ts'],
+
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      exclude: ['src/**/*.test.ts', 'src/**/index.ts'],
     },
   },
 })
