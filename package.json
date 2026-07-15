@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "check": "npm run type-check && npm run lint && npm run format:check && npm run test:run",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "prepare": "husky",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run"
@@ -52,6 +54,7 @@
     "eslint-plugin-react-refresh": "^0.5.3",
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
     "postcss": "^8.5.16",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
