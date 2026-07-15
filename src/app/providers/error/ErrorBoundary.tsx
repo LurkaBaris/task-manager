@@ -31,15 +31,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     })
   }
 
-  private handleReload = () => {
-    window.location.reload()
-  }
-
   render() {
     if (!this.state.hasError) {
       return this.props.children
     }
 
-    return <ErrorPage onReload={this.handleReload} onReset={this.handleReset} />
+    return <ErrorPage onRetry={this.handleReset} />
   }
 }

@@ -1,13 +1,24 @@
 import { selectColumns, useColumnActions, useColumnStore } from '@/entities/column'
 import { useTagActions } from '@/entities/tag'
 import { useTaskActions } from '@/entities/task'
+import { useDocumentTitle } from '@/shared/lib'
 import { Alert, AppShell, Container } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { useEffect, useMemo, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
-import { Header } from './header/Header'
 import styles from './AppLayout.module.css'
+import { Header } from './header/Header'
+
+const LoadError = () => {
+  useDocumentTitle('Ошибка загрузки данных')
+
+  return (
+    <Alert color="red" title="Не удалось загрузить данные">
+      Попробуйте обновить страницу
+    </Alert>
+  )
+}
 
 export const AppLayout = () => {
   const [hasLoadError, setHasLoadError] = useState(false)
@@ -68,13 +79,7 @@ export const AppLayout = () => {
 
       <AppShell.Main className={styles.main}>
         <Container className={styles.container} size="xl">
-          {hasLoadError ? (
-            <Alert color="red" title="Не удалось загрузить данные">
-              Попробуйте обновить страницу
-            </Alert>
-          ) : (
-            <Outlet />
-          )}
+          {hasLoadError ? <LoadError /> : <Outlet />}
         </Container>
       </AppShell.Main>
     </AppShell>

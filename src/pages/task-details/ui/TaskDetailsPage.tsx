@@ -7,6 +7,7 @@ import { ChangeTaskTitleInline } from '@/features/change-task-title'
 import { ChangeTaskType } from '@/features/change-task-type'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { getTaskDetailsRoute, ROUTES } from '@/shared/config'
+import { useDocumentTitle } from '@/shared/lib'
 import { ErrorState } from '@/shared/ui'
 import { TaskComments } from '@/widgets/task-comments'
 import { Box, Center, Divider, Grid, Group, Loader, Paper, Stack, Text } from '@mantine/core'
@@ -33,6 +34,9 @@ export const TaskDetailsPage = () => {
   }, [taskId, tasksByColumnId])
 
   const isInitialLoading = isTasksLoading && !isTasksLoaded
+  const pageTitle = isInitialLoading ? 'Загрузка задачи' : (task?.title ?? 'Задача не найдена')
+
+  useDocumentTitle(pageTitle)
 
   if (isInitialLoading) {
     return (

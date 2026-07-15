@@ -9,4 +9,5 @@ export {
 
 export { renderHighlightedText } from './renderHighlightedText'
 export { pluralize } from './pluralize'
+export { useDocumentTitle } from './useDocumentTitle'
 export { useInlineEdit, type InlineEditSubmitResult } from './useInlineEdit'
