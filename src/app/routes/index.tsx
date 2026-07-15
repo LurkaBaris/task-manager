@@ -35,6 +35,16 @@ export const routes = [
         path: ROUTES.TASK_DETAILS,
         element: withSuspense(<LazyTaskDetailsPage />),
       },
+      {
+        path: '*',
+        element: withSuspense(
+          <LazyErrorPage
+            title="Страница не найдена"
+            description="Возможно, страница была удалена или адрес указан неверно"
+            showReload={false}
+          />,
+        ),
+      },
     ],
   },
 ]

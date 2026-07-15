@@ -1,4 +1,5 @@
 export { ActionsDropdown } from './custom-dropdown'
+export { ErrorState } from './error-state'
 export {
   MetaCombobox,
   metaControlChevronStyles,

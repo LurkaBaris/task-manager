@@ -7,8 +7,9 @@ import { ChangeTaskTitleInline } from '@/features/change-task-title'
 import { ChangeTaskType } from '@/features/change-task-type'
 import { DeleteTaskButton } from '@/features/delete-task'
 import { getTaskDetailsRoute, ROUTES } from '@/shared/config'
+import { ErrorState } from '@/shared/ui'
 import { TaskComments } from '@/widgets/task-comments'
-import { Alert, Box, Center, Divider, Grid, Group, Loader, Paper, Stack, Text } from '@mantine/core'
+import { Box, Center, Divider, Grid, Group, Loader, Paper, Stack, Text } from '@mantine/core'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useShallow } from 'zustand/shallow'
@@ -43,9 +44,10 @@ export const TaskDetailsPage = () => {
 
   if (!task) {
     return (
-      <Alert color="yellow" title="Задача не найдена">
-        Такой задачи нет или она удалена
-      </Alert>
+      <ErrorState
+        title="Задача не найдена"
+        description="Возможно, задача была удалена или указан неверный идентификатор"
+      />
     )
   }
 
