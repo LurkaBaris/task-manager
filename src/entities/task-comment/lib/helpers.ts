@@ -1,4 +1,12 @@
-import type { TaskComment } from '../model/types'
+import type { TaskComment, TaskCommentAttachment } from '../model/types'
+
+const IMAGE_FILE_EXTENSION = /\.(gif|jpe?g|png|webp)$/i
+
+export const isImageAttachment = (
+  attachment: Pick<TaskCommentAttachment, 'name' | 'type'>,
+): boolean => {
+  return attachment.type.startsWith('image/') || IMAGE_FILE_EXTENSION.test(attachment.name)
+}
 
 export const sortTaskCommentsByCreatedAt = (comments: TaskComment[]): TaskComment[] => {
   return [...comments].sort((firstComment, secondComment) => {

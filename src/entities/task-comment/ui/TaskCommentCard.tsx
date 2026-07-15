@@ -3,7 +3,7 @@ import { UserRound } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { formatCommentDate } from '../lib/helpers'
 import type { TaskComment } from '../model/types'
-import { TaskCommentAttachmentCard } from './TaskCommentAttachmentCard'
+import { TaskCommentAttachmentGallery } from './TaskCommentAttachmentGallery'
 import styles from './TaskCommentCard.module.css'
 
 interface TaskCommentCardProps {
@@ -67,17 +67,7 @@ export const TaskCommentCard = ({
                 Вложения
               </Text>
 
-              <Stack gap="xs">
-                {comment.attachments.map((attachment) => (
-                  <TaskCommentAttachmentCard
-                    file={attachment.file}
-                    key={attachment.id}
-                    name={attachment.name}
-                    size={attachment.size}
-                    type={attachment.type}
-                  />
-                ))}
-              </Stack>
+              <TaskCommentAttachmentGallery attachments={comment.attachments} />
             </Stack>
           )}
 

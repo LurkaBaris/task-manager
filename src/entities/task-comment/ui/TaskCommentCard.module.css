@@ -28,3 +28,98 @@
   flex-shrink: 0;
   border: 1px solid var(--mantine-color-gray-2);
 }
+
+.attachmentPreviewButton {
+  flex-shrink: 0;
+  border-radius: var(--mantine-radius-md);
+  cursor: zoom-in;
+}
+
+.attachmentPreviewButton:focus-visible {
+  outline: 2px solid var(--mantine-color-brand-5);
+  outline-offset: 2px;
+}
+
+.galleryModalContent {
+  overflow: hidden;
+  max-height: 94dvh;
+}
+
+.galleryModalHeader {
+  min-width: 0;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.galleryModalTitle {
+  overflow: hidden;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.galleryModalBody {
+  padding: var(--mantine-spacing-md);
+}
+
+.galleryCarousel {
+  overflow: hidden;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-gray-1);
+}
+
+.galleryCarouselViewport {
+  border-radius: var(--mantine-radius-md);
+  cursor: grab;
+  touch-action: pan-y pinch-zoom;
+}
+
+.galleryCarouselViewport:active {
+  cursor: grabbing;
+}
+
+.galleryCarouselSlide {
+  height: min(70vh, 680px);
+  min-height: 280px;
+  background: var(--mantine-color-gray-1);
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.galleryCarouselControl {
+  border: 0;
+  background: var(--mantine-color-brand-6);
+  color: var(--mantine-color-white);
+  opacity: 0.94;
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease;
+}
+
+.galleryCarouselControl:hover {
+  background: var(--mantine-color-brand-7);
+  opacity: 1;
+}
+
+@media (max-width: 48em) {
+  .galleryModalBody {
+    padding: var(--mantine-spacing-xs);
+  }
+
+  .galleryCarouselSlide {
+    height: calc(100dvh - 150px);
+    min-height: 240px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attachmentCard,
+  .galleryCarouselControl {
+    transition: none;
+  }
+}
