@@ -1,6 +1,6 @@
 import type { ChartOptions } from 'chart.js'
 
-export const chartOptions: ChartOptions<'bar'> = {
+export const getChartOptions = (textColor: string, gridColor: string): ChartOptions<'bar'> => ({
   indexAxis: 'y',
   responsive: true,
   maintainAspectRatio: false,
@@ -24,8 +24,12 @@ export const chartOptions: ChartOptions<'bar'> = {
       stacked: true,
       beginAtZero: true,
       ticks: {
+        color: textColor,
         precision: 0,
         stepSize: 1,
+      },
+      grid: {
+        color: gridColor,
       },
     },
     y: {
@@ -35,7 +39,8 @@ export const chartOptions: ChartOptions<'bar'> = {
       },
       ticks: {
         autoSkip: false,
+        color: textColor,
       },
     },
   },
-}
+})

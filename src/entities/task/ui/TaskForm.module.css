@@ -1,14 +1,14 @@
 .label {
-  color: var(--mantine-color-gray-7);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
   font-weight: 600;
 }
 
 .input {
-  color: var(--mantine-color-gray-9);
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
 }
 
 .input::placeholder {
-  color: var(--mantine-color-gray-6);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
 }
 
 .error {

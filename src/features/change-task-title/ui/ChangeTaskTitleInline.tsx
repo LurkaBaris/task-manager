@@ -71,7 +71,13 @@ export const ChangeTaskTitleInline = ({ task }: ChangeTaskTitleInlineProps) => {
 
   if (!isEditing) {
     return (
-      <Title className={styles.titleText} c="gray.9" fw={750} order={1} size="30px">
+      <Title
+        c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+        className={styles.titleText}
+        fw={750}
+        order={1}
+        size="30px"
+      >
         <span>{task.title}</span>
 
         <Tooltip label="Изменить название" withArrow>

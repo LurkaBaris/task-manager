@@ -1,5 +1,5 @@
 .avatar {
-  border: 1px solid var(--mantine-color-brand-3);
+  border: 1px solid light-dark(var(--mantine-color-brand-2), rgb(45 212 191 / 34%));
 }
 
 .commentText {
@@ -8,12 +8,12 @@
 }
 
 .attachmentCard {
-  border-color: var(--mantine-color-gray-2);
+  border-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
   transition: border-color 160ms ease;
 }
 
 .attachmentCard:hover {
-  border-color: var(--mantine-color-brand-3);
+  border-color: light-dark(var(--mantine-color-brand-2), rgb(45 212 191 / 34%));
 }
 
 .attachmentIcon {
@@ -26,7 +26,7 @@
 
 .attachmentPreview {
   flex-shrink: 0;
-  border: 1px solid var(--mantine-color-gray-2);
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
 }
 
 .attachmentPreviewButton {
@@ -36,7 +36,7 @@
 }
 
 .attachmentPreviewButton:focus-visible {
-  outline: 2px solid var(--mantine-color-brand-5);
+  outline: 2px solid light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3));
   outline-offset: 2px;
 }
 
@@ -47,7 +47,7 @@
 
 .galleryModalHeader {
   min-width: 0;
-  border-bottom: 1px solid var(--mantine-color-gray-2);
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
 }
 
 .galleryModalTitle {
@@ -65,7 +65,7 @@
 .galleryCarousel {
   overflow: hidden;
   border-radius: var(--mantine-radius-md);
-  background: var(--mantine-color-gray-1);
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
 }
 
 .galleryCarouselViewport {
@@ -81,7 +81,7 @@
 .galleryCarouselSlide {
   height: min(70vh, 680px);
   min-height: 280px;
-  background: var(--mantine-color-gray-1);
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
 }
 
 .galleryImage {
@@ -93,8 +93,8 @@
 
 .galleryCarouselControl {
   border: 0;
-  background: var(--mantine-color-brand-6);
-  color: var(--mantine-color-white);
+  background: var(--mantine-primary-color-filled);
+  color: var(--mantine-primary-color-contrast);
   opacity: 0.94;
   transition:
     background-color 160ms ease,
@@ -102,7 +102,7 @@
 }
 
 .galleryCarouselControl:hover {
-  background: var(--mantine-color-brand-7);
+  background: var(--mantine-primary-color-filled-hover);
   opacity: 1;
 }
 

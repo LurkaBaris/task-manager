@@ -82,7 +82,13 @@ export const TaskComments = ({ taskId }: TaskCommentsProps) => {
       <Stack gap="lg">
         <Group gap="sm" justify="space-between" wrap="nowrap" align="center">
           <Group gap="xs" wrap="nowrap" align="center">
-            <Text c="gray.9" component="h2" fw={700} m={0} size="md">
+            <Text
+              c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+              component="h2"
+              fw={700}
+              m={0}
+              size="md"
+            >
               Комментарии
             </Text>
 

@@ -9,12 +9,12 @@
 }
 
 .title {
-  color: var(--mantine-color-gray-9);
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
   line-height: 1.2;
 }
 
 .counter {
-  color: var(--mantine-color-gray-7);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
 }
 
 .bodyEmpty {
@@ -24,7 +24,7 @@
 }
 
 .emptyText {
-  color: var(--mantine-color-gray-6);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
 }
 
 .content {
@@ -49,5 +49,5 @@
 }
 
 .taskListOver {
-  background: var(--mantine-color-blue-0);
+  background: light-dark(var(--mantine-color-blue-0), rgb(59 130 246 / 16%));
 }

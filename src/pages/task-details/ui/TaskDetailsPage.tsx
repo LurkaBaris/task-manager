@@ -59,7 +59,13 @@ export const TaskDetailsPage = () => {
 
   return (
     <Stack className={styles.page} gap="md">
-      <Paper bg="white" p={{ base: 'md', sm: 'lg', md: 'xl' }} radius="lg" shadow="none" withBorder>
+      <Paper
+        bg="light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))"
+        p={{ base: 'md', sm: 'lg', md: 'xl' }}
+        radius="lg"
+        shadow="none"
+        withBorder
+      >
         <Stack gap="xl">
           <Group align="flex-start" gap="md" justify="space-between" wrap="nowrap">
             <Box miw={0} w="100%">
@@ -81,7 +87,7 @@ export const TaskDetailsPage = () => {
           <Grid gap="xl">
             <Grid.Col span={{ base: 12, md: 5, lg: 4 }} pos="relative">
               <Box
-                bg="gray.0"
+                bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))"
                 className={styles.metaPanel}
                 p="md"
                 h="fit-content"
@@ -89,44 +95,74 @@ export const TaskDetailsPage = () => {
                 top="calc(64px + var(--mantine-spacing-md))"
               >
                 <Stack gap="md">
-                  <Text c="gray.9" component="h2" fw={700} m={0} size="sm">
+                  <Text
+                    c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+                    component="h2"
+                    fw={700}
+                    m={0}
+                    size="sm"
+                  >
                     Сведения
                   </Text>
 
                   <Box className={styles.fields}>
                     <Box className={styles.field}>
-                      <Text c="gray.6" fw={650} size="sm">
+                      <Text
+                        c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))"
+                        fw={650}
+                        size="sm"
+                      >
                         Статус:
                       </Text>
                       <ChangeTaskStatusSelect task={task} />
                     </Box>
 
                     <Box className={styles.field}>
-                      <Text c="gray.6" fw={650} size="sm">
+                      <Text
+                        c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))"
+                        fw={650}
+                        size="sm"
+                      >
                         Приоритет:
                       </Text>
                       <ChangeTaskPrioritySelect task={task} />
                     </Box>
 
                     <Box className={styles.field}>
-                      <Text c="gray.6" fw={650} size="sm">
+                      <Text
+                        c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))"
+                        fw={650}
+                        size="sm"
+                      >
                         Тип:
                       </Text>
                       <ChangeTaskType task={task} />
                     </Box>
 
                     <Box className={styles.field}>
-                      <Text c="gray.6" fw={650} size="sm">
+                      <Text
+                        c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))"
+                        fw={650}
+                        size="sm"
+                      >
                         Тег:
                       </Text>
                       <ChangeTaskTag task={task} />
                     </Box>
 
                     <Box className={styles.field}>
-                      <Text c="gray.6" fw={650} size="sm">
+                      <Text
+                        c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))"
+                        fw={650}
+                        size="sm"
+                      >
                         Создано:
                       </Text>
-                      <Text c="gray.8" fw={500} size="sm">
+                      <Text
+                        c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))"
+                        fw={500}
+                        size="sm"
+                      >
                         {createdAt}
                       </Text>
                     </Box>
@@ -137,7 +173,13 @@ export const TaskDetailsPage = () => {
 
             <Grid.Col span={{ base: 12, md: 7, lg: 8 }}>
               <Stack className={styles.section} component="section" gap="xs">
-                <Text c="gray.9" component="h2" fw={700} m={0} size="sm">
+                <Text
+                  c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+                  component="h2"
+                  fw={700}
+                  m={0}
+                  size="sm"
+                >
                   Описание
                 </Text>
 
@@ -146,7 +188,7 @@ export const TaskDetailsPage = () => {
             </Grid.Col>
           </Grid>
 
-          <Divider color="gray.2" />
+          <Divider color="light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5))" />
 
           <TaskComments taskId={task.id} />
         </Stack>

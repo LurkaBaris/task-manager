@@ -99,7 +99,7 @@ export const TaskCommentForm = ({
 
   return (
     <Paper
-      bg="white"
+      bg="light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))"
       className={styles.form}
       component="form"
       p={0}
@@ -155,7 +155,7 @@ export const TaskCommentForm = ({
           </Stack>
         )}
 
-        <Divider color="gray.1" />
+        <Divider color="light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5))" />
 
         <Group
           align="center"

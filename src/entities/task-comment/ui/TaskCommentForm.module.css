@@ -1,17 +1,17 @@
 .form {
-  border: 1px solid var(--mantine-color-gray-2);
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
   overflow: hidden;
   transition: border-color 150ms ease;
 }
 
 .form:focus-within {
-  border-color: var(--mantine-color-brand-5);
+  border-color: light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3));
 }
 
 .textarea {
   min-height: 88px;
   padding: 14px 16px;
-  background: var(--mantine-color-white);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
   line-height: 1.5;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .actions {
-  background: var(--mantine-color-white);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
 }
 
 @media (prefers-reduced-motion: reduce) {

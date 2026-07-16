@@ -66,7 +66,7 @@ export const StatisticChartCard = ({
           </Grid>
         ) : (
           <Paper
-            bg="gray.0"
+            bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))"
             h={230}
             radius="md"
             withBorder

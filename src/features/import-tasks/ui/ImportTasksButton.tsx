@@ -144,7 +144,12 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
 
       <Modal centered onClose={handleClose} opened={opened} title="Импорт данных">
         <Stack gap="md">
-          <Paper bg="gray.0" p="sm" radius="md" withBorder>
+          <Paper
+            bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))"
+            p="sm"
+            radius="md"
+            withBorder
+          >
             <Stack gap="xs">
               <Text fw={500} size="sm">
                 {selectedFile?.name ?? 'Файл не выбран'}

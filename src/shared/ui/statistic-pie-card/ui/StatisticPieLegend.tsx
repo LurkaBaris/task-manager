@@ -65,11 +65,22 @@ export const StatisticPieLegend = ({
             }}
           />
 
-          <Text c="gray.8" fw={600} miw={0} size="sm" truncate>
+          <Text
+            c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))"
+            fw={600}
+            miw={0}
+            size="sm"
+            truncate
+          >
             {item.label}
           </Text>
 
-          <Text c="gray.9" fw={700} size="sm" ta="right">
+          <Text
+            c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+            fw={700}
+            size="sm"
+            ta="right"
+          >
             {item.count}
           </Text>
 

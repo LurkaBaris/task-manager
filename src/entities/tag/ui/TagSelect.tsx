@@ -87,7 +87,7 @@ export const TagSelect = ({
           }
           styles={{
             label: {
-              color: 'var(--mantine-color-gray-7)',
+              color: 'light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))',
               fontSize: 14,
               fontWeight: 600,
             },

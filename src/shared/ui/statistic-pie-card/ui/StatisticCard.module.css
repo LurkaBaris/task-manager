@@ -39,11 +39,11 @@
 
 .legendItem:hover,
 .legendItem:focus-visible {
-  background: var(--mantine-color-gray-0);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
 }
 
 .legendItem:focus-visible {
-  outline: 2px solid var(--mantine-color-brand-4);
+  outline: 2px solid light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3));
   outline-offset: 1px;
 }
 

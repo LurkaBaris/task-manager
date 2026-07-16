@@ -99,7 +99,7 @@ export const DeleteTaskModal = ({
   return (
     <Modal centered onClose={onClose} opened={opened} title="Удалить задачу">
       <Stack gap="lg">
-        <Text size="sm" c="gray.7">
+        <Text c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))" size="sm">
           Вы уверены, что хотите удалить задачу «{task.title}»? Это действие нельзя отменить.
         </Text>
 

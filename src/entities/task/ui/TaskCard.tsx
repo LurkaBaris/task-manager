@@ -34,7 +34,12 @@ export const TaskCard = ({
       <Stack gap="sm">
         <Stack gap="xs">
           <Flex gap="md" align="flex-start" justify="space-between" wrap="nowrap">
-            <Title order={3} size="md" c="gray.9" className={styles.title}>
+            <Title
+              c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+              order={3}
+              size="md"
+              className={styles.title}
+            >
               <NavLink to={getTaskDetailsRoute(task.id)} data-no-dnd className={styles.link}>
                 <span data-no-dnd className={styles.selectableText}>
                   {renderHighlightedText(task.title, search ?? '')}
@@ -51,7 +56,7 @@ export const TaskCard = ({
 
           <Text
             size="sm"
-            c="gray.7"
+            c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))"
             lh={1.45}
             component="div"
             lineClamp={2}
@@ -66,7 +71,12 @@ export const TaskCard = ({
             <Stack gap={2} w="fit-content" maw="100%" data-no-dnd>
               {metaItems.map((item) => (
                 <Group key={item.label} gap={10} w="fit-content" maw="100%" wrap="nowrap">
-                  <Text size="13px" c="gray.6" fw={600} style={{ flexShrink: 0 }}>
+                  <Text
+                    c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))"
+                    fw={600}
+                    size="13px"
+                    style={{ flexShrink: 0 }}
+                  >
                     {item.label}:
                   </Text>
 
@@ -78,7 +88,11 @@ export const TaskCard = ({
         </Stack>
 
         <Stack gap={8} pt={10} className={styles.footer}>
-          <Text size="xs" c="gray.6" fw={600}>
+          <Text
+            c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))"
+            fw={600}
+            size="xs"
+          >
             <span data-no-dnd className={styles.selectableText}>
               Создано: {createdAt}
             </span>

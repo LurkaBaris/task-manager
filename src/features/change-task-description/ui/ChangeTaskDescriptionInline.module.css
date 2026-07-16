@@ -28,13 +28,13 @@
 .editorInput {
   min-height: 96px;
   padding: 12px 14px;
-  border: 1px solid var(--mantine-color-gray-2);
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
   border-radius: var(--mantine-radius-md);
-  background: var(--mantine-color-white);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
 }
 
 .editorInput:focus {
-  border-color: var(--mantine-color-brand-6);
+  border-color: light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3));
   box-shadow: none;
 }
 

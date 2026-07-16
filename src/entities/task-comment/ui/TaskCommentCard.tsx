@@ -39,7 +39,15 @@ export const TaskCommentCard = ({
         {authorInitial || <UserRound aria-hidden size={17} strokeWidth={2.1} />}
       </Avatar>
 
-      <Paper bg="gray.0" flex={1} miw={0} p="md" radius="md" shadow="none" withBorder={false}>
+      <Paper
+        bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))"
+        flex={1}
+        miw={0}
+        p="md"
+        radius="md"
+        shadow="none"
+        withBorder={false}
+      >
         <Stack gap="xs">
           <Group align="center" justify="space-between" wrap="nowrap">
             <Group align="baseline" gap={6} wrap="wrap">
@@ -56,7 +64,11 @@ export const TaskCommentCard = ({
           </Group>
 
           {hasText && (
-            <Text className={styles.commentText} c="gray.8" size="sm">
+            <Text
+              className={styles.commentText}
+              c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))"
+              size="sm"
+            >
               {comment.text}
             </Text>
           )}
