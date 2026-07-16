@@ -65,7 +65,14 @@ export const TaskCommentAttachmentCard = ({
   )
 
   return (
-    <Paper bg="white" className={styles.attachmentCard} miw={0} p={10} radius="md" withBorder>
+    <Paper
+      bg="light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))"
+      className={styles.attachmentCard}
+      miw={0}
+      p={10}
+      radius="md"
+      withBorder
+    >
       <Group align="center" gap="sm" wrap="nowrap">
         {canShowPreview ? (
           onPreview ? (
@@ -82,7 +89,13 @@ export const TaskCommentAttachmentCard = ({
             preview
           )
         ) : (
-          <Box bg="brand.0" c="brand.7" className={styles.attachmentIcon} h={44} w={44}>
+          <Box
+            bg="light-dark(var(--mantine-color-brand-0), rgb(45 212 191 / 14%))"
+            c="light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3))"
+            className={styles.attachmentIcon}
+            h={44}
+            w={44}
+          >
             <TaskCommentAttachmentIcon size={20} type={type} />
           </Box>
         )}

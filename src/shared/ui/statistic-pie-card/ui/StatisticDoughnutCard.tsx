@@ -49,7 +49,11 @@ export const StatisticDoughnutCard = ({
         pos="absolute"
         style={{ pointerEvents: 'none' }}
       >
-        <Text c="gray.9" fw={700} size="xl">
+        <Text
+          c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+          fw={700}
+          size="xl"
+        >
           {total}
         </Text>
 

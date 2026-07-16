@@ -69,7 +69,7 @@ export const DeleteTaskCommentButton = ({
 
       <Modal centered opened={opened} title="Удалить комментарий" onClose={close}>
         <Stack gap="lg">
-          <Text c="gray.7" size="sm">
+          <Text c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))" size="sm">
             Комментарий будет удален. После удаления его можно будет восстановить.
           </Text>
 

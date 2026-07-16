@@ -7,7 +7,11 @@ export const HomePage = () => {
 
   return (
     <Stack component="section" gap="lg" mih="100%" flex={1}>
-      <Title order={1} size="h1" c="gray.9">
+      <Title
+        c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+        order={1}
+        size="h1"
+      >
         Все задачи
       </Title>
 

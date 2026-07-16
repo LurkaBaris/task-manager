@@ -1,0 +1,76 @@
+.root {
+  flex: 0 0 auto;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+}
+
+.control {
+  min-width: 34px;
+  border-radius: var(--mantine-radius-xl);
+  transition: background-color 160ms ease;
+}
+
+.control::before {
+  display: none;
+}
+
+.indicator {
+  border: 0;
+  background: light-dark(var(--mantine-color-brand-0), rgb(45 212 191 / 14%));
+  box-shadow:
+    inset 0 0 0 1px light-dark(var(--mantine-color-brand-2), rgb(45 212 191 / 34%)),
+    0 3px 10px
+      color-mix(
+        in srgb,
+        light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3)) 30%,
+        transparent
+      );
+}
+
+.label {
+  padding: 7px 8px;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+  line-height: 1;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.control:not([data-active]):hover {
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.control:not([data-active]):hover .label {
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+}
+
+.control[data-active] .label {
+  color: light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3));
+}
+
+.control:has(input:focus-visible) {
+  border-radius: var(--mantine-radius-xl);
+  box-shadow: 0 0 0 2px light-dark(var(--mantine-color-brand-1), rgb(45 212 191 / 30%));
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  transition: transform 160ms ease;
+}
+
+.control[data-active] .icon {
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control,
+  .label,
+  .icon {
+    transition: none;
+  }
+}

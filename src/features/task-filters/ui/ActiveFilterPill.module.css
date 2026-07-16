@@ -29,8 +29,8 @@
   height: 18px;
   padding-inline: 4px;
   border-radius: 999px;
-  background: var(--mantine-color-gray-1);
-  color: var(--mantine-color-gray-8);
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
   font-size: var(--mantine-font-size-xs);
   font-weight: 500;
   line-height: 1;
@@ -47,5 +47,5 @@
 .count {
   flex-shrink: 0;
   font-weight: 600;
-  background: var(--mantine-color-gray-2);
+  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
 }

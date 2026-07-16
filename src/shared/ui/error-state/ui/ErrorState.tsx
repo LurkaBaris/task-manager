@@ -28,11 +28,15 @@ export const ErrorState = ({
           {icon}
         </ThemeIcon>
 
-        <Title c="gray.9" order={2} ta="center">
+        <Title
+          c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+          order={2}
+          ta="center"
+        >
           {title}
         </Title>
 
-        <Text c="gray.6" ta="center">
+        <Text c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))" ta="center">
           {description}
         </Text>
 

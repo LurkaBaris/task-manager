@@ -6,11 +6,12 @@ import { theme } from './providers/theme/theme'
 
 function App() {
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider defaultColorScheme="auto" theme={theme}>
       <Notifications
         styles={{
           notification: {
-            border: '1px solid var(--mantine-color-gray-3)',
+            border:
+              '1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4))',
           },
         }}
         position="top-right"

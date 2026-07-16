@@ -1,9 +1,20 @@
-import { Badge, Box, Group, Paper, ScrollArea, Stack, Text, Title } from '@mantine/core'
+import {
+  Badge,
+  Box,
+  Group,
+  Paper,
+  ScrollArea,
+  Stack,
+  Text,
+  Title,
+  useComputedColorScheme,
+  useMantineTheme,
+} from '@mantine/core'
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from 'chart.js'
 import { useMemo } from 'react'
 import { Bar } from 'react-chartjs-2'
 import { mapStatisticStackedBarDataToChartData } from '../lib/mapStatisticStackedBarDataToChartData'
-import { chartOptions } from '../model/chartOptions'
+import { getChartOptions } from '../model/chartOptions'
 import type { StatisticStackedBarData } from '../model/types'
 import styles from './StatisticStackedBarCard.module.css'
 
@@ -22,13 +33,23 @@ export const StatisticStackedBarCard = ({
   data,
   emptyMessage = 'Пока нет задач для отображения статистики',
 }: StatisticStackedBarCardProps) => {
+  const theme = useMantineTheme()
+  const colorScheme = useComputedColorScheme('light', { getInitialValueInEffect: false })
+  const isDark = colorScheme === 'dark'
+  const chartBorderColor = isDark ? theme.colors.dark[7] : theme.white
+  const chartTextColor = isDark ? theme.colors.dark[1] : theme.colors.gray[7]
+  const chartGridColor = isDark ? theme.colors.dark[5] : theme.colors.gray[2]
   const total = data.datasets.reduce((sum, dataset) => {
     return sum + dataset.values.reduce((datasetSum, value) => datasetSum + value, 0)
   }, 0)
 
   const chartData = useMemo(() => {
-    return mapStatisticStackedBarDataToChartData(data)
-  }, [data])
+    return mapStatisticStackedBarDataToChartData(data, chartBorderColor)
+  }, [chartBorderColor, data])
+
+  const chartOptions = useMemo(() => {
+    return getChartOptions(chartTextColor, chartGridColor)
+  }, [chartGridColor, chartTextColor])
 
   const datasetTotals = useMemo(() => {
     return data.datasets.map((dataset) => ({
@@ -63,11 +84,20 @@ export const StatisticStackedBarCard = ({
                 <Group gap="xs" wrap="nowrap">
                   <Box bg={dataset.color} className={styles.dot} h={10} w={10} />
 
-                  <Text c="gray.7" fw={600} size="sm">
+                  <Text
+                    c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))"
+                    fw={600}
+                    size="sm"
+                  >
                     {dataset.label}:
                   </Text>
 
-                  <Text c="gray.9" fw={700} ml="auto" size="sm">
+                  <Text
+                    c="light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0))"
+                    fw={700}
+                    ml="auto"
+                    size="sm"
+                  >
                     {dataset.total}
                   </Text>
                 </Group>
@@ -81,7 +111,14 @@ export const StatisticStackedBarCard = ({
             <Bar data={chartData} options={chartOptions} />
           </Box>
         ) : (
-          <Paper className={styles.emptyChart} bg="gray.0" h={300} mt="auto" radius="md" withBorder>
+          <Paper
+            bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))"
+            className={styles.emptyChart}
+            h={300}
+            mt="auto"
+            radius="md"
+            withBorder
+          >
             <Text c="dimmed" size="sm">
               {emptyMessage}
             </Text>

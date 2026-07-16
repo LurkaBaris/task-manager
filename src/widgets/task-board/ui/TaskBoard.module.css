@@ -34,9 +34,9 @@
   min-height: 116px;
   justify-content: center;
   padding: var(--mantine-spacing-md);
-  border: 1px solid var(--mantine-color-gray-2);
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
   border-radius: var(--mantine-radius-md);
-  background: var(--mantine-color-gray-0);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
 }
 
 .boardWrapper {
@@ -54,7 +54,7 @@
   overflow-y: hidden;
   height: 5px;
   scrollbar-width: thin;
-  scrollbar-color: var(--mantine-color-brand-6) transparent;
+  scrollbar-color: var(--mantine-primary-color-filled) transparent;
 }
 
 .topScrollbar::-webkit-scrollbar {
@@ -67,12 +67,12 @@
 }
 
 .topScrollbar::-webkit-scrollbar-thumb {
-  background: var(--mantine-color-brand-6);
+  background: var(--mantine-primary-color-filled);
   border-radius: 9999px;
 }
 
 .topScrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--mantine-color-brand-7);
+  background: var(--mantine-primary-color-filled-hover);
 }
 
 .topScrollbar > div {

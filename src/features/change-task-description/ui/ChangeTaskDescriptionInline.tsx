@@ -75,7 +75,11 @@ export const ChangeTaskDescriptionInline = ({ task }: ChangeTaskDescriptionInlin
         <Text
           className={styles.descriptionText}
           component="span"
-          c={task.description ? 'gray.8' : 'gray.6'}
+          c={
+            task.description
+              ? 'light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1))'
+              : 'light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2))'
+          }
           size="sm"
         >
           {task.description || 'Добавить описание'}

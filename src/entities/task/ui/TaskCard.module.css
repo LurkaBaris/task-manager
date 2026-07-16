@@ -27,7 +27,7 @@
 }
 
 .footer {
-  border-top: 1px solid var(--mantine-color-gray-3);
+  border-top: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .link {
@@ -42,5 +42,5 @@
 }
 
 .link > .selectableText:hover {
-  color: var(--mantine-color-brand-6);
+  color: light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3));
 }

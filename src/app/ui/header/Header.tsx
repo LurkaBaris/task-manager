@@ -1,3 +1,4 @@
+import { ToggleColorScheme } from '@/features/toggle-color-scheme'
 import { ROUTES } from '@/shared/config'
 import { AppShell, Container, Group, Text } from '@mantine/core'
 import { NavLink } from 'react-router-dom'
@@ -15,25 +16,29 @@ export const Header = () => {
           </Group>
         </NavLink>
 
-        <nav className={styles.nav} aria-label="Основная навигация">
-          <NavLink
-            className={({ isActive }) =>
-              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-            }
-            to={ROUTES.HOME}
-          >
-            Главная
-          </NavLink>
+        <Group gap="md" wrap="nowrap" align="center">
+          <nav className={styles.nav} aria-label="Основная навигация">
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+              }
+              to={ROUTES.HOME}
+            >
+              Главная
+            </NavLink>
 
-          <NavLink
-            className={({ isActive }) =>
-              isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-            }
-            to={ROUTES.STATISTIC}
-          >
-            Статистика
-          </NavLink>
-        </nav>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? `${styles.link} ${styles.linkActive}` : styles.link
+              }
+              to={ROUTES.STATISTIC}
+            >
+              Статистика
+            </NavLink>
+          </nav>
+
+          <ToggleColorScheme />
+        </Group>
       </Container>
     </AppShell.Header>
   )

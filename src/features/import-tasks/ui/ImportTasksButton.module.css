@@ -2,7 +2,7 @@
   margin: 0;
   padding: var(--mantine-spacing-xs);
   background: transparent;
-  color: var(--mantine-color-gray-9);
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
   font-family: var(--mantine-font-family-monospace);
   font-size: var(--mantine-font-size-xs);
   line-height: 1.5;
