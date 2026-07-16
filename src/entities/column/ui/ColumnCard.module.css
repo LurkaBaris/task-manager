@@ -1,0 +1,53 @@
+.wrapper {
+  overflow: hidden;
+}
+
+.body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.title {
+  color: var(--mantine-color-gray-9);
+  line-height: 1.2;
+}
+
+.counter {
+  color: var(--mantine-color-gray-7);
+}
+
+.bodyEmpty {
+  min-height: 100%;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.emptyText {
+  color: var(--mantine-color-gray-6);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.viewport {
+  height: 100%;
+}
+
+.scrollbar {
+  transform: translateX(calc(var(--mantine-spacing-md) * -0.35));
+}
+
+.taskList {
+  transition:
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+  border-radius: var(--mantine-radius-lg);
+}
+
+.taskListOver {
+  background: var(--mantine-color-blue-0);
+}

@@ -1,0 +1,30 @@
+.form {
+  border: 1px solid var(--mantine-color-gray-2);
+  overflow: hidden;
+  transition: border-color 150ms ease;
+}
+
+.form:focus-within {
+  border-color: var(--mantine-color-brand-5);
+}
+
+.textarea {
+  min-height: 88px;
+  padding: 14px 16px;
+  background: var(--mantine-color-white);
+  line-height: 1.5;
+}
+
+.textarea:focus {
+  box-shadow: none;
+}
+
+.actions {
+  background: var(--mantine-color-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form {
+    transition: none;
+  }
+}

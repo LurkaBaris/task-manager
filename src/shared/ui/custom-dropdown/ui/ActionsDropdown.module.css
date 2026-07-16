@@ -1,0 +1,4 @@
+.dropdown {
+  z-index: 100;
+  transform: translateX(-50%);
+}

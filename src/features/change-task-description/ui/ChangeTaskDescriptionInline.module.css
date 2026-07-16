@@ -1,0 +1,52 @@
+.descriptionView {
+  display: inline;
+  max-width: 100%;
+}
+
+.descriptionText {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+  padding-right: 6px;
+}
+
+.descriptionEditButton {
+  display: inline-flex;
+  margin-left: 4px;
+  vertical-align: middle;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.descriptionView:hover .descriptionEditButton,
+.descriptionEditButton:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.editorInput {
+  min-height: 96px;
+  padding: 12px 14px;
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-white);
+}
+
+.editorInput:focus {
+  border-color: var(--mantine-color-brand-6);
+  box-shadow: none;
+}
+
+@media (hover: none) {
+  .descriptionEditButton {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .descriptionEditButton {
+    transition: none;
+  }
+}

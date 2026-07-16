@@ -1,0 +1,40 @@
+@import '@fontsource-variable/geist';
+
+:root {
+  color-scheme: light;
+  font-family: 'Geist Variable', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--mantine-color-gray-0);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--mantine-color-gray-0);
+  color: var(--mantine-color-gray-9);
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}

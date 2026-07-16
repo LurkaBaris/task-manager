@@ -1,0 +1,80 @@
+.toolbar {
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+
+.prioritySelect {
+  flex: 1 1 300px;
+  min-width: 220px;
+  max-width: 300px;
+}
+
+.board {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+}
+
+.board::-webkit-scrollbar {
+  display: none;
+}
+
+.loadingColumn {
+  flex: 1 1 0;
+}
+
+.loadingTask {
+  min-height: 116px;
+  justify-content: center;
+  padding: var(--mantine-spacing-md);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-gray-0);
+}
+
+.boardWrapper {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+
+.topScrollbar {
+  position: absolute;
+  inset-inline: 0;
+  top: -10px;
+  z-index: 10;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mantine-color-brand-6) transparent;
+}
+
+.topScrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+
+.topScrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.topScrollbar::-webkit-scrollbar-thumb {
+  background: var(--mantine-color-brand-6);
+  border-radius: 9999px;
+}
+
+.topScrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--mantine-color-brand-7);
+}
+
+.topScrollbar > div {
+  height: 1px;
+}
