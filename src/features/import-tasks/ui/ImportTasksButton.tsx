@@ -1,59 +1,59 @@
-import { Box, Button, Group, Modal, Paper, ScrollArea, Stack, Text } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
-import { Upload } from 'lucide-react'
-import { useMemo, useRef, useState, type ChangeEvent } from 'react'
-import { formatJsonPreview } from '../lib/formatJsonPreview'
-import { getImportErrorMessage } from '../lib/getImportErrorMessage'
-import { parseTasksBackup } from '../lib/parseTasksBackup'
-import { IMPORT_TASKS_MODE, type ImportTasksMode } from '../model/types'
-import { useImportBoard } from '../model/useImportBoard'
-import styles from './ImportTasksButton.module.css'
+import { Box, Button, Group, Modal, Paper, ScrollArea, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { Upload } from 'lucide-react';
+import { useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { formatJsonPreview } from '../lib/formatJsonPreview';
+import { getImportErrorMessage } from '../lib/getImportErrorMessage';
+import { parseTasksBackup } from '../lib/parseTasksBackup';
+import { IMPORT_TASKS_MODE, type ImportTasksMode } from '../model/types';
+import { useImportBoard } from '../model/useImportBoard';
+import styles from './ImportTasksButton.module.css';
 
 interface ImportTasksButtonProps {
-  disabled?: boolean
+  disabled?: boolean;
 }
 
-const MAX_IMPORT_FILE_SIZE = 100 * 1024 * 1024
+const MAX_IMPORT_FILE_SIZE = 100 * 1024 * 1024;
 
 export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [selectedFileContent, setSelectedFileContent] = useState('')
-  const [isImporting, setIsImporting] = useState(false)
-  const [opened, { open, close }] = useDisclosure(false)
-  const { importBoard } = useImportBoard()
-  const filePreview = useMemo(() => formatJsonPreview(selectedFileContent), [selectedFileContent])
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFileContent, setSelectedFileContent] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const { importBoard } = useImportBoard();
+  const filePreview = useMemo(() => formatJsonPreview(selectedFileContent), [selectedFileContent]);
 
   const resetSelectedFile = () => {
-    setSelectedFile(null)
-    setSelectedFileContent('')
+    setSelectedFile(null);
+    setSelectedFileContent('');
 
     if (inputRef.current) {
-      inputRef.current.value = ''
+      inputRef.current.value = '';
     }
-  }
+  };
 
   const handleClose = () => {
-    if (isImporting) return
+    if (isImporting) return;
 
-    resetSelectedFile()
-    close()
-  }
+    resetSelectedFile();
+    close();
+  };
 
   const handleSelectFile = async (file: File) => {
-    setSelectedFile(file)
-    setSelectedFileContent(await file.text())
-    open()
-  }
+    setSelectedFile(file);
+    setSelectedFileContent(await file.text());
+    open();
+  };
 
   const handleImportFile = async (mode: ImportTasksMode) => {
-    if (isImporting || !selectedFile) return
+    if (isImporting || !selectedFile) return;
 
-    setIsImporting(true)
+    setIsImporting(true);
 
     try {
-      const backup = parseTasksBackup(selectedFileContent)
+      const backup = parseTasksBackup(selectedFileContent);
 
       await importBoard({
         columns: backup.columns,
@@ -61,65 +61,66 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
         tags: backup.tags,
         comments: backup.comments,
         mode,
-      })
+      });
 
       notifications.show({
         title: 'Данные импортированы',
         message: `Импортировано колонок: ${backup.columns.length}, задач: ${backup.tasks.length}, тегов: ${backup.tags.length}, комментариев: ${backup.comments.length}`,
         color: 'brand',
-      })
+      });
 
-      resetSelectedFile()
-      close()
+      resetSelectedFile();
+      close();
     } catch (error) {
       notifications.show({
         title: 'Не удалось импортировать данные',
         message: getImportErrorMessage(error),
         color: 'red',
-      })
+      });
     } finally {
-      setIsImporting(false)
+      setIsImporting(false);
     }
-  }
+  };
 
   const handleInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const input = event.currentTarget
-    const file = input.files?.[0]
+    const input = event.currentTarget;
+    const file = input.files?.[0];
 
     if (!file) {
-      return
+      return;
     }
 
-    const isJsonFile = file.type === 'application/json' || file.name.toLowerCase().endsWith('.json')
+    const isJsonFile =
+      file.type === 'application/json' || file.name.toLowerCase().endsWith('.json');
 
     if (!isJsonFile) {
-      input.value = ''
+      input.value = '';
 
       notifications.show({
         title: 'Вы выбрали не тот формат файла',
         message: 'Попробуйте выбрать файл в формате JSON',
         color: 'red',
-      })
+      });
 
-      return
+      return;
     }
 
     if (file.size > MAX_IMPORT_FILE_SIZE) {
-      input.value = ''
+      input.value = '';
 
       notifications.show({
         title: 'Файл слишком большой',
         message: 'Размер файла импорта не должен превышать 100 МБ',
         color: 'red',
-      })
+      });
 
-      return
+      return;
     }
 
-    await handleSelectFile(file)
+    await handleSelectFile(file);
 
-    input.value = ''
-  }
+    input.value = '';
+  };
 
   return (
     <>
@@ -191,5 +192,5 @@ export const ImportTasksButton = ({ disabled = false }: ImportTasksButtonProps) 
         </Stack>
       </Modal>
     </>
-  )
-}
+  );
+};

@@ -1,1 +1,1 @@
-export { EditTaskCommentButton } from './ui/EditTaskCommentButton'
+export { EditTaskCommentButton } from './ui/EditTaskCommentButton';

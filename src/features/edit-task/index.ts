@@ -1,2 +1,2 @@
-export { EditTaskAction } from './ui/EditTaskAction'
-export { EditTaskModal } from './ui/EditTaskModal'
+export { EditTaskAction } from './ui/EditTaskAction';
+export { EditTaskModal } from './ui/EditTaskModal';

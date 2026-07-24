@@ -1,9 +1,9 @@
-import { useDocumentTitle } from '@/shared/lib'
-import { TaskBoard } from '@/widgets/task-board'
-import { Stack, Title } from '@mantine/core'
+import { useDocumentTitle } from '@/shared/lib';
+import { TaskBoard } from '@/widgets/task-board';
+import { Stack, Title } from '@mantine/core';
 
 export const HomePage = () => {
-  useDocumentTitle('Все задачи')
+  useDocumentTitle('Все задачи');
 
   return (
     <Stack component="section" gap="lg" mih="100%" flex={1}>
@@ -17,5 +17,5 @@ export const HomePage = () => {
 
       <TaskBoard />
     </Stack>
-  )
-}
+  );
+};

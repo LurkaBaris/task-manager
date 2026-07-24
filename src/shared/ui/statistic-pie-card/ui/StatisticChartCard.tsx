@@ -1,21 +1,21 @@
-import { Badge, Box, Grid, Group, Paper, Stack, Text, Title } from '@mantine/core'
-import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js'
-import type { ReactNode } from 'react'
-import type { StatisticPieItem } from '../model/types'
-import styles from './StatisticCard.module.css'
-import { StatisticPieLegend } from './StatisticPieLegend'
+import { Badge, Box, Grid, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
+import type { ReactNode } from 'react';
+import type { StatisticPieItem } from '../model/types';
+import styles from './StatisticCard.module.css';
+import { StatisticPieLegend } from './StatisticPieLegend';
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface StatisticChartCardProps {
-  title: string
-  description: string
-  total: number
-  visibleItems: StatisticPieItem[]
-  visibleTotal: number
-  children: ReactNode
-  onLegendItemMouseEnter: (item: StatisticPieItem) => void
-  onLegendItemMouseLeave: () => void
+  title: string;
+  description: string;
+  total: number;
+  visibleItems: StatisticPieItem[];
+  visibleTotal: number;
+  children: ReactNode;
+  onLegendItemMouseEnter: (item: StatisticPieItem) => void;
+  onLegendItemMouseLeave: () => void;
 }
 
 export const StatisticChartCard = ({
@@ -84,5 +84,5 @@ export const StatisticChartCard = ({
         )}
       </Stack>
     </Paper>
-  )
-}
+  );
+};

@@ -1,3 +1,3 @@
-import { columnRepository } from './columnRepository'
+import { columnRepository } from './columnRepository';
 
-export const getAllColumns = () => columnRepository.getAll()
+export const getAllColumns = () => columnRepository.getAll();

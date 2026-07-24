@@ -1,11 +1,11 @@
-import { Flex, Group, Paper, Skeleton, Stack } from '@mantine/core'
-import styles from './TaskBoard.module.css'
+import { Flex, Group, Paper, Skeleton, Stack } from '@mantine/core';
+import styles from './TaskBoard.module.css';
 
-const LOADING_COLUMNS_COUNT = 3
-const LOADING_COLUMN_TASKS_COUNT = 3
+const LOADING_COLUMNS_COUNT = 3;
+const LOADING_COLUMN_TASKS_COUNT = 3;
 
 interface TaskBoardSkeletonProps {
-  columnsCount?: number
+  columnsCount?: number;
 }
 
 export const TaskBoardSkeleton = ({
@@ -51,5 +51,5 @@ export const TaskBoardSkeleton = ({
         </Paper>
       ))}
     </Group>
-  )
-}
+  );
+};

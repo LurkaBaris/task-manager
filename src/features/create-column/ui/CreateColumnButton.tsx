@@ -4,25 +4,25 @@ import {
   columnSchema,
   useColumnActions,
   type ColumnSchemaType,
-} from '@/entities/column'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
-import { Plus } from 'lucide-react'
-import { Controller, useForm } from 'react-hook-form'
+} from '@/entities/column';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { Plus } from 'lucide-react';
+import { Controller, useForm } from 'react-hook-form';
 
 interface CreateColumnButtonProps {
-  disabled?: boolean
-  variant?: 'light' | 'filled'
+  disabled?: boolean;
+  variant?: 'light' | 'filled';
 }
 
 export const CreateColumnButton = ({
   disabled = false,
   variant = 'light',
 }: CreateColumnButtonProps) => {
-  const { createColumn } = useColumnActions()
-  const [opened, { open, close }] = useDisclosure(false)
+  const { createColumn } = useColumnActions();
+  const [opened, { open, close }] = useDisclosure(false);
 
   const {
     register,
@@ -37,32 +37,32 @@ export const CreateColumnButton = ({
       title: '',
       color: DEFAULT_COLUMN_COLOR,
     },
-  })
+  });
 
   const handleClose = () => {
-    reset()
-    close()
-  }
+    reset();
+    close();
+  };
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await createColumn(values)
+      await createColumn(values);
 
       notifications.show({
         title: `Создана колонка «${values.title}»`,
         message: 'Колонка добавлена в конец доски',
         color: 'brand',
-      })
+      });
 
-      handleClose()
+      handleClose();
     } catch {
       notifications.show({
         title: 'Не удалось создать колонку',
         message: 'Попробуйте ещё раз',
         color: 'red',
-      })
+      });
     }
-  })
+  });
 
   return (
     <>
@@ -113,5 +113,5 @@ export const CreateColumnButton = ({
         </form>
       </Modal>
     </>
-  )
-}
+  );
+};

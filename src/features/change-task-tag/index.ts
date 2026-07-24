@@ -1,1 +1,1 @@
-export { ChangeTaskTag } from './ui/ChangeTaskTag'
+export { ChangeTaskTag } from './ui/ChangeTaskTag';

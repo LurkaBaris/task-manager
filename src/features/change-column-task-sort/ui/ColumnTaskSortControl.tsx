@@ -1,10 +1,10 @@
-import { SegmentedControl } from '@mantine/core'
-import { isTaskSortOrder, TASK_SORT_ORDER, type TaskSortOrder } from '../model/sort'
+import { SegmentedControl } from '@mantine/core';
+import { isTaskSortOrder, TASK_SORT_ORDER, type TaskSortOrder } from '../model/sort';
 
 interface ColumnTaskSortControlProps {
-  disabled?: boolean
-  sortOrder: TaskSortOrder
-  onChange: (sortOrder: TaskSortOrder) => void
+  disabled?: boolean;
+  sortOrder: TaskSortOrder;
+  onChange: (sortOrder: TaskSortOrder) => void;
 }
 
 export const ColumnTaskSortControl = ({
@@ -27,4 +27,4 @@ export const ColumnTaskSortControl = ({
     size="xs"
     value={sortOrder}
   />
-)
+);

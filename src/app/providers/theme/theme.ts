@@ -8,7 +8,7 @@ import {
   Textarea,
   createTheme,
   type MantineColorsTuple,
-} from '@mantine/core'
+} from '@mantine/core';
 
 const brand: MantineColorsTuple = [
   '#f0fdfa',
@@ -21,7 +21,7 @@ const brand: MantineColorsTuple = [
   '#0f766e',
   '#115e59',
   '#134e4a',
-]
+];
 
 const accent: MantineColorsTuple = [
   '#fff7ed',
@@ -34,7 +34,7 @@ const accent: MantineColorsTuple = [
   '#c2410c',
   '#9a3412',
   '#7c2d12',
-]
+];
 
 const statusTodo: MantineColorsTuple = [
   '#eff6ff',
@@ -47,7 +47,7 @@ const statusTodo: MantineColorsTuple = [
   '#1d4ed8',
   '#1e40af',
   '#1e3a8a',
-]
+];
 
 const statusProgress: MantineColorsTuple = [
   '#fffbeb',
@@ -60,7 +60,7 @@ const statusProgress: MantineColorsTuple = [
   '#b45309',
   '#92400e',
   '#78350f',
-]
+];
 
 const statusDone: MantineColorsTuple = [
   '#f0fdf4',
@@ -73,7 +73,7 @@ const statusDone: MantineColorsTuple = [
   '#15803d',
   '#166534',
   '#14532d',
-]
+];
 
 const priorityHigh: MantineColorsTuple = [
   '#fef2f2',
@@ -86,7 +86,7 @@ const priorityHigh: MantineColorsTuple = [
   '#b91c1c',
   '#991b1b',
   '#7f1d1d',
-]
+];
 
 export const theme = createTheme({
   primaryColor: 'brand',
@@ -151,4 +151,4 @@ export const theme = createTheme({
       },
     }),
   },
-})
+});

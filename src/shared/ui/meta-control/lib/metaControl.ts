@@ -1,15 +1,15 @@
-import type { ComboboxProps, SelectProps } from '@mantine/core'
-import type { CSSProperties } from 'react'
+import type { ComboboxProps, SelectProps } from '@mantine/core';
+import type { CSSProperties } from 'react';
 
-export const META_CONTROL_MAX_TEXT_LENGTH = 20
-export const META_CONTROL_RIGHT_SECTION_WIDTH = 24
-export const META_CONTROL_RIGHT_SECTION_WITH_ICON_WIDTH = 48
-export const META_CONTROL_TEXT_ICON_GAP = 8
+export const META_CONTROL_MAX_TEXT_LENGTH = 20;
+export const META_CONTROL_RIGHT_SECTION_WIDTH = 24;
+export const META_CONTROL_RIGHT_SECTION_WITH_ICON_WIDTH = 48;
+export const META_CONTROL_TEXT_ICON_GAP = 8;
 
 export const metaControlLabelStyles: CSSProperties = {
   userSelect: 'none',
   WebkitUserSelect: 'none',
-}
+};
 
 export const metaControlRootStyles: CSSProperties = {
   display: 'inline-flex',
@@ -22,7 +22,7 @@ export const metaControlRootStyles: CSSProperties = {
   cursor: 'pointer',
   userSelect: 'none',
   WebkitUserSelect: 'none',
-}
+};
 
 export const metaControlSizerStyles: CSSProperties = {
   position: 'relative',
@@ -32,12 +32,12 @@ export const metaControlSizerStyles: CSSProperties = {
   minWidth: 1,
   flex: '0 0 auto',
   verticalAlign: 'top',
-}
+};
 
 export const metaControlTextSizerStyles = ({
   rightSectionWidth = 0,
 }: {
-  rightSectionWidth?: number
+  rightSectionWidth?: number;
 } = {}): CSSProperties => ({
   display: 'block',
   maxWidth: `${META_CONTROL_MAX_TEXT_LENGTH}ch`,
@@ -51,7 +51,7 @@ export const metaControlTextSizerStyles = ({
   fontSize: 14,
   fontWeight: 500,
   lineHeight: '24px',
-})
+});
 
 export const metaControlInputStyles = ({ disabled }: { disabled: boolean }): CSSProperties => ({
   position: 'absolute',
@@ -75,7 +75,7 @@ export const metaControlInputStyles = ({ disabled }: { disabled: boolean }): CSS
   textOverflow: 'ellipsis',
   userSelect: 'none',
   WebkitUserSelect: 'none',
-})
+});
 
 export const metaControlRightSectionStyles: CSSProperties = {
   display: 'inline-flex',
@@ -88,7 +88,7 @@ export const metaControlRightSectionStyles: CSSProperties = {
   cursor: 'pointer',
   userSelect: 'none',
   WebkitUserSelect: 'none',
-}
+};
 
 export const metaControlChevronStyles: CSSProperties = {
   display: 'inline-flex',
@@ -99,14 +99,14 @@ export const metaControlChevronStyles: CSSProperties = {
   pointerEvents: 'none',
   userSelect: 'none',
   WebkitUserSelect: 'none',
-}
+};
 
 export const metaControlSelectStyles = ({
   disabled,
   rightSectionWidth = META_CONTROL_RIGHT_SECTION_WIDTH,
 }: {
-  disabled: boolean
-  rightSectionWidth?: number
+  disabled: boolean;
+  rightSectionWidth?: number;
 }): SelectProps['styles'] => ({
   root: {
     position: 'absolute',
@@ -167,7 +167,7 @@ export const metaControlSelectStyles = ({
     borderRadius: 8,
     padding: '6px 12px',
   },
-})
+});
 
 export const metaControlComboboxStyles: ComboboxProps['styles'] = {
   dropdown: {
@@ -179,4 +179,4 @@ export const metaControlComboboxStyles: ComboboxProps['styles'] = {
   option: {
     borderRadius: 8,
   },
-}
+};

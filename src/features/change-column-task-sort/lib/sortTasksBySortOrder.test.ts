@@ -1,8 +1,8 @@
-import 'fake-indexeddb/auto'
-import type { Task } from '@/entities/task'
-import { describe, expect, it } from 'vitest'
-import { TASK_SORT_ORDER } from '../model/sort'
-import { sortTasksBySortOrder } from './sortTasksBySortOrder'
+import 'fake-indexeddb/auto';
+import type { Task } from '@/entities/task';
+import { describe, expect, it } from 'vitest';
+import { TASK_SORT_ORDER } from '../model/sort';
+import { sortTasksBySortOrder } from './sortTasksBySortOrder';
 
 const createTask = (overrides: Partial<Task> = {}): Task => ({
   id: 'task-1',
@@ -14,9 +14,9 @@ const createTask = (overrides: Partial<Task> = {}): Task => ({
   position: 1000,
   createdAt: '2026-07-15T10:00:00.000Z',
   ...overrides,
-})
+});
 
-const getTaskIds = (tasks: Task[]) => tasks.map((task) => task.id)
+const getTaskIds = (tasks: Task[]) => tasks.map((task) => task.id);
 
 describe('sortTasksBySortOrder', () => {
   it('сортирует задачи правильно по позиции', () => {
@@ -33,12 +33,12 @@ describe('sortTasksBySortOrder', () => {
         id: 'task-2',
         position: 2000,
       }),
-    ]
+    ];
 
-    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Manual)
+    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Manual);
 
-    expect(getTaskIds(result)).toEqual(['task-1', 'task-2', 'task-3'])
-  })
+    expect(getTaskIds(result)).toEqual(['task-1', 'task-2', 'task-3']);
+  });
 
   it('сортирует новые задачи сверху', () => {
     const tasks = [
@@ -54,12 +54,12 @@ describe('sortTasksBySortOrder', () => {
         id: 'middle-task',
         createdAt: '2026-07-15T10:00:00.000Z',
       }),
-    ]
+    ];
 
-    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Newest)
+    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Newest);
 
-    expect(getTaskIds(result)).toEqual(['new-task', 'middle-task', 'old-task'])
-  })
+    expect(getTaskIds(result)).toEqual(['new-task', 'middle-task', 'old-task']);
+  });
 
   it('сортирует старые задачи сверху', () => {
     const tasks = [
@@ -75,12 +75,12 @@ describe('sortTasksBySortOrder', () => {
         id: 'old-task',
         createdAt: '2026-07-14T10:00:00.000Z',
       }),
-    ]
+    ];
 
-    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Oldest)
+    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Oldest);
 
-    expect(getTaskIds(result)).toEqual(['old-task', 'middle-task', 'new-task'])
-  })
+    expect(getTaskIds(result)).toEqual(['old-task', 'middle-task', 'new-task']);
+  });
 
   it('не меняет исходный массив', () => {
     const tasks = [
@@ -92,30 +92,30 @@ describe('sortTasksBySortOrder', () => {
         id: 'task-1',
         createdAt: '2026-07-15T10:00:00.000Z',
       }),
-    ]
+    ];
 
-    sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Oldest)
+    sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Oldest);
 
-    expect(getTaskIds(tasks)).toEqual(['task-2', 'task-1'])
-  })
+    expect(getTaskIds(tasks)).toEqual(['task-2', 'task-1']);
+  });
 
   it('возвращает новый массив', () => {
-    const tasks = [createTask()]
+    const tasks = [createTask()];
 
-    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Newest)
+    const result = sortTasksBySortOrder(tasks, TASK_SORT_ORDER.Newest);
 
-    expect(result).not.toBe(tasks)
-  })
+    expect(result).not.toBe(tasks);
+  });
 
   it('возвращает пустой массив для пустого списка', () => {
-    expect(sortTasksBySortOrder([], TASK_SORT_ORDER.Manual)).toEqual([])
-  })
+    expect(sortTasksBySortOrder([], TASK_SORT_ORDER.Manual)).toEqual([]);
+  });
 
   it('корректно обрабатывает одну задачу', () => {
-    const task = createTask()
+    const task = createTask();
 
-    const result = sortTasksBySortOrder([task], TASK_SORT_ORDER.Oldest)
+    const result = sortTasksBySortOrder([task], TASK_SORT_ORDER.Oldest);
 
-    expect(result).toEqual([task])
-  })
-})
+    expect(result).toEqual([task]);
+  });
+});

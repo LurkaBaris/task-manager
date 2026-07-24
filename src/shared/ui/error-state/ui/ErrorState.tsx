@@ -1,15 +1,15 @@
-import { ROUTES } from '@/shared/config'
-import { Button, Group, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core'
-import { AlertTriangle } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/shared/config';
+import { Button, Group, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { AlertTriangle } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ErrorStateProps {
-  title: string
-  description: string
-  icon?: ReactNode
-  showReload?: boolean
-  onRetry?: () => void
+  title: string;
+  description: string;
+  icon?: ReactNode;
+  showReload?: boolean;
+  onRetry?: () => void;
 }
 
 export const ErrorState = ({
@@ -19,7 +19,7 @@ export const ErrorState = ({
   showReload = false,
   onRetry,
 }: ErrorStateProps) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <Paper maw={520} mx="auto" mt={80} p="xl" radius="lg">
@@ -59,5 +59,5 @@ export const ErrorState = ({
         </Group>
       </Stack>
     </Paper>
-  )
-}
+  );
+};

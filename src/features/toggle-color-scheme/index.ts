@@ -1,1 +1,1 @@
-export { ToggleColorScheme } from './ui/ToggleColorScheme'
+export { ToggleColorScheme } from './ui/ToggleColorScheme';

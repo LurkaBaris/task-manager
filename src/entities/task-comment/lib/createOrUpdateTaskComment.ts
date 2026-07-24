@@ -1,18 +1,18 @@
-import type { TaskComment, TaskCommentAttachment } from '../model/types'
+import type { TaskComment, TaskCommentAttachment } from '../model/types';
 
 interface CreateTaskCommentParams {
-  taskId: TaskComment['taskId']
-  text: string
-  files: File[]
+  taskId: TaskComment['taskId'];
+  text: string;
+  files: File[];
 }
 
 interface UpdateTaskCommentParams {
-  comment: TaskComment
-  text: string
-  files: File[]
+  comment: TaskComment;
+  text: string;
+  files: File[];
 }
 
-type CreateOrUpdateTaskCommentParams = CreateTaskCommentParams | UpdateTaskCommentParams
+type CreateOrUpdateTaskCommentParams = CreateTaskCommentParams | UpdateTaskCommentParams;
 
 const createTaskCommentAttachments = (files: File[]): TaskCommentAttachment[] => {
   return files.map((file) => ({
@@ -21,20 +21,20 @@ const createTaskCommentAttachments = (files: File[]): TaskCommentAttachment[] =>
     type: file.type,
     size: file.size,
     file,
-  }))
-}
+  }));
+};
 
 export const createOrUpdateTaskComment = (params: CreateOrUpdateTaskCommentParams): TaskComment => {
   const nextCommentData = {
     text: params.text.trim(),
     attachments: createTaskCommentAttachments(params.files),
-  }
+  };
 
   if ('comment' in params) {
     return {
       ...params.comment,
       ...nextCommentData,
-    }
+    };
   }
 
   return {
@@ -42,5 +42,5 @@ export const createOrUpdateTaskComment = (params: CreateOrUpdateTaskCommentParam
     taskId: params.taskId,
     createdAt: new Date().toISOString(),
     ...nextCommentData,
-  }
-}
+  };
+};

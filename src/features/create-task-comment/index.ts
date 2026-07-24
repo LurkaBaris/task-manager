@@ -1,1 +1,1 @@
-export { CreateTaskComment } from './ui/CreateTaskComment'
+export { CreateTaskComment } from './ui/CreateTaskComment';

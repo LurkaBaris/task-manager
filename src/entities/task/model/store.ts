@@ -1,59 +1,59 @@
-import { create } from 'zustand'
-import { useShallow } from 'zustand/shallow'
-import { taskRepository } from '../api/taskRepository'
+import { create } from 'zustand';
+import { useShallow } from 'zustand/shallow';
+import { taskRepository } from '../api/taskRepository';
 import {
   getNextTaskPosition,
   getTaskPositionAfterNormalization,
   normalizeTaskPositions,
   normalizeTaskPositionsByOrder,
-} from './position'
-import type { Task, TasksByColumnId } from './types'
+} from './position';
+import type { Task, TasksByColumnId } from './types';
 
-type TaskPatch = Partial<Omit<Task, 'id' | 'createdAt'>>
+type TaskPatch = Partial<Omit<Task, 'id' | 'createdAt'>>;
 type MoveTaskParams = {
-  task: Task
-  targetColumnId: Task['columnId']
-  previousTask?: Task
-  nextTask?: Task
-}
+  task: Task;
+  targetColumnId: Task['columnId'];
+  previousTask?: Task;
+  nextTask?: Task;
+};
 type ReorderColumnTasksParams = {
   columns: {
-    columnId: Task['columnId']
-    tasks: Task[]
-  }[]
-}
+    columnId: Task['columnId'];
+    tasks: Task[];
+  }[];
+};
 
 interface ITaskState {
-  tasksByColumnId: TasksByColumnId
-  isLoading: boolean
-  isLoaded: boolean
+  tasksByColumnId: TasksByColumnId;
+  isLoading: boolean;
+  isLoaded: boolean;
 }
 
 interface ITaskActions {
-  loadTasksByColumnIds: (columnIds: Task['columnId'][]) => Promise<void>
-  addTask: (task: Task) => Promise<void>
-  updateTask: (task: Task, patch: TaskPatch) => Promise<void>
-  deleteTask: (taskId: Task['id']) => Promise<void>
-  clearColumnTasks: (columnId: Task['columnId']) => void
-  restoreTasks: (tasks: Task[]) => Promise<void>
-  moveTask: (params: MoveTaskParams) => Promise<void>
-  reorderColumnTasks: (params: ReorderColumnTasksParams) => Promise<void>
-  getNextPositionByColumnId: (columnId: Task['columnId']) => number
-  setTasks: (tasks: Task[]) => void
+  loadTasksByColumnIds: (columnIds: Task['columnId'][]) => Promise<void>;
+  addTask: (task: Task) => Promise<void>;
+  updateTask: (task: Task, patch: TaskPatch) => Promise<void>;
+  deleteTask: (taskId: Task['id']) => Promise<void>;
+  clearColumnTasks: (columnId: Task['columnId']) => void;
+  restoreTasks: (tasks: Task[]) => Promise<void>;
+  moveTask: (params: MoveTaskParams) => Promise<void>;
+  reorderColumnTasks: (params: ReorderColumnTasksParams) => Promise<void>;
+  getNextPositionByColumnId: (columnId: Task['columnId']) => number;
+  setTasks: (tasks: Task[]) => void;
 }
 
-export type TaskStore = ITaskState & ITaskActions
+export type TaskStore = ITaskState & ITaskActions;
 
 const upsertTaskInColumns = (tasksByColumnId: TasksByColumnId, task: Task): TasksByColumnId => {
-  const columnTasks = tasksByColumnId[task.columnId] ?? []
+  const columnTasks = tasksByColumnId[task.columnId] ?? [];
 
   return {
     ...tasksByColumnId,
     [task.columnId]: columnTasks.some((columnTask) => columnTask.id === task.id)
       ? columnTasks.map((columnTask) => (columnTask.id === task.id ? task : columnTask))
       : [...columnTasks, task],
-  }
-}
+  };
+};
 
 const removeTaskFromColumns = (
   tasksByColumnId: TasksByColumnId,
@@ -64,28 +64,28 @@ const removeTaskFromColumns = (
       columnId,
       columnTasks?.filter((task) => task.id !== taskId) ?? [],
     ]),
-  )
+  );
 
 export const groupTasksByColumnId = (tasks: Task[]): TasksByColumnId => {
-  const tasksByColumnId: TasksByColumnId = {}
+  const tasksByColumnId: TasksByColumnId = {};
 
   tasks.forEach((task) => {
-    const columnTasks = tasksByColumnId[task.columnId]
+    const columnTasks = tasksByColumnId[task.columnId];
 
     if (columnTasks) {
-      columnTasks.push(task)
+      columnTasks.push(task);
     } else {
-      tasksByColumnId[task.columnId] = [task]
+      tasksByColumnId[task.columnId] = [task];
     }
-  })
+  });
 
-  return tasksByColumnId
-}
+  return tasksByColumnId;
+};
 
 export const normalizeTasksByColumnId = (tasks: Task[]): Task[] =>
   Object.values(groupTasksByColumnId(tasks)).flatMap((columnTasks) =>
     normalizeTaskPositions(columnTasks ?? []),
-  )
+  );
 
 // решил попробовать использовать index по назначению, и чтобы в ui избежать reduce + filter
 export const useTaskStore = create<TaskStore>()((set, get) => ({
@@ -95,28 +95,28 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
 
   loadTasksByColumnIds: async (columnIds) => {
     if (get().isLoaded || get().isLoading) {
-      return
+      return;
     }
 
-    set({ isLoading: true })
+    set({ isLoading: true });
 
     try {
       const tasksByColumnEntries = await Promise.all(
         columnIds.map(async (columnId): Promise<[string, Task[]]> => {
-          const columnTasks = await taskRepository.getByColumnId(columnId)
+          const columnTasks = await taskRepository.getByColumnId(columnId);
 
-          return [columnId, columnTasks]
+          return [columnId, columnTasks];
         }),
-      )
+      );
 
-      const tasksByColumnId: TasksByColumnId = Object.fromEntries(tasksByColumnEntries)
+      const tasksByColumnId: TasksByColumnId = Object.fromEntries(tasksByColumnEntries);
 
       set({
         tasksByColumnId,
         isLoaded: true,
-      })
+      });
     } finally {
-      set({ isLoading: false })
+      set({ isLoading: false });
     }
   },
 
@@ -124,19 +124,19 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
     set({
       tasksByColumnId: groupTasksByColumnId(tasks),
       isLoaded: true,
-    })
+    });
   },
 
   addTask: async (task) => {
-    await taskRepository.put(task)
+    await taskRepository.put(task);
 
     set((state) => ({
       tasksByColumnId: upsertTaskInColumns(state.tasksByColumnId, task),
-    }))
+    }));
   },
 
   updateTask: async (task, patch) => {
-    const nextColumnId = patch.columnId ?? task.columnId
+    const nextColumnId = patch.columnId ?? task.columnId;
 
     if (nextColumnId !== task.columnId) {
       await get().moveTask({
@@ -146,96 +146,96 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
           columnId: nextColumnId,
         },
         targetColumnId: nextColumnId,
-      })
+      });
 
-      return
+      return;
     }
 
     const updatedTask: Task = {
       ...task,
       ...patch,
-    }
+    };
 
-    await taskRepository.put(updatedTask)
+    await taskRepository.put(updatedTask);
 
     set((state) => ({
       tasksByColumnId: upsertTaskInColumns(state.tasksByColumnId, updatedTask),
-    }))
+    }));
   },
 
   deleteTask: async (taskId) => {
     const deletedTask = Object.values(get().tasksByColumnId)
       .flatMap((columnTasks) => columnTasks ?? [])
-      .find((task) => task.id === taskId)
+      .find((task) => task.id === taskId);
 
     set((state) => ({
       tasksByColumnId: removeTaskFromColumns(state.tasksByColumnId, taskId),
-    }))
+    }));
 
     try {
-      await taskRepository.delete(taskId)
+      await taskRepository.delete(taskId);
     } catch (error) {
       if (deletedTask) {
         set((state) => ({
           tasksByColumnId: upsertTaskInColumns(state.tasksByColumnId, deletedTask),
-        }))
+        }));
       }
 
-      throw error
+      throw error;
     }
   },
 
   getNextPositionByColumnId: (columnId) => {
-    const columnTasks = get().tasksByColumnId[columnId] ?? []
+    const columnTasks = get().tasksByColumnId[columnId] ?? [];
 
-    return getNextTaskPosition(columnTasks)
+    return getNextTaskPosition(columnTasks);
   },
 
   moveTask: async ({ task, targetColumnId, previousTask, nextTask }) => {
     if (previousTask && previousTask.columnId !== targetColumnId) {
-      throw new Error('Предыдущая задача не из этой колонки')
+      throw new Error('Предыдущая задача не из этой колонки');
     }
 
     if (nextTask && nextTask.columnId !== targetColumnId) {
-      throw new Error('Следующая задача не из этой колонки')
+      throw new Error('Следующая задача не из этой колонки');
     }
 
     const targetColumnTasksWithoutMovedTask = (get().tasksByColumnId[targetColumnId] ?? []).filter(
       (columnTask) => columnTask.id !== task.id,
-    )
+    );
 
     const { position, normalizedTasks } = getTaskPositionAfterNormalization(
       targetColumnTasksWithoutMovedTask,
       previousTask,
       nextTask,
-    )
+    );
 
     const movedTask: Task = {
       ...task,
       columnId: targetColumnId,
       position,
-    }
+    };
 
     if (normalizedTasks) {
-      await taskRepository.putMany([...normalizedTasks, movedTask])
+      await taskRepository.putMany([...normalizedTasks, movedTask]);
     } else {
-      await taskRepository.put(movedTask)
+      await taskRepository.put(movedTask);
     }
 
     set((state) => {
-      let nextTasksByColumnId = removeTaskFromColumns(state.tasksByColumnId, task.id)
+      let nextTasksByColumnId = removeTaskFromColumns(state.tasksByColumnId, task.id);
 
       if (normalizedTasks) {
         nextTasksByColumnId = {
           ...nextTasksByColumnId,
           [targetColumnId]: normalizedTasks,
-        }
+        };
       }
 
       return {
         tasksByColumnId: upsertTaskInColumns(nextTasksByColumnId, movedTask),
-      }
-    })
+      };
+    });
   },
 
   reorderColumnTasks: async ({ columns }) => {
@@ -247,59 +247,59 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
           columnId,
         })),
       ),
-    }))
+    }));
 
-    await taskRepository.putMany(normalizedColumnEntries.flatMap(({ tasks }) => tasks))
+    await taskRepository.putMany(normalizedColumnEntries.flatMap(({ tasks }) => tasks));
 
     set((state) => {
       const nextTasksByColumnId: TasksByColumnId = {
         ...state.tasksByColumnId,
-      }
+      };
 
       normalizedColumnEntries.forEach(({ columnId, tasks }) => {
-        nextTasksByColumnId[columnId] = tasks
-      })
+        nextTasksByColumnId[columnId] = tasks;
+      });
 
       return {
         tasksByColumnId: nextTasksByColumnId,
-      }
-    })
+      };
+    });
   },
 
   clearColumnTasks: (columnId) => {
     set((state) => {
-      const nextTasksByColumnId = { ...state.tasksByColumnId }
+      const nextTasksByColumnId = { ...state.tasksByColumnId };
 
-      nextTasksByColumnId[columnId] = undefined
+      nextTasksByColumnId[columnId] = undefined;
 
       return {
         tasksByColumnId: nextTasksByColumnId,
-      }
-    })
+      };
+    });
   },
 
   restoreTasks: async (tasks) => {
-    await taskRepository.putMany(tasks)
+    await taskRepository.putMany(tasks);
 
     set((state) => {
-      let nextTasksByColumnId = state.tasksByColumnId
+      let nextTasksByColumnId = state.tasksByColumnId;
 
       tasks.forEach((task) => {
-        nextTasksByColumnId = upsertTaskInColumns(nextTasksByColumnId, task)
-      })
+        nextTasksByColumnId = upsertTaskInColumns(nextTasksByColumnId, task);
+      });
 
       return {
         tasksByColumnId: nextTasksByColumnId,
-      }
-    })
+      };
+    });
   },
-}))
+}));
 
 export const selectTasks = (state: TaskStore): ITaskState => ({
   tasksByColumnId: state.tasksByColumnId,
   isLoading: state.isLoading,
   isLoaded: state.isLoaded,
-})
+});
 
 export const useTaskActions = () =>
   useTaskStore(
@@ -315,4 +315,4 @@ export const useTaskActions = () =>
       restoreTasks: state.restoreTasks,
       setTasks: state.setTasks,
     })),
-  )
+  );

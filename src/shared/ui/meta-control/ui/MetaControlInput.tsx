@@ -1,26 +1,26 @@
-import { Box } from '@mantine/core'
+import { Box } from '@mantine/core';
 import {
   useRef,
   type ComponentPropsWithoutRef,
   type MouseEventHandler,
   type ReactNode,
-} from 'react'
+} from 'react';
 import {
   metaControlInputStyles,
   metaControlRightSectionStyles,
   metaControlRootStyles,
   metaControlSizerStyles,
   metaControlTextSizerStyles,
-} from '../lib/metaControl'
+} from '../lib/metaControl';
 
 interface MetaControlInputProps extends Omit<
   ComponentPropsWithoutRef<'input'>,
   'className' | 'style' | 'size' | 'onClick' | 'onMouseDown'
 > {
-  displayValue: string
-  rightSection?: ReactNode
-  onClick?: MouseEventHandler<HTMLDivElement>
-  onMouseDown?: MouseEventHandler<HTMLDivElement>
+  displayValue: string;
+  rightSection?: ReactNode;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+  onMouseDown?: MouseEventHandler<HTMLDivElement>;
 }
 
 export const MetaControlInput = ({
@@ -31,31 +31,31 @@ export const MetaControlInput = ({
   onMouseDown,
   ...inputProps
 }: MetaControlInputProps) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const sizerValue = displayValue || inputProps.placeholder || ' '
+  const sizerValue = displayValue || inputProps.placeholder || ' ';
 
   const handleRootMouseDown: MouseEventHandler<HTMLDivElement> = (event) => {
-    onMouseDown?.(event)
+    onMouseDown?.(event);
 
     if (event.defaultPrevented || disabled) {
-      return
+      return;
     }
 
-    const input = inputRef.current
+    const input = inputRef.current;
 
     if (!input) {
-      return
+      return;
     }
 
     if (event.target !== input) {
-      event.preventDefault()
+      event.preventDefault();
     }
 
     input.focus({
       preventScroll: true,
-    })
-  }
+    });
+  };
 
   return (
     <Box
@@ -78,5 +78,5 @@ export const MetaControlInput = ({
 
       {rightSection && <Box style={metaControlRightSectionStyles}>{rightSection}</Box>}
     </Box>
-  )
-}
+  );
+};

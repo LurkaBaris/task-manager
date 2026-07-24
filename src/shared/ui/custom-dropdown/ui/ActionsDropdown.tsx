@@ -1,34 +1,34 @@
-import { Box, Paper } from '@mantine/core'
-import { useClickOutside } from '@mantine/hooks'
-import { useState, type ReactNode } from 'react'
-import styles from './ActionsDropdown.module.css'
+import { Box, Paper } from '@mantine/core';
+import { useClickOutside } from '@mantine/hooks';
+import { useState, type ReactNode } from 'react';
+import styles from './ActionsDropdown.module.css';
 
 interface ActionsDropdownProps {
-  trigger: ReactNode
-  children: ReactNode
-  disabled?: boolean
+  trigger: ReactNode;
+  children: ReactNode;
+  disabled?: boolean;
 }
 
 export const ActionsDropdown = ({ trigger, children, disabled = false }: ActionsDropdownProps) => {
-  const [opened, setOpened] = useState(false)
+  const [opened, setOpened] = useState(false);
 
   const rootRef = useClickOutside<HTMLDivElement>(() => {
-    setOpened(false)
-  })
+    setOpened(false);
+  });
 
   const handleTriggerClick = () => {
     if (disabled) {
-      return
+      return;
     }
 
-    setOpened((current) => !current)
-  }
+    setOpened((current) => !current);
+  };
 
   const handleActionClick = () => {
     requestAnimationFrame(() => {
-      setOpened(false)
-    })
-  }
+      setOpened(false);
+    });
+  };
 
   return (
     <Box ref={rootRef} pos="relative" w="fit-content">
@@ -51,5 +51,5 @@ export const ActionsDropdown = ({ trigger, children, disabled = false }: Actions
         {children}
       </Paper>
     </Box>
-  )
-}
+  );
+};

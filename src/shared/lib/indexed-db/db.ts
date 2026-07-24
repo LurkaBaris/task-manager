@@ -1,170 +1,173 @@
-import { DEFAULT_COLUMNS, DEFAULT_TYPE, TASK_POSITION_STEP } from '@/shared/config'
-import { openDB, type DBSchema } from 'idb'
-import { INDEXED_DB_NAME, INDEXED_DB_VERSION } from './config'
+import { DEFAULT_COLUMNS, DEFAULT_TYPE, TASK_POSITION_STEP } from '@/shared/config';
+import { openDB, type DBSchema } from 'idb';
+import { INDEXED_DB_NAME, INDEXED_DB_VERSION } from './config';
 
 export interface TaskDbRecord {
-  id: string
-  title: string
-  description: string
-  createdAt: string
-  columnId: string
-  priority: string
-  position: number
-  type: string
-  tagId?: string
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  columnId: string;
+  priority: string;
+  position: number;
+  type: string;
+  tagId?: string;
 }
 
 export interface ColumnDbRecord {
-  id: string
-  title: string
-  color: string
-  order: number
+  id: string;
+  title: string;
+  color: string;
+  order: number;
 }
 
 export interface TagDbRecord {
-  id: string
-  name: string
+  id: string;
+  name: string;
 }
 
 export interface TaskCommentAttachmentDbRecord {
-  id: string
-  name: string
-  type: string
-  size: number
-  file: Blob
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  file: Blob;
 }
 
 export interface TaskCommentDbRecord {
-  id: string
-  taskId: string
-  text: string
-  createdAt: string
-  attachments: TaskCommentAttachmentDbRecord[]
+  id: string;
+  taskId: string;
+  text: string;
+  createdAt: string;
+  attachments: TaskCommentAttachmentDbRecord[];
 }
 
 interface AppDbSchema extends DBSchema {
   tasks: {
-    key: string
-    value: TaskDbRecord
+    key: string;
+    value: TaskDbRecord;
     indexes: {
-      'by-column-id': string
-      'by-created-at': string
-      'by-priority': string
-    }
-  }
+      'by-column-id': string;
+      'by-created-at': string;
+      'by-priority': string;
+    };
+  };
   columns: {
-    key: string
-    value: ColumnDbRecord
+    key: string;
+    value: ColumnDbRecord;
     indexes: {
-      'by-order': number
-    }
-  }
+      'by-order': number;
+    };
+  };
   tags: {
-    key: string
-    value: TagDbRecord
-  }
+    key: string;
+    value: TagDbRecord;
+  };
   taskComments: {
-    key: string
-    value: TaskCommentDbRecord
+    key: string;
+    value: TaskCommentDbRecord;
     indexes: {
-      'by-task-id': string
-      'by-created-at': string
-    }
-  }
+      'by-task-id': string;
+      'by-created-at': string;
+    };
+  };
 }
 
-const TASKS_STORE_NAME = 'tasks'
-const COLUMNS_STORE_NAME = 'columns'
-const TAGS_STORE_NAME = 'tags'
-const TASK_COMMENTS_STORE_NAME = 'taskComments'
+const TASKS_STORE_NAME = 'tasks';
+const COLUMNS_STORE_NAME = 'columns';
+const TAGS_STORE_NAME = 'tags';
+const TASK_COMMENTS_STORE_NAME = 'taskComments';
 
-const UNUSED_TASK_INDEXES: Array<'by-created-at' | 'by-priority'> = ['by-created-at', 'by-priority']
+const UNUSED_TASK_INDEXES: Array<'by-created-at' | 'by-priority'> = [
+  'by-created-at',
+  'by-priority',
+];
 
 export const appDbPromise = openDB<AppDbSchema>(INDEXED_DB_NAME, INDEXED_DB_VERSION, {
   async upgrade(db, oldVersion, _, transaction) {
     if (oldVersion < 1) {
-      const taskStore = db.createObjectStore(TASKS_STORE_NAME, { keyPath: 'id' })
+      const taskStore = db.createObjectStore(TASKS_STORE_NAME, { keyPath: 'id' });
 
-      taskStore.createIndex('by-column-id', 'columnId')
-      taskStore.createIndex('by-created-at', 'createdAt')
-      taskStore.createIndex('by-priority', 'priority')
+      taskStore.createIndex('by-column-id', 'columnId');
+      taskStore.createIndex('by-created-at', 'createdAt');
+      taskStore.createIndex('by-priority', 'priority');
     }
 
     if (oldVersion < 2) {
-      const taskStore = transaction.objectStore(TASKS_STORE_NAME)
-      const positionsByColumnId = new Map<string, number>()
+      const taskStore = transaction.objectStore(TASKS_STORE_NAME);
+      const positionsByColumnId = new Map<string, number>();
 
       try {
-        let cursor = await taskStore.index('by-created-at').openCursor()
+        let cursor = await taskStore.index('by-created-at').openCursor();
 
         while (cursor) {
-          const task = cursor.value
+          const task = cursor.value;
 
           if (typeof task.position !== 'number') {
-            const nextPosition = (positionsByColumnId.get(task.columnId) ?? 0) + TASK_POSITION_STEP
+            const nextPosition = (positionsByColumnId.get(task.columnId) ?? 0) + TASK_POSITION_STEP;
 
-            positionsByColumnId.set(task.columnId, nextPosition)
+            positionsByColumnId.set(task.columnId, nextPosition);
 
             await cursor.update({
               ...task,
               position: nextPosition,
-            })
+            });
           }
 
-          cursor = await cursor.continue()
+          cursor = await cursor.continue();
         }
       } catch (error) {
-        console.error('Не удалось определить позицию задачи', error)
+        console.error('Не удалось определить позицию задачи', error);
       }
     }
 
     if (oldVersion < 3) {
-      const taskStore = transaction.objectStore(TASKS_STORE_NAME)
+      const taskStore = transaction.objectStore(TASKS_STORE_NAME);
 
       for (const indexName of UNUSED_TASK_INDEXES) {
         if (taskStore.indexNames.contains(indexName)) {
-          taskStore.deleteIndex(indexName)
+          taskStore.deleteIndex(indexName);
         }
       }
     }
 
     if (oldVersion < 4) {
-      const columnStore = db.createObjectStore(COLUMNS_STORE_NAME, { keyPath: 'id' })
+      const columnStore = db.createObjectStore(COLUMNS_STORE_NAME, { keyPath: 'id' });
 
-      columnStore.createIndex('by-order', 'order')
+      columnStore.createIndex('by-order', 'order');
 
       for (const column of DEFAULT_COLUMNS) {
-        await columnStore.put(column)
+        await columnStore.put(column);
       }
     }
 
     if (oldVersion < 5) {
-      db.createObjectStore(TAGS_STORE_NAME, { keyPath: 'id' })
+      db.createObjectStore(TAGS_STORE_NAME, { keyPath: 'id' });
 
-      const taskStore = transaction.objectStore(TASKS_STORE_NAME)
+      const taskStore = transaction.objectStore(TASKS_STORE_NAME);
 
-      let cursor = await taskStore.openCursor()
+      let cursor = await taskStore.openCursor();
 
       while (cursor) {
-        const task = cursor.value
+        const task = cursor.value;
 
         await cursor.update({
           ...task,
           type: task.type || DEFAULT_TYPE,
           tagId: undefined,
-        })
+        });
 
-        cursor = await cursor.continue()
+        cursor = await cursor.continue();
       }
     }
 
     if (oldVersion < 6) {
       const taskCommentsStore = db.createObjectStore(TASK_COMMENTS_STORE_NAME, {
         keyPath: 'id',
-      })
+      });
 
-      taskCommentsStore.createIndex('by-task-id', 'taskId')
-      taskCommentsStore.createIndex('by-created-at', 'createdAt')
+      taskCommentsStore.createIndex('by-task-id', 'taskId');
+      taskCommentsStore.createIndex('by-created-at', 'createdAt');
     }
   },
-})
+});

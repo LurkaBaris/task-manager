@@ -1,1 +1,1 @@
-export { ChangeTaskDescriptionInline } from './ui/ChangeTaskDescriptionInline'
+export { ChangeTaskDescriptionInline } from './ui/ChangeTaskDescriptionInline';

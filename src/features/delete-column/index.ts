@@ -1,1 +1,1 @@
-export { DeleteColumnButton } from './ui/DeleteColumnButton'
+export { DeleteColumnButton } from './ui/DeleteColumnButton';

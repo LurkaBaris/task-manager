@@ -1,16 +1,16 @@
-import { pluralize } from '@/shared/lib'
-import { Stack, Text } from '@mantine/core'
-import { Doughnut } from 'react-chartjs-2'
-import { doughnutChartOptions } from '../model/chartOptions'
-import type { StatisticPieItem } from '../model/types'
-import { useStatisticChart } from '../model/useStatisticChart'
-import { StatisticChartCard } from './StatisticChartCard'
-import styles from './StatisticCard.module.css'
+import { pluralize } from '@/shared/lib';
+import { Stack, Text } from '@mantine/core';
+import { Doughnut } from 'react-chartjs-2';
+import { doughnutChartOptions } from '../model/chartOptions';
+import type { StatisticPieItem } from '../model/types';
+import { useStatisticChart } from '../model/useStatisticChart';
+import { StatisticChartCard } from './StatisticChartCard';
+import styles from './StatisticCard.module.css';
 
 interface StatisticDoughnutCardProps {
-  title: string
-  description: string
-  items: StatisticPieItem[]
+  title: string;
+  description: string;
+  items: StatisticPieItem[];
 }
 
 export const StatisticDoughnutCard = ({
@@ -26,7 +26,7 @@ export const StatisticDoughnutCard = ({
     total,
     visibleItems,
     visibleTotal,
-  } = useStatisticChart<'doughnut'>(items)
+  } = useStatisticChart<'doughnut'>(items);
 
   return (
     <StatisticChartCard
@@ -62,5 +62,5 @@ export const StatisticDoughnutCard = ({
         </Text>
       </Stack>
     </StatisticChartCard>
-  )
-}
+  );
+};

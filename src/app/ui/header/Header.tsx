@@ -1,8 +1,8 @@
-import { ToggleColorScheme } from '@/features/toggle-color-scheme'
-import { ROUTES } from '@/shared/config'
-import { AppShell, Container, Group, Text } from '@mantine/core'
-import { NavLink } from 'react-router-dom'
-import styles from './Header.module.css'
+import { ToggleColorScheme } from '@/features/toggle-color-scheme';
+import { ROUTES } from '@/shared/config';
+import { AppShell, Container, Group, Text } from '@mantine/core';
+import { NavLink } from 'react-router-dom';
+import styles from './Header.module.css';
 
 export const Header = () => {
   return (
@@ -41,5 +41,5 @@ export const Header = () => {
         </Group>
       </Container>
     </AppShell.Header>
-  )
-}
+  );
+};

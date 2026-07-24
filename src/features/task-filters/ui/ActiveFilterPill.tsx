@@ -1,12 +1,12 @@
-import { Flex, Pill, Text } from '@mantine/core'
-import { VISIBLE_ACTIVE_FILTER_VALUES_COUNT } from '../model/contstants'
-import styles from './ActiveFilterPill.module.css'
+import { Flex, Pill, Text } from '@mantine/core';
+import { VISIBLE_ACTIVE_FILTER_VALUES_COUNT } from '../model/contstants';
+import styles from './ActiveFilterPill.module.css';
 
 interface ActiveFilterPillProps {
-  title: string
-  values: string[]
-  disabled?: boolean
-  onRemove: () => void
+  title: string;
+  values: string[];
+  disabled?: boolean;
+  onRemove: () => void;
 }
 
 export const ActiveFilterPill = ({
@@ -15,11 +15,11 @@ export const ActiveFilterPill = ({
   disabled = false,
   onRemove,
 }: ActiveFilterPillProps) => {
-  const visibleValues = values.slice(0, VISIBLE_ACTIVE_FILTER_VALUES_COUNT)
-  const hiddenValuesCount = values.length - visibleValues.length
+  const visibleValues = values.slice(0, VISIBLE_ACTIVE_FILTER_VALUES_COUNT);
+  const hiddenValuesCount = values.length - visibleValues.length;
 
   if (values.length === 0) {
-    return null
+    return null;
   }
 
   return (
@@ -45,5 +45,5 @@ export const ActiveFilterPill = ({
         </Flex>
       </Flex>
     </Pill>
-  )
-}
+  );
+};

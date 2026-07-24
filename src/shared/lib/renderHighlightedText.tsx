@@ -1,16 +1,16 @@
-import { Mark } from '@mantine/core'
-import type { ReactNode } from 'react'
+import { Mark } from '@mantine/core';
+import type { ReactNode } from 'react';
 
 export const renderHighlightedText = (text: string, search: string): ReactNode => {
   if (!search) {
-    return text
+    return text;
   }
 
-  const lowerText = text.toLowerCase()
-  const index = lowerText.indexOf(search)
+  const lowerText = text.toLowerCase();
+  const index = lowerText.indexOf(search);
 
   if (index === -1) {
-    return text
+    return text;
   }
 
   return (
@@ -21,5 +21,5 @@ export const renderHighlightedText = (text: string, search: string): ReactNode =
       </Mark>
       {text.slice(index + search.length)}
     </>
-  )
-}
+  );
+};

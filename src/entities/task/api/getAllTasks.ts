@@ -1,3 +1,3 @@
-import { taskRepository } from './taskRepository'
+import { taskRepository } from './taskRepository';
 
-export const getAllTasks = () => taskRepository.getAll()
+export const getAllTasks = () => taskRepository.getAll();

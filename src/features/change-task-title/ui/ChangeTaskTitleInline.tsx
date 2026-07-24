@@ -1,73 +1,73 @@
-import { taskSchema, useTaskActions, type Task } from '@/entities/task'
-import { useInlineEdit, type InlineEditSubmitResult } from '@/shared/lib'
-import { ActionIcon, Text, Title, Tooltip } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { Check, Pencil, X } from 'lucide-react'
-import type { KeyboardEvent } from 'react'
-import styles from './ChangeTaskTitleInline.module.css'
+import { taskSchema, useTaskActions, type Task } from '@/entities/task';
+import { useInlineEdit, type InlineEditSubmitResult } from '@/shared/lib';
+import { ActionIcon, Text, Title, Tooltip } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { Check, Pencil, X } from 'lucide-react';
+import type { KeyboardEvent } from 'react';
+import styles from './ChangeTaskTitleInline.module.css';
 
 interface ChangeTaskTitleInlineProps {
-  task: Task
+  task: Task;
 }
 
 export const ChangeTaskTitleInline = ({ task }: ChangeTaskTitleInlineProps) => {
-  const { updateTask } = useTaskActions()
+  const { updateTask } = useTaskActions();
 
   const handleSubmit = async (value: string): Promise<InlineEditSubmitResult> => {
-    const result = taskSchema.shape.title.safeParse(value)
+    const result = taskSchema.shape.title.safeParse(value);
 
     if (!result.success) {
       return {
         success: false,
         error: result.error.issues[0]?.message ?? 'Некорректное название',
-      }
+      };
     }
 
-    const title = result.data
+    const title = result.data;
 
     if (title === task.title) {
-      return { success: true }
+      return { success: true };
     }
 
     try {
-      await updateTask(task, { title })
+      await updateTask(task, { title });
 
       notifications.show({
         title: 'Название обновлено',
         message: 'Изменения сохранены',
         color: 'brand',
-      })
+      });
 
-      return { success: true }
+      return { success: true };
     } catch {
       notifications.show({
         title: `Не удалось обновить задачу «${task.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
-      })
+      });
 
-      return { success: false }
+      return { success: false };
     }
-  }
+  };
 
   const { isEditing, value, error, isSaving, open, cancel, setValue, submit, handleBlur } =
     useInlineEdit({
       value: task.title,
       onSubmit: handleSubmit,
-    })
+    });
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Escape') {
-      event.preventDefault()
-      cancel()
-      return
+      event.preventDefault();
+      cancel();
+      return;
     }
 
     if (event.key === 'Enter') {
-      event.preventDefault()
-      await submit()
+      event.preventDefault();
+      await submit();
     }
-  }
+  };
 
   if (!isEditing) {
     return (
@@ -95,7 +95,7 @@ export const ChangeTaskTitleInline = ({ task }: ChangeTaskTitleInlineProps) => {
           </ActionIcon>
         </Tooltip>
       </Title>
-    )
+    );
   }
 
   return (
@@ -152,5 +152,5 @@ export const ChangeTaskTitleInline = ({ task }: ChangeTaskTitleInlineProps) => {
         </Text>
       )}
     </div>
-  )
-}
+  );
+};

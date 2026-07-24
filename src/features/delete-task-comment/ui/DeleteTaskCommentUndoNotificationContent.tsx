@@ -1,11 +1,11 @@
-import { restoreTaskComment, type TaskComment } from '@/entities/task-comment'
-import { Button, Stack, Text } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
+import { restoreTaskComment, type TaskComment } from '@/entities/task-comment';
+import { Button, Stack, Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
 interface DeleteTaskCommentUndoNotificationContentProps {
-  comment: TaskComment
-  notificationId: string
-  onRestored: (comment: TaskComment) => unknown
+  comment: TaskComment;
+  notificationId: string;
+  onRestored: (comment: TaskComment) => unknown;
 }
 
 export const DeleteTaskCommentUndoNotificationContent = ({
@@ -15,23 +15,23 @@ export const DeleteTaskCommentUndoNotificationContent = ({
 }: DeleteTaskCommentUndoNotificationContentProps) => {
   const handleRestoreComment = async () => {
     try {
-      await restoreTaskComment(comment)
-      onRestored(comment)
-      notifications.hide(notificationId)
+      await restoreTaskComment(comment);
+      onRestored(comment);
+      notifications.hide(notificationId);
 
       notifications.show({
         title: 'Комментарий восстановлен',
         message: 'Комментарий снова отображается в задаче',
         color: 'brand',
-      })
+      });
     } catch {
       notifications.show({
         title: 'Не удалось восстановить комментарий',
         message: 'Попробуйте еще раз',
         color: 'red',
-      })
+      });
     }
-  }
+  };
 
   return (
     <Stack gap="xs">
@@ -41,5 +41,5 @@ export const DeleteTaskCommentUndoNotificationContent = ({
         Восстановить
       </Button>
     </Stack>
-  )
-}
+  );
+};

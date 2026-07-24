@@ -1,3 +1,3 @@
-import { tagRepository } from './tagRepository'
+import { tagRepository } from './tagRepository';
 
-export const getAllTags = () => tagRepository.getAll()
+export const getAllTags = () => tagRepository.getAll();

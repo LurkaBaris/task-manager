@@ -1,15 +1,15 @@
-import { SegmentedControl, Tooltip, VisuallyHidden, useMantineColorScheme } from '@mantine/core'
-import { COLOR_SCHEME_OPTIONS } from '../model/options'
-import styles from './ToggleColorScheme.module.css'
+import { SegmentedControl, Tooltip, VisuallyHidden, useMantineColorScheme } from '@mantine/core';
+import { COLOR_SCHEME_OPTIONS } from '../model/options';
+import styles from './ToggleColorScheme.module.css';
 
 export const ToggleColorScheme = () => {
-  const { colorScheme, setColorScheme } = useMantineColorScheme()
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   const handleChange = (value: string) => {
     if (value === 'light' || value === 'dark' || value === 'auto') {
-      setColorScheme(value)
+      setColorScheme(value);
     }
-  }
+  };
 
   return (
     <SegmentedControl
@@ -36,5 +36,5 @@ export const ToggleColorScheme = () => {
       radius="xl"
       value={colorScheme}
     />
-  )
-}
+  );
+};

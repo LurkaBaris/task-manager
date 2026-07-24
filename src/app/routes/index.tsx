@@ -1,8 +1,8 @@
-import { ROUTES } from '@/shared/config'
-import { Center, Loader } from '@mantine/core'
-import { Suspense, type ReactNode } from 'react'
-import { AppLayout } from '../ui/AppLayout'
-import { LazyErrorPage, LazyHomePage, LazyStatisticPage, LazyTaskDetailsPage } from './lazyPages'
+import { ROUTES } from '@/shared/config';
+import { Center, Loader } from '@mantine/core';
+import { Suspense, type ReactNode } from 'react';
+import { AppLayout } from '../ui/AppLayout';
+import { LazyErrorPage, LazyHomePage, LazyStatisticPage, LazyTaskDetailsPage } from './lazyPages';
 
 const withSuspense = (element: ReactNode) => {
   return (
@@ -15,8 +15,8 @@ const withSuspense = (element: ReactNode) => {
     >
       {element}
     </Suspense>
-  )
-}
+  );
+};
 
 export const routes = [
   {
@@ -47,4 +47,4 @@ export const routes = [
       },
     ],
   },
-]
+];

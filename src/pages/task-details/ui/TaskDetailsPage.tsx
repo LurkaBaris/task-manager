@@ -1,49 +1,49 @@
-import { selectTasks, taskDateFormatter, useTaskStore } from '@/entities/task'
-import { ChangeTaskDescriptionInline } from '@/features/change-task-description'
-import { ChangeTaskPrioritySelect } from '@/features/change-task-priority'
-import { ChangeTaskStatusSelect } from '@/features/change-task-status'
-import { ChangeTaskTag } from '@/features/change-task-tag'
-import { ChangeTaskTitleInline } from '@/features/change-task-title'
-import { ChangeTaskType } from '@/features/change-task-type'
-import { DeleteTaskButton } from '@/features/delete-task'
-import { getTaskDetailsRoute, ROUTES } from '@/shared/config'
-import { useDocumentTitle } from '@/shared/lib'
-import { ErrorState } from '@/shared/ui'
-import { TaskComments } from '@/widgets/task-comments'
-import { Box, Center, Divider, Grid, Group, Loader, Paper, Stack, Text } from '@mantine/core'
-import { useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useShallow } from 'zustand/shallow'
-import styles from './TaskDetailsPage.module.css'
+import { selectTasks, taskDateFormatter, useTaskStore } from '@/entities/task';
+import { ChangeTaskDescriptionInline } from '@/features/change-task-description';
+import { ChangeTaskPrioritySelect } from '@/features/change-task-priority';
+import { ChangeTaskStatusSelect } from '@/features/change-task-status';
+import { ChangeTaskTag } from '@/features/change-task-tag';
+import { ChangeTaskTitleInline } from '@/features/change-task-title';
+import { ChangeTaskType } from '@/features/change-task-type';
+import { DeleteTaskButton } from '@/features/delete-task';
+import { getTaskDetailsRoute, ROUTES } from '@/shared/config';
+import { useDocumentTitle } from '@/shared/lib';
+import { ErrorState } from '@/shared/ui';
+import { TaskComments } from '@/widgets/task-comments';
+import { Box, Center, Divider, Grid, Group, Loader, Paper, Stack, Text } from '@mantine/core';
+import { useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useShallow } from 'zustand/shallow';
+import styles from './TaskDetailsPage.module.css';
 
 export const TaskDetailsPage = () => {
-  const { taskId } = useParams()
-  const navigate = useNavigate()
+  const { taskId } = useParams();
+  const navigate = useNavigate();
   const {
     tasksByColumnId,
     isLoading: isTasksLoading,
     isLoaded: isTasksLoaded,
-  } = useTaskStore(useShallow(selectTasks))
+  } = useTaskStore(useShallow(selectTasks));
 
   const task = useMemo(() => {
-    if (!taskId) return undefined
+    if (!taskId) return undefined;
 
     return Object.values(tasksByColumnId)
       .flatMap((columnTasks) => columnTasks ?? [])
-      .find((task) => task.id === taskId)
-  }, [taskId, tasksByColumnId])
+      .find((task) => task.id === taskId);
+  }, [taskId, tasksByColumnId]);
 
-  const isInitialLoading = isTasksLoading && !isTasksLoaded
-  const pageTitle = isInitialLoading ? 'Загрузка задачи' : (task?.title ?? 'Задача не найдена')
+  const isInitialLoading = isTasksLoading && !isTasksLoaded;
+  const pageTitle = isInitialLoading ? 'Загрузка задачи' : (task?.title ?? 'Задача не найдена');
 
-  useDocumentTitle(pageTitle)
+  useDocumentTitle(pageTitle);
 
   if (isInitialLoading) {
     return (
       <Center h={240}>
         <Loader size="sm" />
       </Center>
-    )
+    );
   }
 
   if (!task) {
@@ -52,10 +52,10 @@ export const TaskDetailsPage = () => {
         title="Задача не найдена"
         description="Возможно, задача была удалена или указан неверный идентификатор"
       />
-    )
+    );
   }
 
-  const createdAt = taskDateFormatter.format(new Date(task.createdAt))
+  const createdAt = taskDateFormatter.format(new Date(task.createdAt));
 
   return (
     <Stack className={styles.page} gap="md">
@@ -194,5 +194,5 @@ export const TaskDetailsPage = () => {
         </Stack>
       </Paper>
     </Stack>
-  )
-}
+  );
+};

@@ -1,11 +1,11 @@
-import { useDocumentTitle } from '@/shared/lib'
-import { ErrorState } from '@/shared/ui'
+import { useDocumentTitle } from '@/shared/lib';
+import { ErrorState } from '@/shared/ui';
 
 interface ErrorPageProps {
-  title?: string
-  description?: string
-  showReload?: boolean
-  onRetry?: () => void
+  title?: string;
+  description?: string;
+  showReload?: boolean;
+  onRetry?: () => void;
 }
 
 export const ErrorPage = ({
@@ -14,9 +14,9 @@ export const ErrorPage = ({
   showReload = true,
   onRetry,
 }: ErrorPageProps) => {
-  useDocumentTitle(title)
+  useDocumentTitle(title);
 
   return (
     <ErrorState title={title} description={description} showReload={showReload} onRetry={onRetry} />
-  )
-}
+  );
+};

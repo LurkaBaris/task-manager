@@ -1,1 +1,1 @@
-export { ChangeTaskType } from './ui/ChangeTaskType'
+export { ChangeTaskType } from './ui/ChangeTaskType';

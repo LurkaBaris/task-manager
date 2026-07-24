@@ -1,13 +1,13 @@
-import { PointerSensor, TouchSensor } from '@dnd-kit/core'
-import type { PointerEvent, TouchEvent } from 'react'
+import { PointerSensor, TouchSensor } from '@dnd-kit/core';
+import type { PointerEvent, TouchEvent } from 'react';
 
 const isDragDisabledElement = (target: EventTarget | null): boolean => {
   if (!(target instanceof HTMLElement)) {
-    return false
+    return false;
   }
 
   if (target.closest('[data-dnd-handle]')) {
-    return false
+    return false;
   }
 
   return Boolean(
@@ -24,18 +24,18 @@ const isDragDisabledElement = (target: EventTarget | null): boolean => {
         [data-no-dnd]
       `,
     ),
-  )
-}
+  );
+};
 
 export class CustomPointerSensor extends PointerSensor {
   static activators = [
     {
       eventName: 'onPointerDown' as const,
       handler: ({ nativeEvent }: PointerEvent) => {
-        return !isDragDisabledElement(nativeEvent.target)
+        return !isDragDisabledElement(nativeEvent.target);
       },
     },
-  ]
+  ];
 }
 
 export class CustomTouchSensor extends TouchSensor {
@@ -43,8 +43,8 @@ export class CustomTouchSensor extends TouchSensor {
     {
       eventName: 'onTouchStart' as const,
       handler: ({ nativeEvent }: TouchEvent) => {
-        return !isDragDisabledElement(nativeEvent.target)
+        return !isDragDisabledElement(nativeEvent.target);
       },
     },
-  ]
+  ];
 }

@@ -2,6 +2,6 @@ export const ROUTES = {
   HOME: '/',
   STATISTIC: '/statistic',
   TASK_DETAILS: '/tasks/:taskId',
-} as const
+} as const;
 
-export const getTaskDetailsRoute = (taskId: string) => `/tasks/${taskId}`
+export const getTaskDetailsRoute = (taskId: string) => `/tasks/${taskId}`;

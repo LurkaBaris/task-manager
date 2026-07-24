@@ -4,50 +4,50 @@ import {
   TASK_TYPE_OPTIONS,
   useTaskActions,
   type Task,
-} from '@/entities/task'
-import { MetaSelect } from '@/shared/ui'
-import { Box, Group, Text, ThemeIcon } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { Check } from 'lucide-react'
+} from '@/entities/task';
+import { MetaSelect } from '@/shared/ui';
+import { Box, Group, Text, ThemeIcon } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { Check } from 'lucide-react';
 
 interface ChangeTaskTypeProps {
-  task: Task
-  disabled?: boolean
+  task: Task;
+  disabled?: boolean;
 }
 
 export const ChangeTaskType = ({ task, disabled = false }: ChangeTaskTypeProps) => {
-  const { updateTask } = useTaskActions()
+  const { updateTask } = useTaskActions();
 
-  const selectedType = TASK_TYPE_OPTIONS.find((option) => option.value === task.type)
-  const selectedTypeLabel = selectedType?.label ?? task.type
-  const selectedTypeConfig = TASK_TYPE_CONFIG.find(({ id }) => id === task.type)
-  const SelectedTypeIcon = selectedTypeConfig?.icon
+  const selectedType = TASK_TYPE_OPTIONS.find((option) => option.value === task.type);
+  const selectedTypeLabel = selectedType?.label ?? task.type;
+  const selectedTypeConfig = TASK_TYPE_CONFIG.find(({ id }) => id === task.type);
+  const SelectedTypeIcon = selectedTypeConfig?.icon;
 
   const handleTypeChange = async (value: string | null) => {
     if (!value || value === task.type || !isTaskType(value)) {
-      return
+      return;
     }
 
-    const type = TASK_TYPE_OPTIONS.find((option) => option.value === value)
+    const type = TASK_TYPE_OPTIONS.find((option) => option.value === value);
 
     try {
       await updateTask(task, {
         type: value,
-      })
+      });
 
       notifications.show({
         title: `Тип изменен на «${type?.label ?? 'Без названия'}»`,
         message: 'Изменения сохранены',
         color: 'brand',
-      })
+      });
     } catch {
       notifications.show({
         title: `Не удалось обновить задачу «${task.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
-      })
+      });
     }
-  }
+  };
 
   return (
     <MetaSelect
@@ -67,13 +67,13 @@ export const ChangeTaskType = ({ task, disabled = false }: ChangeTaskTypeProps) 
         ) : undefined
       }
       renderOption={({ option, checked }) => {
-        const typeConfig = TASK_TYPE_CONFIG.find(({ id }) => id === option.value)
+        const typeConfig = TASK_TYPE_CONFIG.find(({ id }) => id === option.value);
 
         if (!typeConfig) {
-          return option.label
+          return option.label;
         }
 
-        const Icon = typeConfig.icon
+        const Icon = typeConfig.icon;
 
         return (
           <Group flex={1} gap={0} wrap="nowrap" justify="space-between">
@@ -93,9 +93,9 @@ export const ChangeTaskType = ({ task, disabled = false }: ChangeTaskTypeProps) 
               </Box>
             )}
           </Group>
-        )
+        );
       }}
       onChange={handleTypeChange}
     />
-  )
-}
+  );
+};

@@ -1,1 +1,1 @@
-export { CreateColumnButton } from './ui/CreateColumnButton'
+export { CreateColumnButton } from './ui/CreateColumnButton';

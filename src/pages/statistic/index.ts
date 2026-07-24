@@ -1,1 +1,1 @@
-export { StatisticPage } from './ui/StatisticPage'
+export { StatisticPage } from './ui/StatisticPage';

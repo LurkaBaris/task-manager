@@ -1,20 +1,20 @@
-import { MetaCombobox } from '@/shared/ui'
-import { ActionIcon, Combobox, Loader, TextInput } from '@mantine/core'
-import { X } from 'lucide-react'
-import type { MouseEvent } from 'react'
-import type { Tag } from '../model/types'
-import { useTagSelect } from '../model/useTagSelect'
-import { TagOptions } from './TagOptions'
+import { MetaCombobox } from '@/shared/ui';
+import { ActionIcon, Combobox, Loader, TextInput } from '@mantine/core';
+import { X } from 'lucide-react';
+import type { MouseEvent } from 'react';
+import type { Tag } from '../model/types';
+import { useTagSelect } from '../model/useTagSelect';
+import { TagOptions } from './TagOptions';
 
 interface TagSelectProps {
-  value?: Tag['id']
-  draftValue?: string
-  label?: string
-  placeholder?: string
-  disabled?: boolean
-  error?: string
-  onChange: (tagId: Tag['id'] | undefined) => void | Promise<void>
-  onCreate: (name: string) => void | Promise<void>
+  value?: Tag['id'];
+  draftValue?: string;
+  label?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  error?: string;
+  onChange: (tagId: Tag['id'] | undefined) => void | Promise<void>;
+  onCreate: (name: string) => void | Promise<void>;
 }
 
 export const TagSelect = ({
@@ -48,14 +48,14 @@ export const TagSelect = ({
     draftValue,
     onChange,
     onCreate,
-  })
+  });
 
   const handleClearClick = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
+    event.preventDefault();
+    event.stopPropagation();
 
-    await handleClearTag()
-  }
+    await handleClearTag();
+  };
 
   return (
     <MetaCombobox store={combobox} onOptionSubmit={handleSelectTag}>
@@ -99,7 +99,7 @@ export const TagSelect = ({
           onChange={(event) => handleSearchChange(event.currentTarget.value)}
           onClick={() => {
             if (!disabled) {
-              combobox.openDropdown()
+              combobox.openDropdown();
             }
           }}
           onFocus={handleInputFocus}
@@ -120,5 +120,5 @@ export const TagSelect = ({
         />
       </Combobox.Dropdown>
     </MetaCombobox>
-  )
-}
+  );
+};
