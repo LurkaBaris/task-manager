@@ -1,3 +1,3 @@
-import { taskCommentRepository } from './taskCommentRepository'
+import { taskCommentRepository } from './taskCommentRepository';
 
-export const getAllTaskComments = () => taskCommentRepository.getAll()
+export const getAllTaskComments = () => taskCommentRepository.getAll();

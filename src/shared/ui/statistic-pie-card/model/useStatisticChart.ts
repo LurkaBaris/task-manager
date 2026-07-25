@@ -1,31 +1,31 @@
-import type { Chart } from 'chart.js'
-import { useComputedColorScheme, useMantineTheme } from '@mantine/core'
-import { useMemo, useRef } from 'react'
-import { getTopStatisticPieItems } from '../lib/getTopStatisticPieItems'
-import { mapStatisticItemsToPieChartData } from '../lib/mapStatisticItemsToPieChartData'
-import type { StatisticPieItem } from './types'
+import type { Chart } from 'chart.js';
+import { useComputedColorScheme, useMantineTheme } from '@mantine/core';
+import { useMemo, useRef } from 'react';
+import { getTopStatisticPieItems } from '../lib/getTopStatisticPieItems';
+import { mapStatisticItemsToPieChartData } from '../lib/mapStatisticItemsToPieChartData';
+import type { StatisticPieItem } from './types';
 
-type StatisticChartType = 'pie' | 'doughnut'
+type StatisticChartType = 'pie' | 'doughnut';
 
 export const useStatisticChart = <T extends StatisticChartType>(items: StatisticPieItem[]) => {
-  const theme = useMantineTheme()
-  const colorScheme = useComputedColorScheme('light', { getInitialValueInEffect: false })
-  const chartRef = useRef<Chart<T>>(null)
-  const chartBorderColor = colorScheme === 'dark' ? theme.colors.dark[7] : theme.white
-  const total = items.reduce((sum, item) => sum + item.count, 0)
+  const theme = useMantineTheme();
+  const colorScheme = useComputedColorScheme('light', { getInitialValueInEffect: false });
+  const chartRef = useRef<Chart<T>>(null);
+  const chartBorderColor = colorScheme === 'dark' ? theme.colors.dark[7] : theme.white;
+  const total = items.reduce((sum, item) => sum + item.count, 0);
   const visibleItems = useMemo(() => {
-    return getTopStatisticPieItems(items)
-  }, [items])
-  const visibleTotal = visibleItems.reduce((sum, item) => sum + item.count, 0)
+    return getTopStatisticPieItems(items);
+  }, [items]);
+  const visibleTotal = visibleItems.reduce((sum, item) => sum + item.count, 0);
   const chartData = useMemo(() => {
-    return mapStatisticItemsToPieChartData(visibleItems, chartBorderColor)
-  }, [chartBorderColor, visibleItems])
+    return mapStatisticItemsToPieChartData(visibleItems, chartBorderColor);
+  }, [chartBorderColor, visibleItems]);
 
   const setActiveChartItem = (itemIndex: number | null) => {
-    const chart = chartRef.current
+    const chart = chartRef.current;
 
     if (!chart) {
-      return
+      return;
     }
 
     const activeElements =
@@ -36,9 +36,9 @@ export const useStatisticChart = <T extends StatisticChartType>(items: Statistic
               datasetIndex: 0,
               index: itemIndex,
             },
-          ]
+          ];
 
-    chart.setActiveElements(activeElements)
+    chart.setActiveElements(activeElements);
     chart.tooltip?.setActiveElements(
       activeElements,
       itemIndex === null
@@ -47,21 +47,21 @@ export const useStatisticChart = <T extends StatisticChartType>(items: Statistic
             x: chart.chartArea.left + chart.chartArea.width / 2,
             y: chart.chartArea.top + chart.chartArea.height / 2,
           },
-    )
-    chart.update()
-  }
+    );
+    chart.update();
+  };
 
   const handleLegendItemMouseEnter = (item: StatisticPieItem) => {
-    const itemIndex = visibleItems.findIndex((visibleItem) => visibleItem.id === item.id)
+    const itemIndex = visibleItems.findIndex((visibleItem) => visibleItem.id === item.id);
 
     if (itemIndex !== -1) {
-      setActiveChartItem(itemIndex)
+      setActiveChartItem(itemIndex);
     }
-  }
+  };
 
   const handleLegendItemMouseLeave = () => {
-    setActiveChartItem(null)
-  }
+    setActiveChartItem(null);
+  };
 
   return {
     chartData,
@@ -71,5 +71,5 @@ export const useStatisticChart = <T extends StatisticChartType>(items: Statistic
     total,
     visibleItems,
     visibleTotal,
-  }
-}
+  };
+};

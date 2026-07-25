@@ -1,4 +1,4 @@
-import type { ChartOptions } from 'chart.js'
+import type { ChartOptions } from 'chart.js';
 
 export const getChartOptions = (textColor: string, gridColor: string): ChartOptions<'bar'> => ({
   indexAxis: 'y',
@@ -11,10 +11,10 @@ export const getChartOptions = (textColor: string, gridColor: string): ChartOpti
     tooltip: {
       callbacks: {
         label: (context) => {
-          const label = context.dataset.label ?? 'Значение'
-          const value = Number(context.parsed.x)
+          const label = context.dataset.label ?? 'Значение';
+          const value = Number(context.parsed.x);
 
-          return `${label}: ${value}`
+          return `${label}: ${value}`;
         },
       },
     },
@@ -43,4 +43,4 @@ export const getChartOptions = (textColor: string, gridColor: string): ChartOpti
       },
     },
   },
-})
+});

@@ -1,10 +1,10 @@
-import type { ChartData } from 'chart.js'
+import type { ChartData } from 'chart.js';
 import {
   STATISTIC_STACKED_BAR_BORDER_RADIUS,
   STATISTIC_STACKED_BAR_BORDER_WIDTH,
   STATISTIC_STACKED_BAR_MAX_BAR_THICKNESS,
-} from '../model/constants'
-import type { StatisticStackedBarData } from '../model/types'
+} from '../model/constants';
+import type { StatisticStackedBarData } from '../model/types';
 
 export const mapStatisticStackedBarDataToChartData = (
   data: StatisticStackedBarData,
@@ -22,5 +22,5 @@ export const mapStatisticStackedBarDataToChartData = (
       maxBarThickness: STATISTIC_STACKED_BAR_MAX_BAR_THICKNESS,
       borderSkipped: false,
     })),
-  }
-}
+  };
+};

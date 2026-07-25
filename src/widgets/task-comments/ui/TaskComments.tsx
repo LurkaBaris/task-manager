@@ -2,80 +2,80 @@ import {
   getTaskCommentsByTaskIds,
   TaskCommentCard,
   type TaskComment,
-} from '@/entities/task-comment'
+} from '@/entities/task-comment';
 import {
   sortTaskCommentsByDate,
   TaskCommentSortButton,
   useTaskCommentSort,
-} from '@/features/change-task-comment-sort'
-import { CreateTaskComment } from '@/features/create-task-comment'
-import { DeleteTaskCommentButton } from '@/features/delete-task-comment'
-import { EditTaskCommentButton } from '@/features/edit-task-comment'
-import { Badge, Group, Stack, Text } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { useEffect, useState } from 'react'
-import styles from './TaskComments.module.css'
+} from '@/features/change-task-comment-sort';
+import { CreateTaskComment } from '@/features/create-task-comment';
+import { DeleteTaskCommentButton } from '@/features/delete-task-comment';
+import { EditTaskCommentButton } from '@/features/edit-task-comment';
+import { Badge, Group, Stack, Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { useEffect, useState } from 'react';
+import styles from './TaskComments.module.css';
 
 interface TaskCommentsProps {
-  taskId: string
+  taskId: string;
 }
 
 export const TaskComments = ({ taskId }: TaskCommentsProps) => {
-  const [comments, setComments] = useState<TaskComment[]>([])
-  const { sortOrder, toggleSortOrder } = useTaskCommentSort()
-  const sortedComments = sortTaskCommentsByDate(comments, sortOrder)
+  const [comments, setComments] = useState<TaskComment[]>([]);
+  const { sortOrder, toggleSortOrder } = useTaskCommentSort();
+  const sortedComments = sortTaskCommentsByDate(comments, sortOrder);
 
   useEffect(() => {
-    let isActive = true
+    let isActive = true;
 
     const loadComments = async () => {
       try {
-        const comments = await getTaskCommentsByTaskIds([taskId])
+        const comments = await getTaskCommentsByTaskIds([taskId]);
 
         if (isActive) {
-          setComments(comments)
+          setComments(comments);
         }
       } catch {
-        if (!isActive) return
+        if (!isActive) return;
 
         notifications.show({
           title: 'Не удалось загрузить комментарии',
           message: 'Попробуйте обновить страницу',
           color: 'red',
-        })
+        });
       }
-    }
+    };
 
-    void loadComments()
+    void loadComments();
 
     return () => {
-      isActive = false
-    }
-  }, [taskId])
+      isActive = false;
+    };
+  }, [taskId]);
 
   const handleUpdatedComment = (updatedComment: TaskComment) => {
     setComments((comments) => {
       return comments.map((comment) => {
-        return comment.id === updatedComment.id ? updatedComment : comment
-      })
-    })
-  }
+        return comment.id === updatedComment.id ? updatedComment : comment;
+      });
+    });
+  };
 
   const handleDeletedComment = (deletedCommentId: TaskComment['id']) => {
     setComments((comments) => {
-      return comments.filter((comment) => comment.id !== deletedCommentId)
-    })
-  }
+      return comments.filter((comment) => comment.id !== deletedCommentId);
+    });
+  };
 
   const handleRestoredComment = (restoredComment: TaskComment) => {
     setComments((comments) => {
       const commentsWithoutRestored = comments.filter(
         (comment) => comment.id !== restoredComment.id,
-      )
+      );
 
-      return [...commentsWithoutRestored, restoredComment]
-    })
-  }
+      return [...commentsWithoutRestored, restoredComment];
+    });
+  };
 
   return (
     <section className={styles.comments}>
@@ -128,5 +128,5 @@ export const TaskComments = ({ taskId }: TaskCommentsProps) => {
         />
       </Stack>
     </section>
-  )
-}
+  );
+};

@@ -1,27 +1,27 @@
-import { type Column } from '@/entities/column'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Group, Select, Stack, TextInput, Textarea } from '@mantine/core'
-import type { ReactElement } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { DEFAULT_TYPE } from '../model/constants'
-import { TASK_PRIORITY_OPTIONS, TASK_TYPE_OPTIONS } from '../model/options'
-import { taskSchema, type TaskSchemaType } from '../model/taskSchema'
-import styles from './TaskForm.module.css'
+import { type Column } from '@/entities/column';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Group, Select, Stack, TextInput, Textarea } from '@mantine/core';
+import type { ReactElement } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { DEFAULT_TYPE } from '../model/constants';
+import { TASK_PRIORITY_OPTIONS, TASK_TYPE_OPTIONS } from '../model/options';
+import { taskSchema, type TaskSchemaType } from '../model/taskSchema';
+import styles from './TaskForm.module.css';
 
 interface TaskFormTagFieldProps {
-  value?: TaskSchemaType['tagId']
-  error?: string
-  disabled: boolean
-  onChange: (tagId: TaskSchemaType['tagId']) => void
+  value?: TaskSchemaType['tagId'];
+  error?: string;
+  disabled: boolean;
+  onChange: (tagId: TaskSchemaType['tagId']) => void;
 }
 
 interface TaskFormProps {
-  columns: Column[]
-  defaultValues?: TaskSchemaType
-  submitLabel?: string
-  onCancel: () => void
-  onSubmit: (values: TaskSchemaType) => void | Promise<void>
-  renderTagField?: (props: TaskFormTagFieldProps) => ReactElement
+  columns: Column[];
+  defaultValues?: TaskSchemaType;
+  submitLabel?: string;
+  onCancel: () => void;
+  onSubmit: (values: TaskSchemaType) => void | Promise<void>;
+  renderTagField?: (props: TaskFormTagFieldProps) => ReactElement;
 }
 
 const inputProps = {
@@ -30,7 +30,7 @@ const inputProps = {
     input: styles.input,
     label: styles.label,
   },
-}
+};
 
 export const TaskForm = ({
   columns,
@@ -55,16 +55,16 @@ export const TaskForm = ({
     },
     mode: 'onTouched',
     resolver: zodResolver(taskSchema),
-  })
+  });
 
   const onSubmitModal = async (values: TaskSchemaType) => {
-    await onSubmit(values)
-  }
+    await onSubmit(values);
+  };
 
   const statusOptions = columns.map((column) => ({
     value: column.id,
     label: column.title,
-  }))
+  }));
 
   return (
     <form onSubmit={handleSubmit(onSubmitModal)}>
@@ -170,5 +170,5 @@ export const TaskForm = ({
         </Group>
       </Stack>
     </form>
-  )
-}
+  );
+};

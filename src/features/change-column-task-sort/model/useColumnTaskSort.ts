@@ -1,56 +1,56 @@
-import type { Column } from '@/entities/column'
-import { useEffect, useState } from 'react'
+import type { Column } from '@/entities/column';
+import { useEffect, useState } from 'react';
 import {
   TASK_SORT_ORDER,
   TASK_SORT_ORDER_STORAGE_KEY,
   parseSortOrderByColumnId,
   type TaskSortOrder,
   type TaskSortOrderByColumnId,
-} from './sort'
+} from './sort';
 
 export const useColumnTaskSort = () => {
   const [sortOrderByColumnId, setSortOrderByColumnId] = useState<TaskSortOrderByColumnId>(() => {
-    const rawValue = localStorage.getItem(TASK_SORT_ORDER_STORAGE_KEY)
+    const rawValue = localStorage.getItem(TASK_SORT_ORDER_STORAGE_KEY);
 
     if (!rawValue) {
-      return {}
+      return {};
     }
 
     try {
-      return parseSortOrderByColumnId(JSON.parse(rawValue))
+      return parseSortOrderByColumnId(JSON.parse(rawValue));
     } catch {
-      return {}
+      return {};
     }
-  })
+  });
 
   useEffect(() => {
-    localStorage.setItem(TASK_SORT_ORDER_STORAGE_KEY, JSON.stringify(sortOrderByColumnId))
-  }, [sortOrderByColumnId])
+    localStorage.setItem(TASK_SORT_ORDER_STORAGE_KEY, JSON.stringify(sortOrderByColumnId));
+  }, [sortOrderByColumnId]);
 
   const changeColumnSortOrder = (columnId: Column['id'], sortOrder: TaskSortOrder) => {
     setSortOrderByColumnId((currentValue) => ({
       ...currentValue,
       [columnId]: sortOrder,
-    }))
-  }
+    }));
+  };
 
   const getColumnSortOrder = (columnId: Column['id']): TaskSortOrder =>
-    sortOrderByColumnId[columnId] ?? TASK_SORT_ORDER.Newest
+    sortOrderByColumnId[columnId] ?? TASK_SORT_ORDER.Newest;
 
   const removeColumnSortOrder = (columnId: Column['id']) => {
     setSortOrderByColumnId((current) => {
-      const next = { ...current }
+      const next = { ...current };
 
-      delete next[columnId]
+      delete next[columnId];
 
-      return next
-    })
-  }
+      return next;
+    });
+  };
 
   return {
     sortOrderByColumnId,
     changeColumnSortOrder,
     getColumnSortOrder,
     removeColumnSortOrder,
-  }
-}
+  };
+};

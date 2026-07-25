@@ -1,8 +1,8 @@
-import type { TaskSchemaType } from './taskSchema'
-import type { Task } from './types'
+import type { TaskSchemaType } from './taskSchema';
+import type { Task } from './types';
 
 interface ICreateTaskSchema extends TaskSchemaType {
-  position: number
+  position: number;
 }
 
 export const createTask = (data: ICreateTaskSchema): Task => {
@@ -16,7 +16,7 @@ export const createTask = (data: ICreateTaskSchema): Task => {
     tagId: data.tagId,
     createdAt: new Date().toISOString(),
     position: data.position,
-  }
+  };
 
-  return newTask
-}
+  return newTask;
+};

@@ -1,14 +1,14 @@
-import type { Task } from '@/entities/task'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import type { ReactNode } from 'react'
-import { SORTABLE_TASK_ID_PREFIX, type TaskDndTaskData } from '../model/types'
-import styles from './SortableTask.module.css'
+import type { Task } from '@/entities/task';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type { ReactNode } from 'react';
+import { SORTABLE_TASK_ID_PREFIX, type TaskDndTaskData } from '../model/types';
+import styles from './SortableTask.module.css';
 
 interface SortableTaskProps {
-  task: Task
-  children: ReactNode
-  disabled?: boolean
+  task: Task;
+  children: ReactNode;
+  disabled?: boolean;
 }
 
 export const SortableTask = ({ task, disabled = false, children }: SortableTaskProps) => {
@@ -19,7 +19,7 @@ export const SortableTask = ({ task, disabled = false, children }: SortableTaskP
       type: 'task',
       task,
     } satisfies TaskDndTaskData,
-  })
+  });
 
   return (
     <div
@@ -35,5 +35,5 @@ export const SortableTask = ({ task, disabled = false, children }: SortableTaskP
     >
       {children}
     </div>
-  )
-}
+  );
+};

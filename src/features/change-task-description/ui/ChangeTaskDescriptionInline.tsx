@@ -1,73 +1,73 @@
-import { taskSchema, useTaskActions, type Task } from '@/entities/task'
-import { useInlineEdit, type InlineEditSubmitResult } from '@/shared/lib'
-import { ActionIcon, Box, Button, Group, Stack, Text, Textarea, Tooltip } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { Check, Pencil } from 'lucide-react'
-import type { KeyboardEvent } from 'react'
-import styles from './ChangeTaskDescriptionInline.module.css'
+import { taskSchema, useTaskActions, type Task } from '@/entities/task';
+import { useInlineEdit, type InlineEditSubmitResult } from '@/shared/lib';
+import { ActionIcon, Box, Button, Group, Stack, Text, Textarea, Tooltip } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { Check, Pencil } from 'lucide-react';
+import type { KeyboardEvent } from 'react';
+import styles from './ChangeTaskDescriptionInline.module.css';
 
 interface ChangeTaskDescriptionInlineProps {
-  task: Task
+  task: Task;
 }
 
 export const ChangeTaskDescriptionInline = ({ task }: ChangeTaskDescriptionInlineProps) => {
-  const { updateTask } = useTaskActions()
+  const { updateTask } = useTaskActions();
 
   const handleSubmit = async (value: string): Promise<InlineEditSubmitResult> => {
-    const result = taskSchema.shape.description.safeParse(value)
+    const result = taskSchema.shape.description.safeParse(value);
 
     if (!result.success) {
       return {
         success: false,
         error: result.error.issues[0]?.message ?? 'Некорректное описание',
-      }
+      };
     }
 
-    const description = result.data
+    const description = result.data;
 
     if (description === task.description) {
-      return { success: true }
+      return { success: true };
     }
 
     try {
-      await updateTask(task, { description })
+      await updateTask(task, { description });
 
       notifications.show({
         title: 'Описание обновлено',
         message: 'Изменения сохранены',
         color: 'brand',
-      })
+      });
 
-      return { success: true }
+      return { success: true };
     } catch {
       notifications.show({
         title: `Не удалось обновить задачу «${task.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
-      })
+      });
 
-      return { success: false }
+      return { success: false };
     }
-  }
+  };
 
   const { isEditing, value, error, isSaving, open, cancel, setValue, submit, handleBlur } =
     useInlineEdit({
       value: task.description,
       onSubmit: handleSubmit,
-    })
+    });
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Escape') {
-      event.preventDefault()
-      cancel()
-      return
+      event.preventDefault();
+      cancel();
+      return;
     }
 
     if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault()
-      await submit()
+      event.preventDefault();
+      await submit();
     }
-  }
+  };
 
   if (!isEditing) {
     return (
@@ -100,7 +100,7 @@ export const ChangeTaskDescriptionInline = ({ task }: ChangeTaskDescriptionInlin
           </ActionIcon>
         </Tooltip>
       </Box>
-    )
+    );
   }
 
   return (
@@ -144,5 +144,5 @@ export const ChangeTaskDescriptionInline = ({ task }: ChangeTaskDescriptionInlin
         </Button>
       </Group>
     </Stack>
-  )
-}
+  );
+};

@@ -1,38 +1,38 @@
-import { selectColumns, useColumnStore } from '@/entities/column'
+import { selectColumns, useColumnStore } from '@/entities/column';
 import {
   resolveSelectedTag,
   selectTags,
   TagSelect,
   useTagActions,
   useTagStore,
-} from '@/entities/tag'
-import { TaskForm, useTaskActions, type Task, type TaskSchemaType } from '@/entities/task'
-import { Modal } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
-import { useState } from 'react'
-import { useShallow } from 'zustand/shallow'
+} from '@/entities/tag';
+import { TaskForm, useTaskActions, type Task, type TaskSchemaType } from '@/entities/task';
+import { Modal } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 
 interface EditTaskModalProps {
-  task: Task
-  opened: boolean
-  onClose: () => void
+  task: Task;
+  opened: boolean;
+  onClose: () => void;
 }
 
 export const EditTaskModal = ({ task, opened, onClose }: EditTaskModalProps) => {
-  const { columns } = useColumnStore(useShallow(selectColumns))
-  const { tags } = useTagStore(useShallow(selectTags))
-  const { updateTask } = useTaskActions()
-  const { createTagIfNotExists, removeTagsIfUnused } = useTagActions()
-  const [draftTagName, setDraftTagName] = useState('')
+  const { columns } = useColumnStore(useShallow(selectColumns));
+  const { tags } = useTagStore(useShallow(selectTags));
+  const { updateTask } = useTaskActions();
+  const { createTagIfNotExists, removeTagsIfUnused } = useTagActions();
+  const [draftTagName, setDraftTagName] = useState('');
 
   const handleClose = () => {
-    setDraftTagName('')
-    onClose()
-  }
+    setDraftTagName('');
+    onClose();
+  };
 
   const handleEditTask = async (values: TaskSchemaType) => {
-    const previousTagId = task.tagId
-    let createdTagId: string | undefined
+    const previousTagId = task.tagId;
+    let createdTagId: string | undefined;
 
     try {
       const resolvedTag = await resolveSelectedTag({
@@ -40,25 +40,25 @@ export const EditTaskModal = ({ task, opened, onClose }: EditTaskModalProps) => 
         draftTagName,
         tags,
         createTagIfNotExists,
-      })
-      const tagId = resolvedTag.tag?.id
+      });
+      const tagId = resolvedTag.tag?.id;
 
-      createdTagId = resolvedTag.createdTag?.id
+      createdTagId = resolvedTag.createdTag?.id;
 
       await updateTask(task, {
         ...values,
         tagId,
-      })
+      });
 
       if (previousTagId && previousTagId !== tagId) {
         try {
-          await removeTagsIfUnused([previousTagId])
+          await removeTagsIfUnused([previousTagId]);
         } catch {
           notifications.show({
             title: 'Старый тег не удален',
             message: 'Задача обновлена, но старый тег остался в списке',
             color: 'red',
-          })
+          });
         }
       }
 
@@ -66,19 +66,19 @@ export const EditTaskModal = ({ task, opened, onClose }: EditTaskModalProps) => 
         title: `Обновлена задача «${values.title}»`,
         message: 'Изменения сохранены',
         color: 'brand',
-      })
+      });
 
-      handleClose()
+      handleClose();
     } catch {
       if (createdTagId) {
         try {
-          await removeTagsIfUnused([createdTagId])
+          await removeTagsIfUnused([createdTagId]);
         } catch {
           notifications.show({
             title: 'Не удалось удалить созданный тег',
             message: 'Тег не привязан к задаче, но остался в списке',
             color: 'red',
-          })
+          });
         }
       }
 
@@ -86,9 +86,9 @@ export const EditTaskModal = ({ task, opened, onClose }: EditTaskModalProps) => 
         title: `Не удалось обновить задачу «${task.title}»`,
         message: 'Попробуйте еще раз',
         color: 'red',
-      })
+      });
     }
-  }
+  };
 
   return (
     <Modal centered onClose={handleClose} opened={opened} title="Редактировать задачу">
@@ -107,16 +107,16 @@ export const EditTaskModal = ({ task, opened, onClose }: EditTaskModalProps) => 
             disabled={disabled}
             placeholder="Введите тег"
             onChange={(tagId) => {
-              setDraftTagName('')
-              onChange(tagId)
+              setDraftTagName('');
+              onChange(tagId);
             }}
             onCreate={(name) => {
-              setDraftTagName(name)
-              onChange(undefined)
+              setDraftTagName(name);
+              onChange(undefined);
             }}
           />
         )}
       />
     </Modal>
-  )
-}
+  );
+};

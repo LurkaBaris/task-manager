@@ -1,22 +1,22 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Divider, FileButton, Group, Paper, Stack, Text, Textarea } from '@mantine/core'
-import { Paperclip, Send } from 'lucide-react'
-import { useEffect, useRef, type KeyboardEvent } from 'react'
-import { Controller, useForm, useWatch } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Divider, FileButton, Group, Paper, Stack, Text, Textarea } from '@mantine/core';
+import { Paperclip, Send } from 'lucide-react';
+import { useEffect, useRef, type KeyboardEvent } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   TASK_COMMENT_FILE_ACCEPT,
   taskCommentFormSchema,
   type TaskCommentFormValues,
-} from '../model/createTaskCommentSchema'
-import { TaskCommentAttachmentCard } from './TaskCommentAttachmentCard'
-import styles from './TaskCommentForm.module.css'
+} from '../model/createTaskCommentSchema';
+import { TaskCommentAttachmentCard } from './TaskCommentAttachmentCard';
+import styles from './TaskCommentForm.module.css';
 
 interface TaskCommentFormProps {
-  defaultValues: TaskCommentFormValues
-  submitLabel: string
-  disabled?: boolean
-  resetAfterSubmit?: boolean
-  onSubmit: (values: TaskCommentFormValues) => Promise<boolean>
+  defaultValues: TaskCommentFormValues;
+  submitLabel: string;
+  disabled?: boolean;
+  resetAfterSubmit?: boolean;
+  onSubmit: (values: TaskCommentFormValues) => Promise<boolean>;
 }
 
 export const TaskCommentForm = ({
@@ -36,66 +36,66 @@ export const TaskCommentForm = ({
     defaultValues,
     mode: 'onChange',
     resolver: zodResolver(taskCommentFormSchema),
-  })
-  const resetFilePickerRef = useRef<() => void>(null)
+  });
+  const resetFilePickerRef = useRef<() => void>(null);
 
   const text = useWatch({
     control,
     name: 'text',
-  })
+  });
 
   const files = useWatch({
     control,
     name: 'files',
-  })
+  });
 
-  const hasText = text.trim().length > 0
-  const hasFiles = files.length > 0
-  const canSubmit = !disabled && !isSubmitting && isValid && (hasText || hasFiles)
+  const hasText = text.trim().length > 0;
+  const hasFiles = files.length > 0;
+  const canSubmit = !disabled && !isSubmitting && isValid && (hasText || hasFiles);
 
   useEffect(() => {
-    reset(defaultValues)
-    resetFilePickerRef.current?.()
-  }, [defaultValues, reset])
+    reset(defaultValues);
+    resetFilePickerRef.current?.();
+  }, [defaultValues, reset]);
 
   useEffect(() => {
     if (files.length === 0) {
-      resetFilePickerRef.current?.()
+      resetFilePickerRef.current?.();
     }
-  }, [files.length])
+  }, [files.length]);
 
   const handleRemoveFile = (removedFileIndex: number) => {
-    const nextFiles = files.slice(0, removedFileIndex).concat(files.slice(removedFileIndex + 1))
+    const nextFiles = files.slice(0, removedFileIndex).concat(files.slice(removedFileIndex + 1));
 
     setValue('files', nextFiles, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true,
-    })
+    });
 
     if (nextFiles.length === 0) {
-      resetFilePickerRef.current?.()
+      resetFilePickerRef.current?.();
     }
-  }
+  };
 
   const handleValidSubmit = async (values: TaskCommentFormValues) => {
-    const isSubmitted = await onSubmit(values)
+    const isSubmitted = await onSubmit(values);
 
     if (isSubmitted && resetAfterSubmit) {
-      reset(defaultValues)
+      reset(defaultValues);
     }
-  }
+  };
 
-  const submitForm = handleSubmit(handleValidSubmit)
+  const submitForm = handleSubmit(handleValidSubmit);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== 'Enter' || (!event.ctrlKey && !event.metaKey)) {
-      return
+      return;
     }
 
-    event.preventDefault()
-    void submitForm()
-  }
+    event.preventDefault();
+    void submitForm();
+  };
 
   return (
     <Paper
@@ -177,8 +177,8 @@ export const TaskCommentForm = ({
                   multiple
                   resetRef={resetFilePickerRef}
                   onChange={(selectedFiles) => {
-                    field.onChange(field.value.concat(selectedFiles))
-                    resetFilePickerRef.current?.()
+                    field.onChange(field.value.concat(selectedFiles));
+                    resetFilePickerRef.current?.();
                   }}
                 >
                   {({ onClick }) => (
@@ -224,5 +224,5 @@ export const TaskCommentForm = ({
         </Group>
       </Stack>
     </Paper>
-  )
-}
+  );
+};

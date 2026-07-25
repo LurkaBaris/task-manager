@@ -1,5 +1,5 @@
-import type { TaskComment } from '../model/types'
-import { taskCommentRepository } from './taskCommentRepository'
+import type { TaskComment } from '../model/types';
+import { taskCommentRepository } from './taskCommentRepository';
 
 export const getTaskCommentsByTaskIds = (taskIds: TaskComment['taskId'][]) =>
-  taskCommentRepository.getByTaskIds(taskIds)
+  taskCommentRepository.getByTaskIds(taskIds);

@@ -1,25 +1,25 @@
-import type { TaskDbRecord } from '@/shared/lib'
-import { z } from 'zod'
-import { taskSchema } from '../model/taskSchema'
-import type { Task } from '../model/types'
+import type { TaskDbRecord } from '@/shared/lib';
+import { z } from 'zod';
+import { taskSchema } from '../model/taskSchema';
+import type { Task } from '../model/types';
 
 const taskDbRecordSchema = taskSchema.extend({
   id: z.string(),
   createdAt: z.string(),
   position: z.number(),
-})
+});
 
 export const mapTaskFromDb = (record: TaskDbRecord): Task | null => {
-  const result = taskDbRecordSchema.safeParse(record)
+  const result = taskDbRecordSchema.safeParse(record);
 
   if (!result.success) {
-    console.error('Некорректная задача в IndexedDB', result.error)
+    console.error('Некорректная задача в IndexedDB', result.error);
 
-    return null
+    return null;
   }
 
-  return result.data
-}
+  return result.data;
+};
 
 export const mapTaskToDb = (task: Task): TaskDbRecord => {
   return {
@@ -32,5 +32,5 @@ export const mapTaskToDb = (task: Task): TaskDbRecord => {
     position: task.position,
     type: task.type,
     tagId: task.tagId,
-  }
-}
+  };
+};

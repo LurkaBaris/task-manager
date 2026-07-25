@@ -1,26 +1,26 @@
-import { type Column } from '@/entities/column'
-import { type Task } from '@/entities/task'
-import { type TaskSortOrder } from '@/features/change-column-task-sort'
-import { SORTABLE_COLUMN_ID_PREFIX } from '@/features/task-dnd'
-import { horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable'
-import { Group } from '@mantine/core'
-import { useRef, useState, type UIEvent, type WheelEvent } from 'react'
-import styles from './TaskBoard.module.css'
-import { TaskBoardColumn } from './TaskBoardColumn'
+import { type Column } from '@/entities/column';
+import { type Task } from '@/entities/task';
+import { type TaskSortOrder } from '@/features/change-column-task-sort';
+import { SORTABLE_COLUMN_ID_PREFIX } from '@/features/task-dnd';
+import { horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
+import { Group } from '@mantine/core';
+import { useRef, useState, type UIEvent, type WheelEvent } from 'react';
+import styles from './TaskBoard.module.css';
+import { TaskBoardColumn } from './TaskBoardColumn';
 
 interface TaskBoardColumnsProps {
-  columns: Column[]
-  overColumnId: Task['columnId'] | null
-  disabled: boolean
-  isTaskDndDisabled: boolean
-  isTaskFilterActive: boolean
-  normalizedSearch: string
-  onRemove: (columnId: Column['id']) => void
-  onEditTask: (task: Task) => void
-  onDeleteTask: (task: Task) => void
-  getColumnTasks: (columnId: Column['id']) => Task[]
-  getColumnSortOrder: (columnId: Column['id']) => TaskSortOrder
-  changeColumnSortOrder: (columnId: Column['id'], sortOrder: TaskSortOrder) => void
+  columns: Column[];
+  overColumnId: Task['columnId'] | null;
+  disabled: boolean;
+  isTaskDndDisabled: boolean;
+  isTaskFilterActive: boolean;
+  normalizedSearch: string;
+  onRemove: (columnId: Column['id']) => void;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (task: Task) => void;
+  getColumnTasks: (columnId: Column['id']) => Task[];
+  getColumnSortOrder: (columnId: Column['id']) => TaskSortOrder;
+  changeColumnSortOrder: (columnId: Column['id'], sortOrder: TaskSortOrder) => void;
 }
 
 // TODO: фича спорная, чтобы по wheel давать по горизонтали скроллить
@@ -39,84 +39,84 @@ export const TaskBoardColumns = ({
   onEditTask,
   onDeleteTask,
 }: TaskBoardColumnsProps) => {
-  const boardRef = useRef<HTMLDivElement | null>(null)
-  const topScrollbarRef = useRef<HTMLDivElement | null>(null)
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const topScrollbarRef = useRef<HTMLDivElement | null>(null);
 
-  const [boardScrollWidth, setBoardScrollWidth] = useState(0)
+  const [boardScrollWidth, setBoardScrollWidth] = useState(0);
 
   const syncTopScrollbarWidth = () => {
-    const board = boardRef.current
+    const board = boardRef.current;
 
     if (!board) {
-      return
+      return;
     }
 
-    setBoardScrollWidth(board.scrollWidth)
-  }
+    setBoardScrollWidth(board.scrollWidth);
+  };
 
   const handleTopScrollbarScroll = (event: UIEvent<HTMLDivElement>) => {
-    const board = boardRef.current
+    const board = boardRef.current;
 
     if (!board) {
-      return
+      return;
     }
 
-    board.scrollLeft = event.currentTarget.scrollLeft
-  }
+    board.scrollLeft = event.currentTarget.scrollLeft;
+  };
 
   const handleBoardScroll = (event: UIEvent<HTMLDivElement>) => {
-    const topScrollbar = topScrollbarRef.current
+    const topScrollbar = topScrollbarRef.current;
 
     if (!topScrollbar) {
-      return
+      return;
     }
 
-    topScrollbar.scrollLeft = event.currentTarget.scrollLeft
-  }
+    topScrollbar.scrollLeft = event.currentTarget.scrollLeft;
+  };
 
   const isScrollableY = (element: HTMLElement): boolean => {
-    const { overflowY } = window.getComputedStyle(element)
+    const { overflowY } = window.getComputedStyle(element);
 
     return (
       (overflowY === 'auto' || overflowY === 'scroll') &&
       element.scrollHeight > element.clientHeight
-    )
-  }
+    );
+  };
 
   const findScrollableYParent = (target: HTMLElement, root: HTMLElement): HTMLElement | null => {
-    let element: HTMLElement | null = target
+    let element: HTMLElement | null = target;
 
     while (element && element !== root) {
       if (isScrollableY(element)) {
-        return element
+        return element;
       }
 
-      element = element.parentElement
+      element = element.parentElement;
     }
 
-    return null
-  }
+    return null;
+  };
 
   const getBoardScrollDelta = (event: WheelEvent<HTMLDivElement>): number => {
-    return Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY
-  }
+    return Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+  };
 
   const handleBoardWheel = (event: WheelEvent<HTMLDivElement>) => {
-    const board = boardRef.current
-    const target = event.target
+    const board = boardRef.current;
+    const target = event.target;
 
     if (!board || !(target instanceof HTMLElement)) {
-      return
+      return;
     }
 
-    const scrollableYParent = findScrollableYParent(target, board)
+    const scrollableYParent = findScrollableYParent(target, board);
 
     if (scrollableYParent) {
-      return
+      return;
     }
 
-    board.scrollLeft += getBoardScrollDelta(event)
-  }
+    board.scrollLeft += getBoardScrollDelta(event);
+  };
 
   return (
     <div className={styles.boardWrapper}>
@@ -135,8 +135,8 @@ export const TaskBoardColumns = ({
         justify="space-between"
         wrap="nowrap"
         ref={(node) => {
-          boardRef.current = node
-          syncTopScrollbarWidth()
+          boardRef.current = node;
+          syncTopScrollbarWidth();
         }}
         onScroll={handleBoardScroll}
         onWheel={handleBoardWheel}
@@ -146,8 +146,8 @@ export const TaskBoardColumns = ({
           strategy={horizontalListSortingStrategy}
         >
           {columns.map((column) => {
-            const sortOrder = getColumnSortOrder(column.id)
-            const columnTasks = getColumnTasks(column.id)
+            const sortOrder = getColumnSortOrder(column.id);
+            const columnTasks = getColumnTasks(column.id);
 
             return (
               <TaskBoardColumn
@@ -165,10 +165,10 @@ export const TaskBoardColumns = ({
                 onEditTask={onEditTask}
                 onRemove={onRemove}
               />
-            )
+            );
           })}
         </SortableContext>
       </Group>
     </div>
-  )
-}
+  );
+};

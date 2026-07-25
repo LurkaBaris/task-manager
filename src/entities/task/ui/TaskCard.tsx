@@ -1,23 +1,23 @@
-import { getTaskDetailsRoute } from '@/shared/config'
-import { renderHighlightedText } from '@/shared/lib'
-import { Card, Flex, Group, Stack, Text, Title } from '@mantine/core'
-import type { ReactNode } from 'react'
-import { NavLink } from 'react-router-dom'
-import { taskDateFormatter } from '../lib/taskDateFormatter'
-import type { Task } from '../model/types'
-import styles from './TaskCard.module.css'
+import { getTaskDetailsRoute } from '@/shared/config';
+import { renderHighlightedText } from '@/shared/lib';
+import { Card, Flex, Group, Stack, Text, Title } from '@mantine/core';
+import type { ReactNode } from 'react';
+import { NavLink } from 'react-router-dom';
+import { taskDateFormatter } from '../lib/taskDateFormatter';
+import type { Task } from '../model/types';
+import styles from './TaskCard.module.css';
 
 interface TaskCardMetaItem {
-  label: string
-  content: ReactNode
+  label: string;
+  content: ReactNode;
 }
 
 interface TaskCardProps {
-  task: Task
-  search?: string
-  headerActions?: ReactNode
-  metaItems?: TaskCardMetaItem[]
-  footerActions?: ReactNode
+  task: Task;
+  search?: string;
+  headerActions?: ReactNode;
+  metaItems?: TaskCardMetaItem[];
+  footerActions?: ReactNode;
 }
 
 export const TaskCard = ({
@@ -27,7 +27,7 @@ export const TaskCard = ({
   metaItems,
   footerActions,
 }: TaskCardProps) => {
-  const createdAt = taskDateFormatter.format(new Date(task.createdAt))
+  const createdAt = taskDateFormatter.format(new Date(task.createdAt));
 
   return (
     <Card className={styles.card} component="article">
@@ -108,5 +108,5 @@ export const TaskCard = ({
         </Stack>
       </Stack>
     </Card>
-  )
-}
+  );
+};

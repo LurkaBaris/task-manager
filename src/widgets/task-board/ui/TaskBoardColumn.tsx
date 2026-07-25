@@ -1,29 +1,29 @@
-import { ColumnCard, type Column } from '@/entities/column'
-import { type Task } from '@/entities/task'
-import { ColumnTaskSortControl, type TaskSortOrder } from '@/features/change-column-task-sort'
-import { DeleteColumnButton } from '@/features/delete-column'
-import { SORTABLE_TASK_ID_PREFIX, SortableColumn } from '@/features/task-dnd'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { memo } from 'react'
-import { TaskBoardTask } from './TaskBoardTask'
+import { ColumnCard, type Column } from '@/entities/column';
+import { type Task } from '@/entities/task';
+import { ColumnTaskSortControl, type TaskSortOrder } from '@/features/change-column-task-sort';
+import { DeleteColumnButton } from '@/features/delete-column';
+import { SORTABLE_TASK_ID_PREFIX, SortableColumn } from '@/features/task-dnd';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { memo } from 'react';
+import { TaskBoardTask } from './TaskBoardTask';
 
 interface TaskBoardColumnProps {
-  column: Column
-  columnTasks: Task[]
-  sortOrder: TaskSortOrder
-  disabled: boolean
-  isTaskDndDisabled: boolean
-  isTaskFilterActive: boolean
-  isHighlighted: boolean
-  normalizedSearch: string
-  onRemove: (columnId: Column['id']) => void
-  onEditTask: (task: Task) => void
-  onDeleteTask: (task: Task) => void
-  changeColumnSortOrder: (columnId: Column['id'], sortOrder: TaskSortOrder) => void
+  column: Column;
+  columnTasks: Task[];
+  sortOrder: TaskSortOrder;
+  disabled: boolean;
+  isTaskDndDisabled: boolean;
+  isTaskFilterActive: boolean;
+  isHighlighted: boolean;
+  normalizedSearch: string;
+  onRemove: (columnId: Column['id']) => void;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (task: Task) => void;
+  changeColumnSortOrder: (columnId: Column['id'], sortOrder: TaskSortOrder) => void;
 }
 
 const areTaskListsEqual = (current: Task[], next: Task[]): boolean =>
-  current.length === next.length && current.every((task, index) => task === next[index])
+  current.length === next.length && current.every((task, index) => task === next[index]);
 
 const areTaskBoardColumnPropsEqual = (
   current: TaskBoardColumnProps,
@@ -40,7 +40,7 @@ const areTaskBoardColumnPropsEqual = (
   current.onRemove === next.onRemove &&
   current.onEditTask === next.onEditTask &&
   current.onDeleteTask === next.onDeleteTask &&
-  current.changeColumnSortOrder === next.changeColumnSortOrder
+  current.changeColumnSortOrder === next.changeColumnSortOrder;
 
 export const TaskBoardColumn = memo(function TaskBoardColumn({
   column,
@@ -56,7 +56,7 @@ export const TaskBoardColumn = memo(function TaskBoardColumn({
   onDeleteTask,
   changeColumnSortOrder,
 }: TaskBoardColumnProps) {
-  const sortableTaskIds = columnTasks.map((task) => `${SORTABLE_TASK_ID_PREFIX}${task.id}`)
+  const sortableTaskIds = columnTasks.map((task) => `${SORTABLE_TASK_ID_PREFIX}${task.id}`);
 
   return (
     <SortableColumn column={column} disabled={disabled}>
@@ -91,5 +91,5 @@ export const TaskBoardColumn = memo(function TaskBoardColumn({
         </SortableContext>
       </ColumnCard>
     </SortableColumn>
-  )
-}, areTaskBoardColumnPropsEqual)
+  );
+}, areTaskBoardColumnPropsEqual);

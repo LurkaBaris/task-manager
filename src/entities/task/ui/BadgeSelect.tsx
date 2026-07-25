@@ -1,19 +1,19 @@
-import { CheckIcon, Combobox, Group, Text, UnstyledButton, useCombobox } from '@mantine/core'
-import { ChevronDown } from 'lucide-react'
-import styles from './BadgeSelect.module.css'
+import { CheckIcon, Combobox, Group, Text, UnstyledButton, useCombobox } from '@mantine/core';
+import { ChevronDown } from 'lucide-react';
+import styles from './BadgeSelect.module.css';
 
 export interface BadgeSelectOption<T extends string> {
-  value: T
-  label: string
-  color?: string
+  value: T;
+  label: string;
+  color?: string;
 }
 
 interface BadgeSelectProps<T extends string> {
-  value: T
-  options: BadgeSelectOption<T>[]
-  disabled?: boolean
-  width?: number
-  onChange: (value: T) => void | Promise<void>
+  value: T;
+  options: BadgeSelectOption<T>[];
+  disabled?: boolean;
+  width?: number;
+  onChange: (value: T) => void | Promise<void>;
 }
 
 export const BadgeSelect = <T extends string>({
@@ -23,22 +23,22 @@ export const BadgeSelect = <T extends string>({
   width = 190,
   onChange,
 }: BadgeSelectProps<T>) => {
-  const combobox = useCombobox()
+  const combobox = useCombobox();
 
-  const selectedOption = options.find((option) => option.value === value)
-  const color = selectedOption?.color ?? 'gray'
+  const selectedOption = options.find((option) => option.value === value);
+  const color = selectedOption?.color ?? 'gray';
 
   const handleSelect = async (nextValue: string) => {
-    combobox.closeDropdown()
+    combobox.closeDropdown();
 
-    const option = options.find((option) => option.value === nextValue)
+    const option = options.find((option) => option.value === nextValue);
 
     if (!option || option.value === value) {
-      return
+      return;
     }
 
-    await onChange(option.value)
-  }
+    await onChange(option.value);
+  };
 
   return (
     <Combobox
@@ -85,5 +85,5 @@ export const BadgeSelect = <T extends string>({
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
-  )
-}
+  );
+};

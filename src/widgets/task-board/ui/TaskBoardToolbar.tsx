@@ -1,21 +1,21 @@
-import { CreateColumnButton } from '@/features/create-column'
-import { CreateTaskButton } from '@/features/create-task'
-import { ExportTasksButton } from '@/features/export-tasks'
-import { ImportTasksButton } from '@/features/import-tasks'
-import { ActiveTaskFilters, TaskFiltersButton, type TaskFilters } from '@/features/task-filters'
-import { ActionsDropdown } from '@/shared/ui'
-import { ActionIcon, Flex, Stack, TextInput } from '@mantine/core'
-import { Search, Settings } from 'lucide-react'
-import styles from './TaskBoard.module.css'
+import { CreateColumnButton } from '@/features/create-column';
+import { CreateTaskButton } from '@/features/create-task';
+import { ExportTasksButton } from '@/features/export-tasks';
+import { ImportTasksButton } from '@/features/import-tasks';
+import { ActiveTaskFilters, TaskFiltersButton, type TaskFilters } from '@/features/task-filters';
+import { ActionsDropdown } from '@/shared/ui';
+import { ActionIcon, Flex, Stack, TextInput } from '@mantine/core';
+import { Search, Settings } from 'lucide-react';
+import styles from './TaskBoard.module.css';
 
 interface TaskBoardToolbarProps {
-  search: string
-  filters: TaskFilters
-  disabled: boolean
-  isCreateTaskDisabled: boolean
-  onSearchChange: (value: string) => void
-  onFiltersChange: (filters: TaskFilters) => void
-  onFiltersReset: () => void
+  search: string;
+  filters: TaskFilters;
+  disabled: boolean;
+  isCreateTaskDisabled: boolean;
+  onSearchChange: (value: string) => void;
+  onFiltersChange: (filters: TaskFilters) => void;
+  onFiltersReset: () => void;
 }
 
 export const TaskBoardToolbar = ({
@@ -66,5 +66,5 @@ export const TaskBoardToolbar = ({
         onReset={onFiltersReset}
       />
     </Stack>
-  )
-}
+  );
+};

@@ -1,8 +1,8 @@
 import {
   STATISTIC_PIE_CHART_BORDER_WIDTH,
   STATISTIC_PIE_CHART_HOVER_OFFSET,
-} from '../model/constants'
-import type { StatisticPieItem } from '../model/types'
+} from '../model/constants';
+import type { StatisticPieItem } from '../model/types';
 
 export const mapStatisticItemsToPieChartData = (items: StatisticPieItem[], borderColor: string) => {
   return {
@@ -16,5 +16,5 @@ export const mapStatisticItemsToPieChartData = (items: StatisticPieItem[], borde
         hoverOffset: STATISTIC_PIE_CHART_HOVER_OFFSET,
       },
     ],
-  }
-}
+  };
+};

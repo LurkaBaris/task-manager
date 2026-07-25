@@ -1,9 +1,9 @@
-import { ActionIcon } from '@mantine/core'
-import { Pencil } from 'lucide-react'
+import { ActionIcon } from '@mantine/core';
+import { Pencil } from 'lucide-react';
 
 interface EditTaskActionProps {
-  disabled?: boolean
-  onClick?: () => void
+  disabled?: boolean;
+  onClick?: () => void;
 }
 
 export const EditTaskAction = ({ disabled, onClick }: EditTaskActionProps) => {
@@ -20,5 +20,5 @@ export const EditTaskAction = ({ disabled, onClick }: EditTaskActionProps) => {
     >
       <Pencil size={16} strokeWidth={2} data-no-dnd />
     </ActionIcon>
-  )
-}
+  );
+};

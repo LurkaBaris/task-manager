@@ -1,60 +1,60 @@
-import { Button, Group, Image, Modal, Stack, Text } from '@mantine/core'
-import { Carousel } from '@mantine/carousel'
-import { ChevronLeft, ChevronRight, Download } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { downloadFile } from '../lib/downloadFile'
-import { isImageAttachment } from '../lib/helpers'
-import type { TaskCommentAttachment } from '../model/types'
-import { TaskCommentAttachmentCard } from './TaskCommentAttachmentCard'
-import styles from './TaskCommentCard.module.css'
+import { Button, Group, Image, Modal, Stack, Text } from '@mantine/core';
+import { Carousel } from '@mantine/carousel';
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { downloadFile } from '../lib/downloadFile';
+import { isImageAttachment } from '../lib/helpers';
+import type { TaskCommentAttachment } from '../model/types';
+import { TaskCommentAttachmentCard } from './TaskCommentAttachmentCard';
+import styles from './TaskCommentCard.module.css';
 
 interface TaskCommentAttachmentGalleryProps {
-  attachments: TaskCommentAttachment[]
+  attachments: TaskCommentAttachment[];
 }
 
 interface BlobImageProps {
-  file: Blob
-  alt: string
-  className: string
-  fit: 'contain' | 'cover'
+  file: Blob;
+  alt: string;
+  className: string;
+  fit: 'contain' | 'cover';
 }
 
 const BlobImage = ({ file, alt, className, fit }: BlobImageProps) => {
-  const imageRef = useRef<HTMLImageElement | null>(null)
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
-    const imageUrl = URL.createObjectURL(file)
+    const imageUrl = URL.createObjectURL(file);
 
     if (imageRef.current) {
-      imageRef.current.src = imageUrl
+      imageRef.current.src = imageUrl;
     }
 
-    return () => URL.revokeObjectURL(imageUrl)
-  }, [file])
+    return () => URL.revokeObjectURL(imageUrl);
+  }, [file]);
 
-  return <Image alt={alt} className={className} fit={fit} ref={imageRef} />
-}
+  return <Image alt={alt} className={className} fit={fit} ref={imageRef} />;
+};
 
 export const TaskCommentAttachmentGallery = ({
   attachments,
 }: TaskCommentAttachmentGalleryProps) => {
-  const imageAttachments = attachments.filter(isImageAttachment)
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  const imageAttachments = attachments.filter(isImageAttachment);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const selectedImage =
-    selectedImageIndex === null ? undefined : imageAttachments[selectedImageIndex]
-  const canNavigate = imageAttachments.length > 1
+    selectedImageIndex === null ? undefined : imageAttachments[selectedImageIndex];
+  const canNavigate = imageAttachments.length > 1;
 
   const handleDownload = () => {
-    if (!selectedImage) return
+    if (!selectedImage) return;
 
-    downloadFile(selectedImage.file, selectedImage.name)
-  }
+    downloadFile(selectedImage.file, selectedImage.name);
+  };
 
   return (
     <>
       <Stack gap="xs">
         {attachments.map((attachment) => {
-          const imageIndex = imageAttachments.findIndex((image) => image.id === attachment.id)
+          const imageIndex = imageAttachments.findIndex((image) => image.id === attachment.id);
 
           return (
             <TaskCommentAttachmentCard
@@ -65,7 +65,7 @@ export const TaskCommentAttachmentGallery = ({
               type={attachment.type}
               onPreview={imageIndex >= 0 ? () => setSelectedImageIndex(imageIndex) : undefined}
             />
-          )
+          );
         })}
       </Stack>
 
@@ -135,5 +135,5 @@ export const TaskCommentAttachmentGallery = ({
         </Stack>
       </Modal>
     </>
-  )
-}
+  );
+};

@@ -1,8 +1,8 @@
-import type { Column } from '@/entities/column'
-import type { TasksByColumnId } from '@/entities/task'
-import type { StatisticPieItem } from '@/shared/ui'
-import type { MantineTheme } from '@mantine/core'
-import { getThemeChartColor } from './getThemeChartColor'
+import type { Column } from '@/entities/column';
+import type { TasksByColumnId } from '@/entities/task';
+import type { StatisticPieItem } from '@/shared/ui';
+import type { MantineTheme } from '@mantine/core';
+import { getThemeChartColor } from './getThemeChartColor';
 
 export const mapColumnsToStatisticPieItems = (
   columns: Column[],
@@ -14,5 +14,5 @@ export const mapColumnsToStatisticPieItems = (
     label: column.title,
     count: tasksByColumnId[column.id]?.length ?? 0,
     color: getThemeChartColor(theme, column.color),
-  }))
-}
+  }));
+};

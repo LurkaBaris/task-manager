@@ -1,17 +1,17 @@
-import { Button, CheckIcon, Combobox, Group, Loader, Text } from '@mantine/core'
-import { Plus } from 'lucide-react'
-import type { MouseEvent } from 'react'
-import type { Tag } from '../model/types'
+import { Button, CheckIcon, Combobox, Group, Loader, Text } from '@mantine/core';
+import { Plus } from 'lucide-react';
+import type { MouseEvent } from 'react';
+import type { Tag } from '../model/types';
 
 interface TagOptionsProps {
-  value?: Tag['id']
-  filteredTags: Tag[]
-  trimmedSearch: string
-  isTagsLoading: boolean
-  isLoading: boolean
-  canCreateTag: boolean
-  compact?: boolean
-  onCreate: () => void | Promise<void>
+  value?: Tag['id'];
+  filteredTags: Tag[];
+  trimmedSearch: string;
+  isTagsLoading: boolean;
+  isLoading: boolean;
+  canCreateTag: boolean;
+  compact?: boolean;
+  onCreate: () => void | Promise<void>;
 }
 
 export const TagOptions = ({
@@ -25,12 +25,12 @@ export const TagOptions = ({
   onCreate,
 }: TagOptionsProps) => {
   const handleCreateMouseDown = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-  }
+    event.preventDefault();
+  };
 
   const handleCreateClick = () => {
-    void onCreate()
-  }
+    void onCreate();
+  };
 
   return (
     <Combobox.Options data-no-dnd>
@@ -103,5 +103,5 @@ export const TagOptions = ({
         </>
       )}
     </Combobox.Options>
-  )
-}
+  );
+};

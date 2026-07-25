@@ -1,1 +1,1 @@
-export { ChangeTaskStatusSelect } from './ui/ChangeTaskStatusSelect'
+export { ChangeTaskStatusSelect } from './ui/ChangeTaskStatusSelect';

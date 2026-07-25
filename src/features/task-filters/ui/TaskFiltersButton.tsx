@@ -1,11 +1,11 @@
-import { selectTags, useTagStore, type Tag } from '@/entities/tag'
+import { selectTags, useTagStore, type Tag } from '@/entities/tag';
 import {
   TASK_PRIORITY_OPTIONS,
   TASK_TYPE_OPTIONS,
   type TaskPriority,
   type TaskType,
-} from '@/entities/task'
-import { zodResolver } from '@hookform/resolvers/zod'
+} from '@/entities/task';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Box,
   Button,
@@ -18,41 +18,41 @@ import {
   Stack,
   Text,
   type MultiSelectProps,
-} from '@mantine/core'
-import { ChevronDown, SlidersHorizontal } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { useShallow } from 'zustand/shallow'
-import { VISIBLE_SELECT_FILTER_PILLS_COUNT } from '../model/contstants'
-import { getActiveTaskFiltersCount } from '../model/helpers'
-import { taskFiltersSchema, type TaskFiltersSchemaType } from '../model/taskFiltersSchema'
-import type { TaskFilters } from '../model/types'
-import styles from './TaskFiltersButton.module.css'
+} from '@mantine/core';
+import { ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useShallow } from 'zustand/shallow';
+import { VISIBLE_SELECT_FILTER_PILLS_COUNT } from '../model/contstants';
+import { getActiveTaskFiltersCount } from '../model/helpers';
+import { taskFiltersSchema, type TaskFiltersSchemaType } from '../model/taskFiltersSchema';
+import type { TaskFilters } from '../model/types';
+import styles from './TaskFiltersButton.module.css';
 
 interface TaskFiltersButtonProps {
-  filters: TaskFilters
-  disabled?: boolean
-  onChange: (filters: TaskFilters) => void
+  filters: TaskFilters;
+  disabled?: boolean;
+  onChange: (filters: TaskFilters) => void;
 }
 
 const EMPTY_FILTERS: TaskFiltersSchemaType = {
   priorities: [],
   types: [],
   tagIds: [],
-}
+};
 
 const getLimitedPillRenderer = (
   selectedValues: readonly string[],
 ): NonNullable<MultiSelectProps['renderPill']> => {
   return ({ value, option, onRemove, disabled }) => {
-    const selectedValueIndex = selectedValues.findIndex((selectedValue) => selectedValue === value)
+    const selectedValueIndex = selectedValues.findIndex((selectedValue) => selectedValue === value);
 
     if (selectedValueIndex === -1) {
-      return null
+      return null;
     }
 
     if (selectedValueIndex > VISIBLE_SELECT_FILTER_PILLS_COUNT) {
-      return null
+      return null;
     }
 
     if (selectedValueIndex === VISIBLE_SELECT_FILTER_PILLS_COUNT) {
@@ -60,7 +60,7 @@ const getLimitedPillRenderer = (
         <Pill className={styles.countPill} disabled={disabled} size="sm">
           +{selectedValues.length - VISIBLE_SELECT_FILTER_PILLS_COUNT}
         </Pill>
-      )
+      );
     }
 
     return (
@@ -73,17 +73,17 @@ const getLimitedPillRenderer = (
       >
         <span className={styles.selectPillText}>{option.label}</span>
       </Pill>
-    )
-  }
-}
+    );
+  };
+};
 
 export const TaskFiltersButton = ({
   filters,
   disabled = false,
   onChange,
 }: TaskFiltersButtonProps) => {
-  const [opened, setOpened] = useState(false)
-  const { tags, isLoaded } = useTagStore(useShallow(selectTags))
+  const [opened, setOpened] = useState(false);
+  const { tags, isLoaded } = useTagStore(useShallow(selectTags));
   const {
     control,
     handleSubmit,
@@ -93,34 +93,34 @@ export const TaskFiltersButton = ({
     resolver: zodResolver(taskFiltersSchema),
     defaultValues: EMPTY_FILTERS,
     mode: 'onChange',
-  })
+  });
 
   const tagOptions = useMemo(() => {
     return tags.map((tag: Tag) => ({
       value: tag.id,
       label: tag.name,
-    }))
-  }, [tags])
+    }));
+  }, [tags]);
 
-  const activeFiltersCount = getActiveTaskFiltersCount(filters)
+  const activeFiltersCount = getActiveTaskFiltersCount(filters);
 
   useEffect(() => {
     if (!opened) {
-      return
+      return;
     }
 
-    reset(filters)
-  }, [filters, opened, reset])
+    reset(filters);
+  }, [filters, opened, reset]);
 
   const handleApplyFilters = handleSubmit((values) => {
-    onChange(values)
-    setOpened(false)
-  })
+    onChange(values);
+    setOpened(false);
+  });
 
   const handleCancelFilters = () => {
-    reset(filters)
-    setOpened(false)
-  }
+    reset(filters);
+    setOpened(false);
+  };
 
   return (
     <Popover
@@ -141,7 +141,7 @@ export const TaskFiltersButton = ({
             rightSection={<ChevronDown size={14} />}
             variant="light"
             onClick={() => {
-              setOpened((currentOpened) => !currentOpened)
+              setOpened((currentOpened) => !currentOpened);
             }}
           >
             Фильтры
@@ -157,7 +157,7 @@ export const TaskFiltersButton = ({
         <Box
           component="form"
           onSubmit={(event) => {
-            void handleApplyFilters(event)
+            void handleApplyFilters(event);
           }}
         >
           <Stack gap="sm">
@@ -279,5 +279,5 @@ export const TaskFiltersButton = ({
         </Box>
       </Popover.Dropdown>
     </Popover>
-  )
-}
+  );
+};

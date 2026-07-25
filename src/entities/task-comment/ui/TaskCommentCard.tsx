@@ -1,17 +1,17 @@
-import { Avatar, Group, Paper, Stack, Text } from '@mantine/core'
-import { UserRound } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { formatCommentDate } from '../lib/helpers'
-import type { TaskComment } from '../model/types'
-import { TaskCommentAttachmentGallery } from './TaskCommentAttachmentGallery'
-import styles from './TaskCommentCard.module.css'
+import { Avatar, Group, Paper, Stack, Text } from '@mantine/core';
+import { UserRound } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { formatCommentDate } from '../lib/helpers';
+import type { TaskComment } from '../model/types';
+import { TaskCommentAttachmentGallery } from './TaskCommentAttachmentGallery';
+import styles from './TaskCommentCard.module.css';
 
 interface TaskCommentCardProps {
-  comment: TaskComment
-  authorName?: string
-  authorInitial?: string
-  rightSectionActions?: ReactNode
-  footerSectionActions?: ReactNode
+  comment: TaskComment;
+  authorName?: string;
+  authorInitial?: string;
+  rightSectionActions?: ReactNode;
+  footerSectionActions?: ReactNode;
 }
 
 export const TaskCommentCard = ({
@@ -21,8 +21,8 @@ export const TaskCommentCard = ({
   rightSectionActions,
   footerSectionActions,
 }: TaskCommentCardProps) => {
-  const hasText = comment.text.length > 0
-  const hasAttachments = comment.attachments.length > 0
+  const hasText = comment.text.length > 0;
+  const hasAttachments = comment.attachments.length > 0;
 
   return (
     <Group align="flex-start" gap="sm" miw={0} w="100%" wrap="nowrap">
@@ -87,5 +87,5 @@ export const TaskCommentCard = ({
         </Stack>
       </Paper>
     </Group>
-  )
-}
+  );
+};

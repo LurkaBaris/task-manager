@@ -1,6 +1,6 @@
-import { Box, Flex, Group, Select, type SelectProps } from '@mantine/core'
-import { ChevronDown } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { Box, Flex, Group, Select, type SelectProps } from '@mantine/core';
+import { ChevronDown } from 'lucide-react';
+import type { ReactNode } from 'react';
 import {
   META_CONTROL_RIGHT_SECTION_WIDTH,
   META_CONTROL_RIGHT_SECTION_WITH_ICON_WIDTH,
@@ -8,14 +8,14 @@ import {
   metaControlSelectStyles,
   metaControlSizerStyles,
   metaControlTextSizerStyles,
-} from '../lib/metaControl'
+} from '../lib/metaControl';
 
 interface MetaSelectProps extends Omit<
   SelectProps,
   'variant' | 'styles' | 'rightSectionWidth' | 'w'
 > {
-  displayValue: string
-  icon?: ReactNode
+  displayValue: string;
+  icon?: ReactNode;
 }
 
 export const MetaSelect = ({
@@ -26,11 +26,11 @@ export const MetaSelect = ({
   rightSection,
   ...props
 }: MetaSelectProps) => {
-  const sizerValue = displayValue.trim() || props.placeholder || ' '
-  const hasIcon = Boolean(icon && !rightSection)
+  const sizerValue = displayValue.trim() || props.placeholder || ' ';
+  const hasIcon = Boolean(icon && !rightSection);
   const rightSectionWidth = hasIcon
     ? META_CONTROL_RIGHT_SECTION_WITH_ICON_WIDTH
-    : META_CONTROL_RIGHT_SECTION_WIDTH
+    : META_CONTROL_RIGHT_SECTION_WIDTH;
 
   return (
     <Box style={metaControlSizerStyles} data-no-dnd>
@@ -61,5 +61,5 @@ export const MetaSelect = ({
         styles={metaControlSelectStyles({ disabled, rightSectionWidth })}
       />
     </Box>
-  )
-}
+  );
+};

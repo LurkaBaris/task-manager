@@ -1,10 +1,10 @@
-import type { COLUMN_COLOR_OPTIONS } from './constants'
+import type { COLUMN_COLOR_OPTIONS } from './constants';
 
-export type ColumnColor = (typeof COLUMN_COLOR_OPTIONS)[number]['value']
+export type ColumnColor = (typeof COLUMN_COLOR_OPTIONS)[number]['value'];
 
 export interface Column {
-  id: string
-  title: string
-  color: ColumnColor
-  order: number
+  id: string;
+  title: string;
+  color: ColumnColor;
+  order: number;
 }

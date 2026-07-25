@@ -1,8 +1,8 @@
-import { Anchor } from '@mantine/core'
+import { Anchor } from '@mantine/core';
 
 interface DeleteTaskFiltersButtonProps {
-  disabled?: boolean
-  onReset: () => void
+  disabled?: boolean;
+  onReset: () => void;
 }
 
 export const DeleteTaskFiltersButton = ({
@@ -21,5 +21,5 @@ export const DeleteTaskFiltersButton = ({
     >
       Сбросить фильтры
     </Anchor>
-  )
-}
+  );
+};

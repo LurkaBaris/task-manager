@@ -1,14 +1,14 @@
-import { Button } from '@mantine/core'
-import { ArrowUpDown } from 'lucide-react'
-import { TASK_COMMENT_SORT_ORDER, type TaskCommentSortOrder } from '../model/types'
+import { Button } from '@mantine/core';
+import { ArrowUpDown } from 'lucide-react';
+import { TASK_COMMENT_SORT_ORDER, type TaskCommentSortOrder } from '../model/types';
 
 interface TaskCommentSortButtonProps {
-  sortOrder: TaskCommentSortOrder
-  onToggle: () => void
+  sortOrder: TaskCommentSortOrder;
+  onToggle: () => void;
 }
 
 export const TaskCommentSortButton = ({ sortOrder, onToggle }: TaskCommentSortButtonProps) => {
-  const isAscending = sortOrder === TASK_COMMENT_SORT_ORDER.Asc
+  const isAscending = sortOrder === TASK_COMMENT_SORT_ORDER.Asc;
 
   return (
     <Button
@@ -21,5 +21,5 @@ export const TaskCommentSortButton = ({ sortOrder, onToggle }: TaskCommentSortBu
     >
       {isAscending ? 'Старые' : 'Новые'}
     </Button>
-  )
-}
+  );
+};

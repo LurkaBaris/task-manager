@@ -1,14 +1,14 @@
-import { deleteTaskComment, type TaskComment } from '@/entities/task-comment'
-import { ActionIcon, Button, Group, Modal, Stack, Text, Tooltip } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
-import { Trash2 } from 'lucide-react'
-import { DeleteTaskCommentUndoNotificationContent } from './DeleteTaskCommentUndoNotificationContent'
+import { deleteTaskComment, type TaskComment } from '@/entities/task-comment';
+import { ActionIcon, Button, Group, Modal, Stack, Text, Tooltip } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { Trash2 } from 'lucide-react';
+import { DeleteTaskCommentUndoNotificationContent } from './DeleteTaskCommentUndoNotificationContent';
 
 interface DeleteTaskCommentButtonProps {
-  comment: TaskComment
-  onDeleted: (commentId: TaskComment['id']) => unknown
-  onRestored: (comment: TaskComment) => unknown
+  comment: TaskComment;
+  onDeleted: (commentId: TaskComment['id']) => unknown;
+  onRestored: (comment: TaskComment) => unknown;
 }
 
 export const DeleteTaskCommentButton = ({
@@ -16,16 +16,16 @@ export const DeleteTaskCommentButton = ({
   onDeleted,
   onRestored,
 }: DeleteTaskCommentButtonProps) => {
-  const [opened, { open, close }] = useDisclosure(false)
+  const [opened, { open, close }] = useDisclosure(false);
 
   const handleDeleteComment = async () => {
-    close()
-    onDeleted(comment.id)
+    close();
+    onDeleted(comment.id);
 
     try {
-      await deleteTaskComment(comment.id)
+      await deleteTaskComment(comment.id);
 
-      const notificationId = `delete-task-comment-${comment.id}`
+      const notificationId = `delete-task-comment-${comment.id}`;
 
       notifications.show({
         id: notificationId,
@@ -39,17 +39,17 @@ export const DeleteTaskCommentButton = ({
         ),
         color: 'brand',
         autoClose: 5000,
-      })
+      });
     } catch {
-      onRestored(comment)
+      onRestored(comment);
 
       notifications.show({
         title: 'Не удалось удалить комментарий',
         message: 'Попробуйте еще раз',
         color: 'red',
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -85,5 +85,5 @@ export const DeleteTaskCommentButton = ({
         </Stack>
       </Modal>
     </>
-  )
-}
+  );
+};

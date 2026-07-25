@@ -8,22 +8,22 @@ import {
   Text,
   Tooltip,
   UnstyledButton,
-} from '@mantine/core'
-import { Download, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { downloadFile } from '../lib/downloadFile'
-import { formatAttachmentSize, isImageAttachment } from '../lib/helpers'
-import { TaskCommentAttachmentIcon } from './TaskCommentAttachmentIcon'
-import styles from './TaskCommentCard.module.css'
+} from '@mantine/core';
+import { Download, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { downloadFile } from '../lib/downloadFile';
+import { formatAttachmentSize, isImageAttachment } from '../lib/helpers';
+import { TaskCommentAttachmentIcon } from './TaskCommentAttachmentIcon';
+import styles from './TaskCommentCard.module.css';
 
 interface TaskCommentAttachmentCardProps {
-  name: string
-  type: string
-  size: number
-  file: Blob
-  disabled?: boolean
-  onRemove?: () => void
-  onPreview?: () => void
+  name: string;
+  type: string;
+  size: number;
+  file: Blob;
+  disabled?: boolean;
+  onRemove?: () => void;
+  onPreview?: () => void;
 }
 
 export const TaskCommentAttachmentCard = ({
@@ -35,21 +35,21 @@ export const TaskCommentAttachmentCard = ({
   onRemove,
   onPreview,
 }: TaskCommentAttachmentCardProps) => {
-  const [previewErrorFile, setPreviewErrorFile] = useState<Blob | null>(null)
-  const previewRef = useRef<HTMLImageElement | null>(null)
+  const [previewErrorFile, setPreviewErrorFile] = useState<Blob | null>(null);
+  const previewRef = useRef<HTMLImageElement | null>(null);
 
-  const isImage = isImageAttachment({ name, type })
-  const canShowPreview = isImage && previewErrorFile !== file
+  const isImage = isImageAttachment({ name, type });
+  const canShowPreview = isImage && previewErrorFile !== file;
 
   useEffect(() => {
-    const fileUrl = URL.createObjectURL(file)
+    const fileUrl = URL.createObjectURL(file);
 
     if (previewRef.current) {
-      previewRef.current.src = fileUrl
+      previewRef.current.src = fileUrl;
     }
 
-    return () => URL.revokeObjectURL(fileUrl)
-  }, [file])
+    return () => URL.revokeObjectURL(fileUrl);
+  }, [file]);
 
   const preview = (
     <Image
@@ -62,7 +62,7 @@ export const TaskCommentAttachmentCard = ({
       w={44}
       onError={() => setPreviewErrorFile(file)}
     />
-  )
+  );
 
   return (
     <Paper
@@ -141,5 +141,5 @@ export const TaskCommentAttachmentCard = ({
         )}
       </Group>
     </Paper>
-  )
-}
+  );
+};

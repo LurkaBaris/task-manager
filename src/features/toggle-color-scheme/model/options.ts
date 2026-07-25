@@ -1,4 +1,4 @@
-import { Monitor, Moon, Sun } from 'lucide-react'
+import { Monitor, Moon, Sun } from 'lucide-react';
 
 export const COLOR_SCHEME_OPTIONS = [
   {
@@ -16,4 +16,4 @@ export const COLOR_SCHEME_OPTIONS = [
     label: 'Системная тема',
     icon: Monitor,
   },
-] as const
+] as const;

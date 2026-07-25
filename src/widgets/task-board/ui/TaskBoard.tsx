@@ -1,33 +1,33 @@
-import { selectColumns, useColumnStore } from '@/entities/column'
-import { selectTasks, TaskCard, useTaskStore, type Task } from '@/entities/task'
+import { selectColumns, useColumnStore } from '@/entities/column';
+import { selectTasks, TaskCard, useTaskStore, type Task } from '@/entities/task';
 import {
   sortTasksBySortOrder,
   TASK_SORT_ORDER,
   useColumnTaskSort,
-} from '@/features/change-column-task-sort'
-import { ChangeTaskPrioritySelect } from '@/features/change-task-priority'
-import { ChangeTaskStatusSelect } from '@/features/change-task-status'
-import { CreateColumnButton } from '@/features/create-column'
-import { DeleteTaskAction, DeleteTaskModal } from '@/features/delete-task'
-import { EditTaskAction, EditTaskModal } from '@/features/edit-task'
-import { TaskDndProvider } from '@/features/task-dnd'
+} from '@/features/change-column-task-sort';
+import { ChangeTaskPrioritySelect } from '@/features/change-task-priority';
+import { ChangeTaskStatusSelect } from '@/features/change-task-status';
+import { CreateColumnButton } from '@/features/create-column';
+import { DeleteTaskAction, DeleteTaskModal } from '@/features/delete-task';
+import { EditTaskAction, EditTaskModal } from '@/features/edit-task';
+import { TaskDndProvider } from '@/features/task-dnd';
 import {
   hasActiveTaskFilters,
   isTaskMatchingFilters,
   type TaskFilters,
-} from '@/features/task-filters'
-import { Paper, Stack, Text, Title } from '@mantine/core'
-import { useMemo, useState } from 'react'
-import { useShallow } from 'zustand/shallow'
-import type { TaskDialogState } from '../model/TaskDialogState'
-import { useTaskBoardQuery } from '../model/useTaskBoardQuery'
-import { TaskBoardColumns } from './TaskBoardColumns'
-import { TaskBoardSkeleton } from './TaskBoardSkeleton'
-import { TaskBoardToolbar } from './TaskBoardToolbar'
+} from '@/features/task-filters';
+import { Paper, Stack, Text, Title } from '@mantine/core';
+import { useMemo, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
+import type { TaskDialogState } from '../model/TaskDialogState';
+import { useTaskBoardQuery } from '../model/useTaskBoardQuery';
+import { TaskBoardColumns } from './TaskBoardColumns';
+import { TaskBoardSkeleton } from './TaskBoardSkeleton';
+import { TaskBoardToolbar } from './TaskBoardToolbar';
 
 export const TaskBoard = () => {
-  const [taskDialogState, setTaskDialogState] = useState<TaskDialogState>(null)
-  const { boardQuery, debouncedQuery, setQuery, setFilters, resetFilters } = useTaskBoardQuery()
+  const [taskDialogState, setTaskDialogState] = useState<TaskDialogState>(null);
+  const { boardQuery, debouncedQuery, setQuery, setFilters, resetFilters } = useTaskBoardQuery();
 
   const filters = useMemo<TaskFilters>(
     () => ({
@@ -36,53 +36,53 @@ export const TaskBoard = () => {
       tagIds: boardQuery.tagIds,
     }),
     [boardQuery.priorities, boardQuery.tagIds, boardQuery.types],
-  )
+  );
 
-  const normalizedSearch = debouncedQuery.toLowerCase().trim()
-  const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
-  const { tasksByColumnId, isLoading, isLoaded } = useTaskStore(useShallow(selectTasks))
-  const { changeColumnSortOrder, getColumnSortOrder, removeColumnSortOrder } = useColumnTaskSort()
-  const hasColumns = columns.length > 0
-  const hasFilters = hasActiveTaskFilters(filters)
-  const isTasksReady = !hasColumns || isLoaded
-  const isInitialLoading = !isColumnsLoaded || (hasColumns && isLoading && !isLoaded)
-  const isBoardLocked = !isColumnsLoaded || !isTasksReady
-  const isCreateTaskDisabled = isBoardLocked || !hasColumns
-  const isTaskFilterActive = normalizedSearch.length > 0 || hasFilters
-  const isTaskDndDisabled = isBoardLocked || isTaskFilterActive
+  const normalizedSearch = debouncedQuery.toLowerCase().trim();
+  const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns));
+  const { tasksByColumnId, isLoading, isLoaded } = useTaskStore(useShallow(selectTasks));
+  const { changeColumnSortOrder, getColumnSortOrder, removeColumnSortOrder } = useColumnTaskSort();
+  const hasColumns = columns.length > 0;
+  const hasFilters = hasActiveTaskFilters(filters);
+  const isTasksReady = !hasColumns || isLoaded;
+  const isInitialLoading = !isColumnsLoaded || (hasColumns && isLoading && !isLoaded);
+  const isBoardLocked = !isColumnsLoaded || !isTasksReady;
+  const isCreateTaskDisabled = isBoardLocked || !hasColumns;
+  const isTaskFilterActive = normalizedSearch.length > 0 || hasFilters;
+  const isTaskDndDisabled = isBoardLocked || isTaskFilterActive;
 
   const closeTaskDialog = () => {
-    setTaskDialogState(null)
-  }
+    setTaskDialogState(null);
+  };
 
   const openEditTaskDialog = (task: Task) => {
-    setTaskDialogState({ type: 'edit', task })
-  }
+    setTaskDialogState({ type: 'edit', task });
+  };
 
   const openDeleteTaskDialog = (task: Task) => {
-    setTaskDialogState({ type: 'delete', task })
-  }
+    setTaskDialogState({ type: 'delete', task });
+  };
 
   const visibleTasksByColumnId = useMemo(
     () =>
       new Map(
         columns.map((column) => {
-          const columnTasks = tasksByColumnId[column.id] ?? []
+          const columnTasks = tasksByColumnId[column.id] ?? [];
 
           const visibleTasks = columnTasks.filter((task) => {
             const isSearchMatching =
               normalizedSearch.length === 0 ||
               task.title.toLowerCase().includes(normalizedSearch) ||
-              task.description.toLowerCase().includes(normalizedSearch)
+              task.description.toLowerCase().includes(normalizedSearch);
 
-            return isSearchMatching && isTaskMatchingFilters(task, filters)
-          })
+            return isSearchMatching && isTaskMatchingFilters(task, filters);
+          });
 
-          return [column.id, visibleTasks]
+          return [column.id, visibleTasks];
         }),
       ),
     [columns, tasksByColumnId, normalizedSearch, filters],
-  )
+  );
 
   return (
     <>
@@ -167,5 +167,5 @@ export const TaskBoard = () => {
         <DeleteTaskModal task={taskDialogState.task} opened onClose={closeTaskDialog} />
       )}
     </>
-  )
-}
+  );
+};

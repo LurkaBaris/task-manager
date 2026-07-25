@@ -1,8 +1,8 @@
-import { MantineProvider } from '@mantine/core'
-import { Notifications } from '@mantine/notifications'
-import { ErrorBoundary } from './providers/error/ErrorBoundary'
-import { AppRouter } from './providers/router/AppRouter'
-import { theme } from './providers/theme/theme'
+import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import { ErrorBoundary } from './providers/error/ErrorBoundary';
+import { AppRouter } from './providers/router/AppRouter';
+import { theme } from './providers/theme/theme';
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
         <AppRouter />
       </ErrorBoundary>
     </MantineProvider>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,14 +1,14 @@
-import type { Column } from '@/entities/column'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import type { ReactNode } from 'react'
-import { SORTABLE_COLUMN_ID_PREFIX, type TaskDndSortableColumnData } from '../model/types'
-import styles from './SortableColumn.module.css'
+import type { Column } from '@/entities/column';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type { ReactNode } from 'react';
+import { SORTABLE_COLUMN_ID_PREFIX, type TaskDndSortableColumnData } from '../model/types';
+import styles from './SortableColumn.module.css';
 
 interface SortableColumnProps {
-  column: Column
-  disabled?: boolean
-  children: ReactNode
+  column: Column;
+  disabled?: boolean;
+  children: ReactNode;
 }
 
 export const SortableColumn = ({ column, disabled = false, children }: SortableColumnProps) => {
@@ -27,7 +27,7 @@ export const SortableColumn = ({ column, disabled = false, children }: SortableC
       type: 'sortable-column',
       column,
     } satisfies TaskDndSortableColumnData,
-  })
+  });
 
   return (
     <div
@@ -52,5 +52,5 @@ export const SortableColumn = ({ column, disabled = false, children }: SortableC
 
       {children}
     </div>
-  )
-}
+  );
+};

@@ -1,17 +1,17 @@
-import type { Task } from '@/entities/task'
-import type { ActionIconProps } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { DeleteTaskAction } from './DeleteTaskAction'
-import { DeleteTaskModal } from './DeleteTaskModal'
+import type { Task } from '@/entities/task';
+import type { ActionIconProps } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { DeleteTaskAction } from './DeleteTaskAction';
+import { DeleteTaskModal } from './DeleteTaskModal';
 
 interface DeleteTaskButtonProps {
-  task: Task
-  disabled?: boolean
-  onDeleted?: () => void
-  onRestored?: () => void
-  size?: ActionIconProps['size']
-  variant?: ActionIconProps['variant']
-  iconSize?: number
+  task: Task;
+  disabled?: boolean;
+  onDeleted?: () => void;
+  onRestored?: () => void;
+  size?: ActionIconProps['size'];
+  variant?: ActionIconProps['variant'];
+  iconSize?: number;
 }
 
 export const DeleteTaskButton = ({
@@ -23,7 +23,7 @@ export const DeleteTaskButton = ({
   variant,
   iconSize,
 }: DeleteTaskButtonProps) => {
-  const [opened, { open, close }] = useDisclosure(false)
+  const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <>
@@ -45,5 +45,5 @@ export const DeleteTaskButton = ({
         />
       )}
     </>
-  )
-}
+  );
+};

@@ -1,6 +1,6 @@
-import { selectColumns, useColumnStore } from '@/entities/column'
-import { selectTasks, useTaskStore } from '@/entities/task'
-import { StatisticDoughnutCard, StatisticPieCard, StatisticStackedBarCard } from '@/shared/ui'
+import { selectColumns, useColumnStore } from '@/entities/column';
+import { selectTasks, useTaskStore } from '@/entities/task';
+import { StatisticDoughnutCard, StatisticPieCard, StatisticStackedBarCard } from '@/shared/ui';
 import {
   Box,
   Group,
@@ -11,45 +11,45 @@ import {
   Text,
   Title,
   useMantineTheme,
-} from '@mantine/core'
-import { useMemo } from 'react'
-import { useShallow } from 'zustand/shallow'
-import { getTasksFromColumns } from '../lib/getTasksFromColumns'
-import { mapColumnsToStatisticPieItems } from '../lib/mapColumnsToStatisticPieItems'
-import { mapPrioritiesToStatisticPieItems } from '../lib/mapPrioritiesToStatisticPieItems'
-import { mapTaskTypesByColumnsToStackedBarData } from '../lib/mapTaskTypesByColumnsToStackedBarData'
+} from '@mantine/core';
+import { useMemo } from 'react';
+import { useShallow } from 'zustand/shallow';
+import { getTasksFromColumns } from '../lib/getTasksFromColumns';
+import { mapColumnsToStatisticPieItems } from '../lib/mapColumnsToStatisticPieItems';
+import { mapPrioritiesToStatisticPieItems } from '../lib/mapPrioritiesToStatisticPieItems';
+import { mapTaskTypesByColumnsToStackedBarData } from '../lib/mapTaskTypesByColumnsToStackedBarData';
 
 export const TaskStatistics = () => {
-  const theme = useMantineTheme()
-  const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns))
+  const theme = useMantineTheme();
+  const { columns, isLoaded: isColumnsLoaded } = useColumnStore(useShallow(selectColumns));
   const {
     tasksByColumnId,
     isLoading: isTasksLoading,
     isLoaded: isTasksLoaded,
-  } = useTaskStore(useShallow(selectTasks))
+  } = useTaskStore(useShallow(selectTasks));
 
   const sortedColumns = useMemo(() => {
-    return [...columns].sort((firstColumn, secondColumn) => firstColumn.order - secondColumn.order)
-  }, [columns])
+    return [...columns].sort((firstColumn, secondColumn) => firstColumn.order - secondColumn.order);
+  }, [columns]);
 
   const tasks = useMemo(() => {
-    return getTasksFromColumns(tasksByColumnId)
-  }, [tasksByColumnId])
+    return getTasksFromColumns(tasksByColumnId);
+  }, [tasksByColumnId]);
 
   const columnStatisticItems = useMemo(() => {
-    return mapColumnsToStatisticPieItems(sortedColumns, tasksByColumnId, theme)
-  }, [sortedColumns, tasksByColumnId, theme])
+    return mapColumnsToStatisticPieItems(sortedColumns, tasksByColumnId, theme);
+  }, [sortedColumns, tasksByColumnId, theme]);
 
   const priorityStatisticItems = useMemo(() => {
-    return mapPrioritiesToStatisticPieItems(tasks, theme)
-  }, [tasks, theme])
+    return mapPrioritiesToStatisticPieItems(tasks, theme);
+  }, [tasks, theme]);
 
   const taskTypesByColumnsStatisticData = useMemo(() => {
-    return mapTaskTypesByColumnsToStackedBarData(sortedColumns, tasksByColumnId, theme)
-  }, [sortedColumns, tasksByColumnId, theme])
+    return mapTaskTypesByColumnsToStackedBarData(sortedColumns, tasksByColumnId, theme);
+  }, [sortedColumns, tasksByColumnId, theme]);
 
   const isInitialLoading =
-    !isColumnsLoaded || (sortedColumns.length > 0 && isTasksLoading && !isTasksLoaded)
+    !isColumnsLoaded || (sortedColumns.length > 0 && isTasksLoading && !isTasksLoaded);
 
   return (
     <Stack gap="md">
@@ -104,5 +104,5 @@ export const TaskStatistics = () => {
         </Stack>
       )}
     </Stack>
-  )
-}
+  );
+};

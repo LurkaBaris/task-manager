@@ -1,21 +1,21 @@
-import { Box, Text, UnstyledButton } from '@mantine/core'
-import type { StatisticPieItem } from '../model/types'
-import styles from './StatisticCard.module.css'
+import { Box, Text, UnstyledButton } from '@mantine/core';
+import type { StatisticPieItem } from '../model/types';
+import styles from './StatisticCard.module.css';
 
 interface StatisticPieLegendProps {
-  items: StatisticPieItem[]
-  total: number
-  onItemMouseEnter: (item: StatisticPieItem) => void
-  onItemMouseLeave: () => void
+  items: StatisticPieItem[];
+  total: number;
+  onItemMouseEnter: (item: StatisticPieItem) => void;
+  onItemMouseLeave: () => void;
 }
 
 const getPercent = (count: number, total: number): number => {
   if (total === 0) {
-    return 0
+    return 0;
   }
 
-  return Math.round((count / total) * 100)
-}
+  return Math.round((count / total) * 100);
+};
 
 export const StatisticPieLegend = ({
   items,
@@ -49,10 +49,10 @@ export const StatisticPieLegend = ({
           py={8}
           onBlur={onItemMouseLeave}
           onFocus={() => {
-            onItemMouseEnter(item)
+            onItemMouseEnter(item);
           }}
           onMouseEnter={() => {
-            onItemMouseEnter(item)
+            onItemMouseEnter(item);
           }}
           onMouseLeave={onItemMouseLeave}
         >
@@ -90,5 +90,5 @@ export const StatisticPieLegend = ({
         </UnstyledButton>
       ))}
     </Box>
-  )
-}
+  );
+};

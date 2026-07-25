@@ -1,1 +1,1 @@
-export { ChangeTaskPrioritySelect } from './ui/ChangeTaskPrioritySelect'
+export { ChangeTaskPrioritySelect } from './ui/ChangeTaskPrioritySelect';

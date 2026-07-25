@@ -1,8 +1,8 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
-const MAX_FILES_COUNT = 5
-const MAX_FILE_SIZE = 10 * 1024 * 1024
-const MAX_TEXT_LENGTH = 1000
+const MAX_FILES_COUNT = 5;
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_TEXT_LENGTH = 1000;
 
 const ACCEPTED_FILE_TYPES = [
   'image/png',
@@ -17,26 +17,26 @@ const ACCEPTED_FILE_TYPES = [
   'application/x-zip-compressed',
   'application/vnd.rar',
   'application/x-rar-compressed',
-]
+];
 
-const ACCEPTED_FILE_EXTENSIONS = ['.zip', '.rar']
+const ACCEPTED_FILE_EXTENSIONS = ['.zip', '.rar'];
 
 export const TASK_COMMENT_FILE_ACCEPT =
-  'image/png,image/jpeg,image/webp,image/gif,.pdf,.doc,.docx,.txt,.zip,.rar'
+  'image/png,image/jpeg,image/webp,image/gif,.pdf,.doc,.docx,.txt,.zip,.rar';
 
 export const TASK_COMMENT_FORM_DEFAULT_VALUES: TaskCommentFormValues = {
   text: '',
   files: [],
-}
+};
 
 const isAcceptedFile = (file: File): boolean => {
-  const fileName = file.name.toLowerCase()
+  const fileName = file.name.toLowerCase();
 
   return (
     ACCEPTED_FILE_TYPES.includes(file.type) ||
     ACCEPTED_FILE_EXTENSIONS.some((extension) => fileName.endsWith(extension))
-  )
-}
+  );
+};
 
 export const taskCommentFormSchema = z
   .object({
@@ -51,7 +51,7 @@ export const taskCommentFormSchema = z
       })
       .refine(
         (files) => {
-          return files.every((file) => file.size <= MAX_FILE_SIZE)
+          return files.every((file) => file.size <= MAX_FILE_SIZE);
         },
         {
           message: 'Размер одного файла не должен превышать 10 МБ',
@@ -60,12 +60,12 @@ export const taskCommentFormSchema = z
   })
   .refine(
     (values) => {
-      return values.text.trim().length > 0 || values.files.length > 0
+      return values.text.trim().length > 0 || values.files.length > 0;
     },
     {
       message: 'Добавьте текст или прикрепите файл',
       path: ['text'],
     },
-  )
+  );
 
-export type TaskCommentFormValues = z.infer<typeof taskCommentFormSchema>
+export type TaskCommentFormValues = z.infer<typeof taskCommentFormSchema>;

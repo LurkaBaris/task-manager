@@ -1,24 +1,24 @@
-import type { ColumnDbRecord } from '@/shared/lib'
-import { z } from 'zod'
-import { columnSchema } from '../model/columnSchema'
-import type { Column } from '../model/types'
+import type { ColumnDbRecord } from '@/shared/lib';
+import { z } from 'zod';
+import { columnSchema } from '../model/columnSchema';
+import type { Column } from '../model/types';
 
 const columnDbRecordSchema = columnSchema.extend({
   id: z.string().trim().min(1),
   order: z.number(),
-})
+});
 
 export const mapColumnFromDb = (record: ColumnDbRecord): Column | null => {
-  const result = columnDbRecordSchema.safeParse(record)
+  const result = columnDbRecordSchema.safeParse(record);
 
   if (!result.success) {
-    console.error('Некорректная колонка в IndexedDB', result.error)
+    console.error('Некорректная колонка в IndexedDB', result.error);
 
-    return null
+    return null;
   }
 
-  return result.data
-}
+  return result.data;
+};
 
 export const mapColumnToDb = (column: Column): ColumnDbRecord => {
   return {
@@ -26,5 +26,5 @@ export const mapColumnToDb = (column: Column): ColumnDbRecord => {
     title: column.title,
     color: column.color,
     order: column.order,
-  }
-}
+  };
+};

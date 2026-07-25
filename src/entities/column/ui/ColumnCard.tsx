@@ -1,18 +1,18 @@
-import { Badge, Flex, Paper, ScrollArea, Stack, Text, Title } from '@mantine/core'
-import clsx from 'clsx'
-import { type ReactNode, type Ref } from 'react'
-import type { Column } from '../model/types'
-import styles from './ColumnCard.module.css'
+import { Badge, Flex, Paper, ScrollArea, Stack, Text, Title } from '@mantine/core';
+import clsx from 'clsx';
+import { type ReactNode, type Ref } from 'react';
+import type { Column } from '../model/types';
+import styles from './ColumnCard.module.css';
 
 interface ColumnCardProps {
-  column: Column
-  count: number
-  listRef?: Ref<HTMLDivElement>
-  children?: ReactNode
-  headerControls?: ReactNode
-  emptyText?: string
-  isHightlighted?: boolean
-  topRightAction?: ReactNode
+  column: Column;
+  count: number;
+  listRef?: Ref<HTMLDivElement>;
+  children?: ReactNode;
+  headerControls?: ReactNode;
+  emptyText?: string;
+  isHightlighted?: boolean;
+  topRightAction?: ReactNode;
 }
 
 export const ColumnCard = ({
@@ -92,5 +92,5 @@ export const ColumnCard = ({
         </ScrollArea>
       </Flex>
     </Paper>
-  )
-}
+  );
+};

@@ -1,6 +1,6 @@
 export interface StatisticPieItem {
-  id: string
-  label: string
-  count: number
-  color: string
+  id: string;
+  label: string;
+  count: number;
+  color: string;
 }

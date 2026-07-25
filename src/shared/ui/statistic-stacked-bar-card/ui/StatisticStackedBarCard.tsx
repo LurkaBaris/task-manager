@@ -9,22 +9,29 @@ import {
   Title,
   useComputedColorScheme,
   useMantineTheme,
-} from '@mantine/core'
-import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from 'chart.js'
-import { useMemo } from 'react'
-import { Bar } from 'react-chartjs-2'
-import { mapStatisticStackedBarDataToChartData } from '../lib/mapStatisticStackedBarDataToChartData'
-import { getChartOptions } from '../model/chartOptions'
-import type { StatisticStackedBarData } from '../model/types'
-import styles from './StatisticStackedBarCard.module.css'
+} from '@mantine/core';
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from 'chart.js';
+import { useMemo } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { mapStatisticStackedBarDataToChartData } from '../lib/mapStatisticStackedBarDataToChartData';
+import { getChartOptions } from '../model/chartOptions';
+import type { StatisticStackedBarData } from '../model/types';
+import styles from './StatisticStackedBarCard.module.css';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface StatisticStackedBarCardProps {
-  title: string
-  description: string
-  data: StatisticStackedBarData
-  emptyMessage?: string
+  title: string;
+  description: string;
+  data: StatisticStackedBarData;
+  emptyMessage?: string;
 }
 
 export const StatisticStackedBarCard = ({
@@ -33,30 +40,30 @@ export const StatisticStackedBarCard = ({
   data,
   emptyMessage = 'Пока нет задач для отображения статистики',
 }: StatisticStackedBarCardProps) => {
-  const theme = useMantineTheme()
-  const colorScheme = useComputedColorScheme('light', { getInitialValueInEffect: false })
-  const isDark = colorScheme === 'dark'
-  const chartBorderColor = isDark ? theme.colors.dark[7] : theme.white
-  const chartTextColor = isDark ? theme.colors.dark[1] : theme.colors.gray[7]
-  const chartGridColor = isDark ? theme.colors.dark[5] : theme.colors.gray[2]
+  const theme = useMantineTheme();
+  const colorScheme = useComputedColorScheme('light', { getInitialValueInEffect: false });
+  const isDark = colorScheme === 'dark';
+  const chartBorderColor = isDark ? theme.colors.dark[7] : theme.white;
+  const chartTextColor = isDark ? theme.colors.dark[1] : theme.colors.gray[7];
+  const chartGridColor = isDark ? theme.colors.dark[5] : theme.colors.gray[2];
   const total = data.datasets.reduce((sum, dataset) => {
-    return sum + dataset.values.reduce((datasetSum, value) => datasetSum + value, 0)
-  }, 0)
+    return sum + dataset.values.reduce((datasetSum, value) => datasetSum + value, 0);
+  }, 0);
 
   const chartData = useMemo(() => {
-    return mapStatisticStackedBarDataToChartData(data, chartBorderColor)
-  }, [chartBorderColor, data])
+    return mapStatisticStackedBarDataToChartData(data, chartBorderColor);
+  }, [chartBorderColor, data]);
 
   const chartOptions = useMemo(() => {
-    return getChartOptions(chartTextColor, chartGridColor)
-  }, [chartGridColor, chartTextColor])
+    return getChartOptions(chartTextColor, chartGridColor);
+  }, [chartGridColor, chartTextColor]);
 
   const datasetTotals = useMemo(() => {
     return data.datasets.map((dataset) => ({
       ...dataset,
       total: dataset.values.reduce((sum, value) => sum + value, 0),
-    }))
-  }, [data.datasets])
+    }));
+  }, [data.datasets]);
 
   return (
     <Paper h="100%" p="lg" withBorder radius="lg">
@@ -126,5 +133,5 @@ export const StatisticStackedBarCard = ({
         )}
       </Stack>
     </Paper>
-  )
-}
+  );
+};

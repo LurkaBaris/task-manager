@@ -1,164 +1,165 @@
-import { useCombobox } from '@mantine/core'
-import { useDebouncedValue } from '@mantine/hooks'
-import { notifications } from '@mantine/notifications'
-import { useMemo, useState, type KeyboardEvent } from 'react'
-import { useShallow } from 'zustand/shallow'
-import { selectTags, useTagStore } from './store'
-import type { Tag } from './types'
+import { useCombobox } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { useMemo, useState, type KeyboardEvent } from 'react';
+import { useShallow } from 'zustand/shallow';
+import { selectTags, useTagStore } from './store';
+import type { Tag } from './types';
 
 interface UseTagSelectParams {
-  value?: Tag['id']
-  draftValue?: string
-  onChange: (tagId: Tag['id'] | undefined) => void | Promise<void>
-  onCreate: (name: string) => void | Promise<void>
+  value?: Tag['id'];
+  draftValue?: string;
+  onChange: (tagId: Tag['id'] | undefined) => void | Promise<void>;
+  onCreate: (name: string) => void | Promise<void>;
 }
 
 interface ClearedSnapshot {
-  value?: Tag['id']
-  draftValue?: string
+  value?: Tag['id'];
+  draftValue?: string;
 }
 
-const TAG_SEARCH_DEBOUNCE_MS = 250
+const TAG_SEARCH_DEBOUNCE_MS = 250;
 
 export const useTagSelect = ({ value, draftValue, onChange, onCreate }: UseTagSelectParams) => {
-  const combobox = useCombobox()
-  const { tags, isLoaded } = useTagStore(useShallow(selectTags))
-  const [search, setSearch] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
-  const [clearedSnapshot, setClearedSnapshot] = useState<ClearedSnapshot | null>(null)
+  const combobox = useCombobox();
+  const { tags, isLoaded } = useTagStore(useShallow(selectTags));
+  const [search, setSearch] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [clearedSnapshot, setClearedSnapshot] = useState<ClearedSnapshot | null>(null);
 
-  const normalizedDraftValue = draftValue?.trim() || undefined
-  const selectedTag = tags.find((tag) => tag.id === value)
+  const normalizedDraftValue = draftValue?.trim() || undefined;
+  const selectedTag = tags.find((tag) => tag.id === value);
   const isLocallyCleared =
-    clearedSnapshot?.value === value && clearedSnapshot?.draftValue === normalizedDraftValue
-  const currentValue = isLocallyCleared ? '' : (normalizedDraftValue ?? selectedTag?.name ?? '')
-  const inputValue = isEditing ? search : currentValue
+    clearedSnapshot?.value === value && clearedSnapshot?.draftValue === normalizedDraftValue;
+  const currentValue = isLocallyCleared ? '' : (normalizedDraftValue ?? selectedTag?.name ?? '');
+  const inputValue = isEditing ? search : currentValue;
 
-  const [debouncedSearch] = useDebouncedValue(isEditing ? search : '', TAG_SEARCH_DEBOUNCE_MS)
+  const [debouncedSearch] = useDebouncedValue(isEditing ? search : '', TAG_SEARCH_DEBOUNCE_MS);
 
-  const trimmedSearch = debouncedSearch.trim()
-  const normalizedSearch = trimmedSearch.toLowerCase()
-  const isTagsLoading = !isLoaded
-  const isLoading = isEditing && search !== debouncedSearch
-  const hasExactTag = tags.some((tag) => tag.name.toLowerCase() === normalizedSearch)
-  const canCreateTag = isEditing && Boolean(trimmedSearch) && !hasExactTag && !isLoading && isLoaded
-  const canClear = Boolean(search || (!isLocallyCleared && (value || normalizedDraftValue)))
+  const trimmedSearch = debouncedSearch.trim();
+  const normalizedSearch = trimmedSearch.toLowerCase();
+  const isTagsLoading = !isLoaded;
+  const isLoading = isEditing && search !== debouncedSearch;
+  const hasExactTag = tags.some((tag) => tag.name.toLowerCase() === normalizedSearch);
+  const canCreateTag =
+    isEditing && Boolean(trimmedSearch) && !hasExactTag && !isLoading && isLoaded;
+  const canClear = Boolean(search || (!isLocallyCleared && (value || normalizedDraftValue)));
 
   const filteredTags = useMemo(() => {
     if (!normalizedSearch) {
-      return tags
+      return tags;
     }
 
-    return tags.filter((tag) => tag.name.toLowerCase().includes(normalizedSearch))
-  }, [normalizedSearch, tags])
+    return tags.filter((tag) => tag.name.toLowerCase().includes(normalizedSearch));
+  }, [normalizedSearch, tags]);
 
   const stopEditing = () => {
-    setSearch('')
-    setIsEditing(false)
-    combobox.closeDropdown()
-  }
+    setSearch('');
+    setIsEditing(false);
+    combobox.closeDropdown();
+  };
 
   const handleSearchChange = (value: string) => {
-    setSearch(value)
-    setIsEditing(true)
-    combobox.resetSelectedOption()
-    combobox.openDropdown()
-  }
+    setSearch(value);
+    setIsEditing(true);
+    combobox.resetSelectedOption();
+    combobox.openDropdown();
+  };
 
   const handleInputFocus = () => {
-    setSearch(currentValue)
-    setIsEditing(true)
-    combobox.openDropdown()
-  }
+    setSearch(currentValue);
+    setIsEditing(true);
+    combobox.openDropdown();
+  };
 
   const handleInputBlur = () => {
-    stopEditing()
-  }
+    stopEditing();
+  };
 
   const handleClearTag = async () => {
     try {
-      setSearch('')
-      setIsEditing(false)
+      setSearch('');
+      setIsEditing(false);
       setClearedSnapshot({
         value,
         draftValue: normalizedDraftValue,
-      })
+      });
 
-      await onChange(undefined)
+      await onChange(undefined);
 
-      combobox.closeDropdown()
+      combobox.closeDropdown();
     } catch (error) {
-      setClearedSnapshot(null)
+      setClearedSnapshot(null);
 
-      console.error('Не удалось очистить тег', error)
+      console.error('Не удалось очистить тег', error);
 
       notifications.show({
         title: 'Тег не очистился',
         message: 'Попробуйте убрать тег еще раз',
         color: 'red',
-      })
+      });
     }
-  }
+  };
 
   const handleSelectTag = async (tagId: Tag['id']) => {
-    const tag = tags.find((tag) => tag.id === tagId)
+    const tag = tags.find((tag) => tag.id === tagId);
 
     if (!tag) {
-      return
+      return;
     }
 
     try {
-      setClearedSnapshot(null)
+      setClearedSnapshot(null);
 
-      await onChange(tag.id)
+      await onChange(tag.id);
 
-      stopEditing()
+      stopEditing();
     } catch (error) {
-      console.error('Не удалось выбрать тег', error)
+      console.error('Не удалось выбрать тег', error);
 
       notifications.show({
         title: 'Тег не выбран',
         message: 'Попробуйте выбрать тег еще раз',
         color: 'red',
-      })
+      });
     }
-  }
+  };
 
   const handleCreateTag = async () => {
     if (!canCreateTag) {
-      return
+      return;
     }
 
     try {
-      setClearedSnapshot(null)
+      setClearedSnapshot(null);
 
-      await onCreate(trimmedSearch)
+      await onCreate(trimmedSearch);
 
-      stopEditing()
+      stopEditing();
     } catch (error) {
-      console.error('Не удалось создать тег', error)
+      console.error('Не удалось создать тег', error);
 
-      stopEditing()
+      stopEditing();
 
       notifications.show({
         title: 'Тег не создался',
         message: 'Проверьте название тега и попробуйте еще раз',
         color: 'red',
-      })
+      });
     }
-  }
+  };
 
   const handleInputKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Enter' || !canCreateTag) {
-      return
+      return;
     }
 
-    event.preventDefault()
-    event.stopPropagation()
-    combobox.resetSelectedOption()
+    event.preventDefault();
+    event.stopPropagation();
+    combobox.resetSelectedOption();
 
-    await handleCreateTag()
-  }
+    await handleCreateTag();
+  };
 
   return {
     combobox,
@@ -176,5 +177,5 @@ export const useTagSelect = ({ value, draftValue, onChange, onCreate }: UseTagSe
     handleSelectTag,
     handleCreateTag,
     handleInputKeyDown,
-  }
-}
+  };
+};

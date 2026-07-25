@@ -1,1 +1,1 @@
-export { TaskStatistics } from './ui/TaskStatistics'
+export { TaskStatistics } from './ui/TaskStatistics';
